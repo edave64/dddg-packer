@@ -12,6 +12,8 @@ import {
 	type JSONContentPack as V2Json,
 } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
 import Sprites from "./PackV2/Sprites.vue";
+import Character from "./PackV2/character.vue";
+import HeadGroup from "./PackV2/head-group.vue";
 import { joinNormalize } from "../path-tools";
 
 const props = defineProps({
@@ -36,6 +38,7 @@ type Selected =
 	| {
 			t: "head-group";
 			obj: JSONHeadCollection | string[][];
+			key: string;
 	  }
 	| {
 			t: "style-group";
@@ -79,7 +82,13 @@ type Selected =
 									<li v-for="(v, k) of char.heads" :key="'head:' + k">
 										<a
 											href="#"
-											@click="selectedObj = { t: 'head-group', obj: v }"
+											@click="
+												selectedObj = {
+													t: 'head-group',
+													obj: v,
+													key: k as string,
+												}
+											"
 											>{{ k }}</a
 										>
 									</li>
@@ -180,6 +189,17 @@ type Selected =
 				:sprite="selectedObj.obj"
 				:folder="folder"
 				v-if="selectedObj && selectedObj.t === 'sprite'"
+			/>
+			<Character
+				:char="selectedObj.obj"
+				:folder="folder"
+				v-if="selectedObj && selectedObj.t === 'char'"
+			/>
+			<HeadGroup
+				:head-group="selectedObj.obj"
+				:folder="folder"
+				:id="selectedObj.key"
+				v-if="selectedObj && selectedObj.t === 'head-group'"
 			/>
 			<template v-else>
 				{{ selectedObj?.t }}
