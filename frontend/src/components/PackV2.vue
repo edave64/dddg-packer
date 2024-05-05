@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, type PropType } from "vue";
+import { computed, ref, watch, type PropType } from "vue";
 import {
 	type JSONBackground,
 	type JSONCharacter,
@@ -12,12 +12,18 @@ import {
 	type JSONContentPack as V2Json,
 } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
 import Sprites from "./PackV2/Sprites.vue";
+import { joinNormalize } from "../path-tools";
 
 const props = defineProps({
 	json: {
 		required: true,
 		type: Object as PropType<V2Json>,
 	},
+});
+
+const root = joinNormalize("", "./");
+const folder = computed(() => {
+	return joinNormalize(root, props.json.folder);
 });
 
 const selectedObj = ref(null as null | Selected);
@@ -172,6 +178,7 @@ type Selected =
 		<div class="pack_editor">
 			<Sprites
 				:sprite="selectedObj.obj"
+				:folder="folder"
 				v-if="selectedObj && selectedObj.t === 'sprite'"
 			/>
 			<template v-else>

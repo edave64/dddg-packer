@@ -1,18 +1,27 @@
 <script setup lang="ts">
-import { ref, watch, type PropType } from "vue";
+import { computed, type PropType } from "vue";
 import { type JSONSprite } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
 import ImageCollection from "./ImageCollection.vue";
+import Variations from "./variations.vue";
 import Code from "../shared/code.vue";
+import { joinNormalize } from "../../path-tools";
 
 const props = defineProps({
 	sprite: {
 		required: true,
 		type: Object as PropType<JSONSprite>,
 	},
+	folder: {
+		type: String,
+		required: true,
+	},
 });
 
 const emit = defineEmits<{}>();
-const selectedVariant = ref(props.sprite.variants.length > 0 ? 0 : -1);
+
+const f = computed(() => {
+	return joinNormalize(props.folder, props.sprite.folder);
+});
 </script>
 <template>
 	<h2>Sprite</h2>
@@ -24,24 +33,11 @@ const selectedVariant = ref(props.sprite.variants.length > 0 ? 0 : -1);
 		<label for="sprite_id">Label: </label>
 		<input id="sprite_id" v-model="sprite.label" />
 	</p>
-	<p v-if="sprite.variants.length > 0">
-		<label from="sprite_variants">Variants:</label>
-		<select
-			id="sprite_variants"
-			@change="selectedVariant = +($event.target as HTMLSelectElement).value"
-		>
-			<option
-				v-for="(variant, i) of sprite.variants"
-				:value="i"
-				:selected="i === selectedVariant"
-			>
-				{{ variant }}
-			</option>
-		</select>
-	</p>
 	<ImageCollection
-		v-if="selectedVariant !== -1"
-		:imageCollection="sprite.variants[selectedVariant]"
+		v-if="sprite.variants?.length === 1"
+		:imageCollection="sprite.variants[0]"
+		:folder="f"
 	/>
+	<Variations :variants="sprite.variants" label="Variants" :folder="f" v-else />
 	<Code :obj="sprite" />
 </template>
