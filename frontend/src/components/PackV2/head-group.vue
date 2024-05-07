@@ -20,6 +20,9 @@ const props = defineProps({
 		required: true,
 	},
 });
+const emit = defineEmits<{
+	updateKey: [newName: string];
+}>();
 
 const f = computed(() => {
 	return joinNormalize(
@@ -34,7 +37,11 @@ const f = computed(() => {
 	<h2>Head group</h2>
 	<p>
 		<label for="head_id">ID: </label>
-		<input id="head_id" value="id" readonly />
+		<input
+			id="head_id"
+			:value="id"
+			@input="$emit('updateKey', ($event.target as HTMLInputElement).value)"
+		/>
 	</p>
 	<Variations
 		:variants="

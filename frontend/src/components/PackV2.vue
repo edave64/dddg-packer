@@ -14,6 +14,9 @@ import {
 import Sprites from "./PackV2/Sprites.vue";
 import Character from "./PackV2/character.vue";
 import HeadGroup from "./PackV2/head-group.vue";
+import StyleGroup from "./PackV2/style-group.vue";
+import Style from "./PackV2/style.vue";
+import Pose from "./PackV2/pose.vue";
 import { joinNormalize } from "../path-tools";
 
 const props = defineProps({
@@ -30,6 +33,14 @@ const folder = computed(() => {
 
 const selectedObj = ref(null as null | Selected);
 
+function updateHeadkey(oldKey: string, newKey: string) {
+	if (selectedObj.value?.t !== "head-group") return;
+	if (selectedObj.value.parent[newKey]) return;
+	selectedObj.value.parent[newKey] = selectedObj.value.obj;
+	selectedObj.value.key = newKey;
+	delete selectedObj.value.parent[oldKey];
+}
+
 type Selected =
 	| {
 			t: "char";
@@ -39,6 +50,7 @@ type Selected =
 			t: "head-group";
 			obj: JSONHeadCollection | string[][];
 			key: string;
+			parent: Exclude<JSONCharacter["heads"], undefined>;
 	  }
 	| {
 			t: "style-group";
@@ -87,6 +99,7 @@ type Selected =
 													t: 'head-group',
 													obj: v,
 													key: k as string,
+													parent: char.heads,
 												}
 											"
 											>{{ k }}</a
@@ -193,13 +206,29 @@ type Selected =
 			<Character
 				:char="selectedObj.obj"
 				:folder="folder"
-				v-if="selectedObj && selectedObj.t === 'char'"
+				v-else-if="selectedObj && selectedObj.t === 'char'"
 			/>
 			<HeadGroup
 				:head-group="selectedObj.obj"
 				:folder="folder"
 				:id="selectedObj.key"
-				v-if="selectedObj && selectedObj.t === 'head-group'"
+				@update-key="updateHeadkey(selectedObj.key, $event)"
+				v-else-if="selectedObj && selectedObj.t === 'head-group'"
+			/>
+			<StyleGroup
+				:style-group="selectedObj.obj"
+				:folder="folder"
+				v-else-if="selectedObj && selectedObj.t === 'style-group'"
+			/>
+			<Style
+				:style="selectedObj.obj"
+				:folder="folder"
+				v-else-if="selectedObj && selectedObj.t === 'style'"
+			/>
+			<Pose
+				:pose="selectedObj.obj"
+				:folder="folder"
+				v-else-if="selectedObj && selectedObj.t === 'pose'"
 			/>
 			<template v-else>
 				{{ selectedObj?.t }}
