@@ -32,6 +32,8 @@ watch(
 			// mountedPackPath changed
 			if (props.coreState.mountedPackPath !== packId) return;
 			repo.value = repoJSON;
+			repoChanges.value = false;
+			repoUpdated = true;
 		} catch (e) {
 			console.error("Cannot load repo.json", e);
 		}
@@ -65,11 +67,37 @@ watch(
 			// mountedPackPath changed
 			if (repo.value !== currentRepo) return;
 			pack.value = packJson;
+			packUpdated = true;
+			packChanges.value = false;
 		} catch (e) {
 			console.error("Cannot load index.json", e);
 		}
 	},
 	{ immediate: true }
+);
+
+let repoUpdated = false;
+let packUpdated = false;
+
+const repoChanges = ref(false);
+const packChanges = ref(false);
+
+watch(
+	() => repo.value,
+	() => {
+		repoChanges.value = !repoUpdated;
+		repoUpdated = false;
+	},
+	{ deep: true }
+);
+
+watch(
+	() => pack.value,
+	() => {
+		packChanges.value = !packUpdated;
+		packUpdated = false;
+	},
+	{ deep: true }
 );
 
 function normalizeRepoPath(path: string): string {
@@ -78,6 +106,15 @@ function normalizeRepoPath(path: string): string {
 		return path.substring(path.indexOf(packId) + packId.length + 1);
 	}
 	return path;
+}
+
+function save() {
+	if (repoChanges.value) {
+		repoChanges.value = false;
+	}
+	if (packChanges.value) {
+		packChanges.value = false;
+	}
 }
 </script>
 <template>
@@ -106,7 +143,11 @@ function normalizeRepoPath(path: string): string {
 			{{ JSON.stringify(pack) }}
 		</p>
 	</main>
-	<footer>{{ coreState?.mountedPackPath }}</footer>
+	<footer>
+		<a v-if="repoChanges || packChanges" href="#" @click="save()"
+			>Save changes</a
+		>
+	</footer>
 </template>
 
 <style>
@@ -117,8 +158,8 @@ function normalizeRepoPath(path: string): string {
 main {
 	display: flex;
 	width: 100%;
-	height: calc(100% - 64px);
 	flex-grow: 1;
+	overflow: hidden;
 
 	> * {
 		height: 100%;
