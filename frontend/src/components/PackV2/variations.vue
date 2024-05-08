@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch, type PropType } from "vue";
-import { type JSONSprite } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
-import ImageCollection from "./ImageCollection.vue";
+import type { JSONSprite } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
+import ImageCollection from "./image-collection.vue";
 import Code from "../shared/code.vue";
 import { joinNormalize } from "@/path-tools";
 
@@ -20,7 +20,6 @@ const props = defineProps({
 	},
 });
 
-const emit = defineEmits<{}>();
 const selectedVariant = ref(props.variants.length > 0 ? 0 : -1);
 </script>
 <template>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, type PropType } from "vue";
-import { type JSONPose } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
+import type { JSONPose } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
 import Code from "../shared/code.vue";
 import { joinNormalize } from "../../path-tools";
 import Variations from "./variations.vue";

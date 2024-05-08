@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, type PropType } from "vue";
-import { type JSONHeadCollection } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
-import ImageCollection from "./ImageCollection.vue";
+import type { JSONHeadCollection } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
+import ImageCollection from "./image-collection.vue";
 import Variations from "./variations.vue";
 import Code from "../shared/code.vue";
 import { joinNormalize } from "../../path-tools";

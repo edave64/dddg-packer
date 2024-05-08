@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import StartUp from "./components/StartUp.vue";
-import SelectDDDG from "./components/SelectDDDG.vue";
-import SelectPack from "./components/SelectPack.vue";
-import EditPack from "./components/EditPack.vue";
+import StartUp from "./components/start-up.vue";
+import SelectDDDG from "./components/select-dddg.vue";
+import SelectPack from "./components/select-pack.vue";
+import EditPack from "./components/edit-pack.vue";
 import { TriggerCoreStateUpdate } from "../wailsjs/go/main/App";
-import { EventsOn } from "../wailsjs/runtime";
-import { type CoreState, type Stage } from "./coreState";
+import { EventsOn } from "../wailsjs/runtime/runtime";
+import type { CoreState, Stage } from "./core-state";
 
 const coreState = ref(null as null | CoreState);
 const stage = ref("startup" as Stage);

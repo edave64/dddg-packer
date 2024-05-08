@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, watch, type PropType } from "vue";
 import { GetPacks, MountPack, UpdateDddgPath } from "../../wailsjs/go/main/App";
-import { main } from "../../wailsjs/go/models";
-import { type Stage, type CoreState } from "../coreState";
+import type { main } from "../../wailsjs/go/models";
+import type { Stage, CoreState } from "../core-state";
 const packs = ref(null as null | main.Pack[]);
 const props = defineProps({
 	coreState: {
@@ -10,8 +10,6 @@ const props = defineProps({
 		type: Object as PropType<CoreState>,
 	},
 });
-
-const emit = defineEmits<{}>();
 
 watch(() => props.coreState, updatePacks, { immediate: true });
 async function updatePacks() {

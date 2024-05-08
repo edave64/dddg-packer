@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, type PropType } from "vue";
-import { type JSONSprite } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
-import ImageCollection from "./ImageCollection.vue";
+import type { JSONSprite } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
+import ImageCollection from "./image-collection.vue";
 import Variations from "./variations.vue";
 import Code from "../shared/code.vue";
 import { joinNormalize } from "../../path-tools";
@@ -16,8 +16,6 @@ const props = defineProps({
 		required: true,
 	},
 });
-
-const emit = defineEmits<{}>();
 
 const f = computed(() => {
 	return joinNormalize(props.folder, props.sprite.folder);

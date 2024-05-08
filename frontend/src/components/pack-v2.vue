@@ -1,22 +1,22 @@
 <script setup lang="ts">
 import { computed, ref, watch, type PropType } from "vue";
-import {
-	type JSONBackground,
-	type JSONCharacter,
-	type JSONColor,
-	type JSONHeadCollection,
-	type JSONPose,
-	type JSONSprite,
-	type JSONStyle,
-	type JSONStyleGroup,
-	type JSONContentPack as V2Json,
+import type {
+	JSONBackground,
+	JSONCharacter,
+	JSONColor,
+	JSONHeadCollection,
+	JSONPose,
+	JSONSprite,
+	JSONStyle,
+	JSONStyleGroup,
+	JSONContentPack as V2Json,
 } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
-import Sprites from "./PackV2/Sprites.vue";
+import Sprites from "./PackV2/sprites.vue";
 import Character from "./PackV2/character.vue";
 import HeadGroup from "./PackV2/head-group.vue";
 import StyleGroup from "./PackV2/style-group.vue";
-import Style from "./PackV2/style.vue";
 import Pose from "./PackV2/pose.vue";
+import Style from "./PackV2/style.vue";
 import { joinNormalize } from "../path-tools";
 
 const props = defineProps({

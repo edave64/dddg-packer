@@ -30,13 +30,17 @@ watch(
 
 const previewStyle = computed((): CSSProperties => {
 	let background = "";
+	if (!props.imageCollection) return {};
 
-	for (const ic of props.imageCollection!) {
+	for (const ic of props.imageCollection) {
 		if (background) {
 			background += ", ";
 		}
 
-		background += `no-repeat url(${joinNormalize(props.folder, ic)}) center / contain`;
+		background += `no-repeat url(${joinNormalize(
+			props.folder,
+			ic,
+		)}) center / contain`;
 	}
 
 	return {

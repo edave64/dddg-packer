@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { ref, watch, type PropType } from "vue";
-import { type CoreState } from "../coreState";
-import { type JSONCharacter as V1Json } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v1/jsonFormat";
-import { type JSONContentPack as V2Json } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
-import PackV2 from "./PackV2.vue";
+import type { CoreState } from "../core-state";
+import type {
+	JSONCharacter as V1Json,
+	JSONHeadCollection,
+} from "@edave64/doki-doki-dialog-generator-pack-format/dist/v1/jsonFormat";
+import type { JSONContentPack as V2Json } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
+import PackV2 from "./pack-v2.vue";
 import { MountPack } from "../../wailsjs/go/main/App";
 const props = defineProps({
 	coreState: {
@@ -30,10 +33,13 @@ interface IPack {
 	authors: string[];
 }
 
-interface IAuthor {}
+interface IAuthor {
+	reddit?: string;
+}
 
+type HeadDummy = Record<string, JSONHeadCollection>;
 const repo = ref(null as null | IRepo);
-const pack = ref(null as null | V1Json<any> | V2Json);
+const pack = ref(null as null | V1Json<HeadDummy> | V2Json);
 
 watch(
 	() => props.coreState.mountedPackPath,
@@ -68,11 +74,14 @@ watch(
 				throw new Error();
 			}
 
+			const path = repoJSON.dddg2Path ?? repoJSON.dddg1Path;
+			if (path == null) {
+				console.error("No a DDDG pack");
+				throw new Error();
+			}
+
 			const packJson = await (
-				await fetch(
-					"/mountedPack/" +
-						normalizeRepoPath(repoJSON.dddg2Path ?? repoJSON.dddg1Path),
-				)
+				await fetch(`/mountedPack/${normalizeRepoPath(path)}`)
 			).json();
 
 			// mountedPackPath changed
@@ -85,8 +94,7 @@ watch(
 	{ immediate: true },
 );
 
-function normalizeRepoPath(path: string | undefined): string {
-	if (path == null) return null!;
+function normalizeRepoPath(path: string): string {
 	if (path.startsWith("http://") || path.startsWith("https://")) {
 		const packId = props.coreState.mountedPackPath;
 		return path.substring(path.indexOf(packId) + packId.length + 1);
