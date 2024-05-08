@@ -103,10 +103,9 @@ function normalizeRepoPath(path: string): string {
 }
 </script>
 <template>
-	<p>
-		Opened pack: {{ coreState.mountedPackPath }}
-		<a href="#" @click="MountPack('')">[Close]</a>
-	</p>
+	<teleport to="#breadcrumb">
+		<fast-breadcrumb-item href="#" @click="MountPack('')">Packs</fast-breadcrumb-item>
+	</teleport>
 	<p v-if="!repo?.pack">ERROR: No pack in repo file</p>
 	<p v-else-if="!repo.pack.dddg1Path && !repo.pack.dddg2Path">
 		ERROR: No content pack json referenced in repo.json
@@ -115,7 +114,7 @@ function normalizeRepoPath(path: string): string {
 		ERROR: Multiple content pack jsons referenced in repo.json
 	</p>
 	<p v-else-if="'version' in pack!">
-		<PackV2 :json="pack" />
+		<PackV2 :json="pack" :id="coreState.mountedPackPath" />
 	</p>
 	<p v-else>
 		{{ JSON.stringify(pack) }}

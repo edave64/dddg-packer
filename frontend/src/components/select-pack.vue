@@ -29,6 +29,9 @@ function openPack(id: string) {
 function createPack() {}
 </script>
 <template>
+	<teleport to="#breadcrumb">
+		<fast-breadcrumb-item>Pack list</fast-breadcrumb-item>
+	</teleport>
 	<p>
 		DDDG location: {{ coreState.dddgPath }}
 		<a href="#" @click="UpdateDddgPath()">[change]</a>

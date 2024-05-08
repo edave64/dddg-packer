@@ -10,8 +10,12 @@
 		"lint": "eslint . | ls-lint"
 	},
 	"dependencies": {
+		"@edave64/doki-doki-dialog-generator-pack-format": "^2.0.0",
+		"@microsoft/fast-components": "^2.30.6",
+		"@microsoft/fast-element": "^1.13.0",
+		"@microsoft/fast-foundation": "^2.49.6",
 		"vue": "^3.2.37",
-		"@edave64/doki-doki-dialog-generator-pack-format": "^2.0.0"
+		"vue-router": "^4.3.2"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^1.7.3",

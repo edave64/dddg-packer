@@ -11,18 +11,22 @@ import type {
 	JSONStyleGroup,
 	JSONContentPack as V2Json,
 } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
-import Sprites from "./PackV2/sprites.vue";
-import Character from "./PackV2/character.vue";
-import HeadGroup from "./PackV2/head-group.vue";
-import StyleGroup from "./PackV2/style-group.vue";
-import Pose from "./PackV2/pose.vue";
-import Style from "./PackV2/style.vue";
+import Sprites from "./pack-v2/sprites.vue";
+import Character from "./pack-v2/character.vue";
+import HeadGroup from "./pack-v2/head-group.vue";
+import StyleGroup from "./pack-v2/style-group.vue";
+import Pose from "./pack-v2/pose.vue";
+import Style from "./pack-v2/style.vue";
 import { joinNormalize } from "../path-tools";
 
 const props = defineProps({
 	json: {
 		required: true,
 		type: Object as PropType<V2Json>,
+	},
+	id: {
+		required: true,
+		type: String,
 	},
 });
 
@@ -78,6 +82,9 @@ type Selected =
 	  };
 </script>
 <template>
+	<teleport to="#breadcrumb">
+		<fast-breadcrumb-item :href="selectedObj ? '#' : ''" @click="selectedObj = null">{{id}}</fast-breadcrumb-item>
+	</teleport>
 	<div class="pack_wrapper">
 		<ul class="pack_tree">
 			<li v-if="json.characters && json.characters.length > 0">
