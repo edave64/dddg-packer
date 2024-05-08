@@ -8,13 +8,21 @@ import {
 	fastButton,
 	fastBreadcrumb,
 	fastBreadcrumbItem,
+	fastTreeItem,
+	fastTreeView,
+	fastTextField,
 } from "@microsoft/fast-components";
 
 provideFASTDesignSystem().register(
 	fastCard(),
 	fastButton(),
 	fastBreadcrumb(),
-	fastBreadcrumbItem(),
+	fastBreadcrumbItem({
+		separator: " > ",
+	}),
+	fastTreeItem(),
+	fastTreeView(),
+	fastTextField(),
 );
 
 createApp(App).mount("#app");

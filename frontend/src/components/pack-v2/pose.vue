@@ -16,11 +16,21 @@ const props = defineProps({
 	},
 });
 
+const emit = defineEmits<{
+	leave: [];
+}>();
+
 const f = computed(() => {
 	return joinNormalize(props.folder, props.pose.folder);
 });
 </script>
 <template>
+	<teleport to="#breadcrumb">
+		<fast-breadcrumb-item>{{ pose.id }}</fast-breadcrumb-item>
+	</teleport>
+	<teleport to="#tree">
+		<fast-tree-item @click="$emit('leave')">Back to style</fast-tree-item>
+	</teleport>
 	<h2>Pose</h2>
 	<p>
 		<label for="pose_id">ID: </label>

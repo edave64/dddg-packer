@@ -3,7 +3,22 @@ import vue from "@vitejs/plugin-vue";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-	plugins: [vue()],
+	plugins: [
+		vue({
+			template: {
+				compilerOptions: {
+					isCustomElement: (tag) =>
+						[
+							"fast-breadcrumb",
+							"fast-breadcrumb-item",
+							"fast-tree-view",
+							"fast-tree-item",
+							"fast-text-field",
+						].includes(tag),
+				},
+			},
+		}),
+	],
 
 	base: "./",
 

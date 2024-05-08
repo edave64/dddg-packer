@@ -8,6 +8,7 @@ import type {
 import type { JSONContentPack as V2Json } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
 import PackV2 from "./pack-v2.vue";
 import { MountPack } from "../../wailsjs/go/main/App";
+import type { IRepo, ISupportedRepo } from "@/repo";
 const props = defineProps({
 	coreState: {
 		required: true,
@@ -15,30 +16,8 @@ const props = defineProps({
 	},
 });
 
-interface IRepo {
-	$schema: "https://raw.githubusercontent.com/edave64/doki-doki-dialog-generator-pack-format/master/src/repo_schema.json";
-	pack?: IPack;
-	packs?: IPack[];
-	authors: {
-		[key: string]: IAuthor;
-	};
-}
-
-interface IPack {
-	id: string;
-	name: string;
-	dddg1Path?: string;
-	dddg2Path?: string;
-	characters: string[];
-	authors: string[];
-}
-
-interface IAuthor {
-	reddit?: string;
-}
-
 type HeadDummy = Record<string, JSONHeadCollection>;
-const repo = ref(null as null | IRepo);
+const repo = ref(null as null | ISupportedRepo);
 const pack = ref(null as null | V1Json<HeadDummy> | V2Json);
 
 watch(
@@ -57,7 +36,7 @@ watch(
 			console.error("Cannot load repo.json", e);
 		}
 	},
-	{ immediate: true },
+	{ immediate: true }
 );
 
 watch(
@@ -66,18 +45,17 @@ watch(
 		try {
 			const repoJSON = currentRepo?.pack;
 			if (!repoJSON) {
-				throw new Error();
+				pack.value = null;
+				return;
 			}
 
 			if (repoJSON.dddg1Path && repoJSON.dddg2Path) {
-				console.error("Cannot load dual pack");
-				throw new Error();
+				throw new Error("Cannot load dual pack");
 			}
 
 			const path = repoJSON.dddg2Path ?? repoJSON.dddg1Path;
 			if (path == null) {
-				console.error("No a DDDG pack");
-				throw new Error();
+				throw new Error("No a DDDG pack");
 			}
 
 			const packJson = await (
@@ -91,7 +69,7 @@ watch(
 			console.error("Cannot load index.json", e);
 		}
 	},
-	{ immediate: true },
+	{ immediate: true }
 );
 
 function normalizeRepoPath(path: string): string {
@@ -104,19 +82,64 @@ function normalizeRepoPath(path: string): string {
 </script>
 <template>
 	<teleport to="#breadcrumb">
-		<fast-breadcrumb-item href="#" @click="MountPack('')">Packs</fast-breadcrumb-item>
+		<fast-breadcrumb-item href="#" @click="MountPack('')"
+			>Packs</fast-breadcrumb-item
+		>
 	</teleport>
-	<p v-if="!repo?.pack">ERROR: No pack in repo file</p>
-	<p v-else-if="!repo.pack.dddg1Path && !repo.pack.dddg2Path">
-		ERROR: No content pack json referenced in repo.json
-	</p>
-	<p v-else-if="repo.pack.dddg1Path && repo.pack.dddg2Path">
-		ERROR: Multiple content pack jsons referenced in repo.json
-	</p>
-	<p v-else-if="'version' in pack!">
-		<PackV2 :json="pack" :id="coreState.mountedPackPath" />
-	</p>
-	<p v-else>
-		{{ JSON.stringify(pack) }}
-	</p>
+	<main>
+		<fast-tree-view id="tree"> </fast-tree-view>
+		<p v-if="!repo?.pack">ERROR: No pack in repo file</p>
+		<p v-else-if="!repo.pack.dddg1Path && !repo.pack.dddg2Path">
+			ERROR: No content pack json referenced in repo.json
+		</p>
+		<p v-else-if="repo.pack.dddg1Path && repo.pack.dddg2Path">
+			ERROR: Multiple content pack jsons referenced in repo.json
+		</p>
+		<p v-else-if="!pack">No pack</p>
+		<PackV2
+			v-else-if="'version' in pack"
+			:repo="repo"
+			:json="pack"
+			:id="coreState.mountedPackPath"
+		/>
+		<p v-else>
+			{{ JSON.stringify(pack) }}
+		</p>
+	</main>
+	<footer>{{ coreState?.mountedPackPath }}</footer>
 </template>
+
+<style>
+#tree {
+	width: 256px;
+}
+
+main {
+	display: flex;
+	width: 100%;
+	height: calc(100% - 64px);
+	flex-grow: 1;
+
+	> * {
+		height: 100%;
+		overflow-y: auto;
+		overflow-x: none;
+	}
+}
+
+header {
+	height: 32px;
+	padding-inline-start: 8px;
+	flex-shrink: 0;
+}
+
+main {
+	flex-grow: 1;
+}
+
+footer {
+	height: 32px;
+	padding-inline-start: 8px;
+	flex-shrink: 0;
+}
+</style>

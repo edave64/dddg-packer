@@ -17,11 +17,21 @@ const props = defineProps({
 	},
 });
 
+const emit = defineEmits<{
+	leave: [];
+}>();
+
 const f = computed(() => {
 	return joinNormalize(props.folder, props.sprite.folder);
 });
 </script>
 <template>
+	<teleport to="#breadcrumb">
+		<fast-breadcrumb-item>{{ sprite.id }}</fast-breadcrumb-item>
+	</teleport>
+	<teleport to="#tree">
+		<fast-tree-item @click="$emit('leave')">Back to pack</fast-tree-item>
+	</teleport>
 	<h2>Sprite</h2>
 	<p>
 		<label for="sprite_id">ID: </label>

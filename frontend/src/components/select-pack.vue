@@ -30,7 +30,7 @@ function createPack() {}
 </script>
 <template>
 	<teleport to="#breadcrumb">
-		<fast-breadcrumb-item>Pack list</fast-breadcrumb-item>
+		<fast-breadcrumb-item>Packs</fast-breadcrumb-item>
 	</teleport>
 	<p>
 		DDDG location: {{ coreState.dddgPath }}

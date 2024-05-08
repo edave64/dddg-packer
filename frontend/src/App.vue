@@ -20,14 +20,16 @@ watch(
 		} else {
 			stage.value = "selectDDDG";
 		}
-	},
+	}
 );
 
 TriggerCoreStateUpdate();
 </script>
 
 <template>
-	<fast-breadcrumb id="breadcrumb"></fast-breadcrumb>
+	<header>
+		<fast-breadcrumb id="breadcrumb" separator=">"></fast-breadcrumb>
+	</header>
 	<StartUp v-if="stage === 'startup'" />
 	<SelectDDDG v-else-if="stage === 'selectDDDG'" :core-state="coreState!" />
 	<SelectPack v-else-if="stage === 'selectPack'" :core-state="coreState!" />
@@ -35,4 +37,10 @@ TriggerCoreStateUpdate();
 </template>
 
 <style>
+#app {
+	height: 100%;
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+}
 </style>

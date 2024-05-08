@@ -22,6 +22,7 @@ const props = defineProps({
 });
 const emit = defineEmits<{
 	updateKey: [newName: string];
+	leave: [];
 }>();
 
 const f = computed(() => {
@@ -29,11 +30,17 @@ const f = computed(() => {
 		props.folder,
 		Array.isArray(props.headGroup) || !props.headGroup
 			? undefined
-			: props.headGroup.folder,
+			: props.headGroup.folder
 	);
 });
 </script>
 <template>
+	<teleport to="#tree">
+		<fast-tree-item @click="$emit('leave')">Back to character</fast-tree-item>
+	</teleport>
+	<teleport to="#breadcrumb">
+		<fast-breadcrumb-item>Head group '{{ id }}'</fast-breadcrumb-item>
+	</teleport>
 	<h2>Head group</h2>
 	<p>
 		<label for="head_id">ID: </label>
