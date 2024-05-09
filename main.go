@@ -87,5 +87,38 @@ func (handler *DynamicAssetHandler) ServeMountedGet(rw http.ResponseWriter, r *h
 }
 
 func (handler *DynamicAssetHandler) ServeMountedPut(rw http.ResponseWriter, r *http.Request, mountedPath string) {
-	rw.WriteHeader(http.StatusNotImplemented)
+	err := r.ParseMultipartForm(100 << 20)
+	if err != nil {
+		fmt.Printf("ergerg %+v\n", err)
+		rw.WriteHeader(http.StatusRequestEntityTooLarge)
+		return
+	}
+	reqFile, _, err := r.FormFile("data")
+	if err != nil {
+		fmt.Printf("qwe %+v\n", err)
+		rw.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	if reqFile == nil {
+		fmt.Printf("Wut %+v\n", err)
+		rw.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	fi, err := os.Create(path.Join(handler.app.DddgPath, "localRepo", handler.app.MountedPackPath, mountedPath))
+	if err == nil {
+		// close fi on exit and check for its returned error
+		defer func() {
+			if err := fi.Close(); err != nil {
+				panic(err)
+			}
+		}()
+
+		fmt.Printf("a %+v\n", fi)
+		fmt.Printf("b %+v\n", reqFile)
+
+		io.Copy(fi, reqFile)
+	} else {
+		fmt.Printf("%+v\n", err)
+		rw.WriteHeader(http.StatusInternalServerError)
+	}
 }

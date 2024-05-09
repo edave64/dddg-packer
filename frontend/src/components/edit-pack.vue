@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, watch, type PropType } from "vue";
-import type { CoreState } from "../core-state";
+import { saveFile, type CoreState } from "../core-state";
 import type {
 	JSONCharacter as V1Json,
 	JSONHeadCollection,
@@ -8,7 +8,7 @@ import type {
 import type { JSONContentPack as V2Json } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
 import PackV2 from "./pack-v2.vue";
 import { MountPack } from "../../wailsjs/go/main/App";
-import type { IRepo, ISupportedRepo } from "@/repo";
+import type { IPack, IRepo, ISupportedRepo } from "@/repo";
 const props = defineProps({
 	coreState: {
 		required: true,
@@ -51,17 +51,8 @@ watch(
 				return;
 			}
 
-			if (repoJSON.dddg1Path && repoJSON.dddg2Path) {
-				throw new Error("Cannot load dual pack");
-			}
-
-			const path = repoJSON.dddg2Path ?? repoJSON.dddg1Path;
-			if (path == null) {
-				throw new Error("No a DDDG pack");
-			}
-
 			const packJson = await (
-				await fetch(`/mountedPack/${normalizeRepoPath(path)}`)
+				await fetch(`/mountedPack/${getPackJsonPath(repoJSON)}`)
 			).json();
 
 			// mountedPackPath changed
@@ -108,13 +99,38 @@ function normalizeRepoPath(path: string): string {
 	return path;
 }
 
-function save() {
+function getPackJsonPath(repoJSON: IPack) {
+	if (repoJSON.dddg1Path && repoJSON.dddg2Path) {
+		throw new Error("Cannot load dual pack");
+	}
+
+	const path = repoJSON.dddg2Path ?? repoJSON.dddg1Path;
+	if (path == null) {
+		throw new Error("No a DDDG pack");
+	}
+	return normalizeRepoPath(path);
+}
+
+async function save() {
+	const repoV = repo.value;
+	if (!repoV) return;
+
 	if (repoChanges.value) {
+		await saveRepo(repoV);
 		repoChanges.value = false;
 	}
 	if (packChanges.value) {
+		await savePack(repoV);
 		packChanges.value = false;
 	}
+}
+
+async function saveRepo(repoV: ISupportedRepo) {
+	await saveFile("repo.json", JSON.stringify(repoV));
+}
+
+async function savePack(repoV: ISupportedRepo) {
+	await saveFile(getPackJsonPath(repoV.pack), JSON.stringify(pack.value));
 }
 </script>
 <template>
