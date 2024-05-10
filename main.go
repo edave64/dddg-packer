@@ -70,55 +70,49 @@ func (handler *DynamicAssetHandler) ServeMounted(rw http.ResponseWriter, r *http
 }
 
 func (handler *DynamicAssetHandler) ServeMountedGet(rw http.ResponseWriter, r *http.Request, mountedPath string) {
-	fi, err := os.Open(path.Join(handler.app.DddgPath, "localRepo", handler.app.MountedPackPath, mountedPath))
-	if err == nil {
-		// close fi on exit and check for its returned error
-		defer func() {
-			if err := fi.Close(); err != nil {
-				panic(err)
-			}
-		}()
-
-		io.Copy(rw, fi)
-	} else {
+	path := path.Join(handler.app.DddgPath, "localRepo", handler.app.MountedPackPath, mountedPath)
+	fi, err := os.Open(path)
+	if err != nil {
 		fmt.Printf("%+v\n", err)
 		rw.WriteHeader(http.StatusNotFound)
+		return
+	}
+	// close fi on exit and check for its returned error
+	defer func() {
+		if err := fi.Close(); err != nil {
+			panic(err)
+		}
+	}()
+
+		io.Copy(rw, fi)
 	}
 }
 
 func (handler *DynamicAssetHandler) ServeMountedPut(rw http.ResponseWriter, r *http.Request, mountedPath string) {
 	err := r.ParseMultipartForm(100 << 20)
 	if err != nil {
-		fmt.Printf("ergerg %+v\n", err)
-		rw.WriteHeader(http.StatusRequestEntityTooLarge)
+		http.Error(rw, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	reqFile, _, err := r.FormFile("data")
 	if err != nil {
-		fmt.Printf("qwe %+v\n", err)
-		rw.WriteHeader(http.StatusBadRequest)
-		return
-	}
-	if reqFile == nil {
-		fmt.Printf("Wut %+v\n", err)
-		rw.WriteHeader(http.StatusBadRequest)
+		http.Error(rw, err.Error(), http.StatusBadRequest)
 		return
 	}
 	fi, err := os.Create(path.Join(handler.app.DddgPath, "localRepo", handler.app.MountedPackPath, mountedPath))
-	if err == nil {
-		// close fi on exit and check for its returned error
-		defer func() {
-			if err := fi.Close(); err != nil {
-				panic(err)
-			}
-		}()
-
-		fmt.Printf("a %+v\n", fi)
-		fmt.Printf("b %+v\n", reqFile)
-
-		io.Copy(fi, reqFile)
-	} else {
-		fmt.Printf("%+v\n", err)
-		rw.WriteHeader(http.StatusInternalServerError)
+	if err != nil {
+		http.Error(rw, err.Error(), http.StatusInternalServerError)
+		return
 	}
+	// close fi on exit and check for its returned error
+	defer func() {
+		if err := fi.Close(); err != nil {
+			panic(err)
+		}
+	}()
+
+	fmt.Printf("a %+v\n", fi)
+	fmt.Printf("b %+v\n", reqFile)
+
+	io.Copy(fi, reqFile)
 }
