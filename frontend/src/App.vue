@@ -34,6 +34,7 @@ TriggerCoreStateUpdate();
 	<SelectDDDG v-else-if="stage === 'selectDDDG'" :core-state="coreState!" />
 	<SelectPack v-else-if="stage === 'selectPack'" :core-state="coreState!" />
 	<EditPack v-else-if="stage === 'pack'" :core-state="coreState!" />
+	<div id="modalSlot"></div>
 </template>
 
 <style>

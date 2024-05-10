@@ -25,25 +25,48 @@ const selectedVariant = ref(props.variants.length > 0 ? 0 : -1);
 <template>
 	<fieldset>
 		<legend>{{ label }}</legend>
-		<p v-if="variants.length > 0">
-			<label from="sprite_variants">Variants:</label>
-			<select
-				id="sprite_variants"
-				@change="selectedVariant = +($event.target as HTMLSelectElement).value"
-			>
-				<option
-					v-for="(variant, i) of variants"
-					:value="i"
-					:selected="i === selectedVariant"
+		<div class="variant_splitter">
+			<div v-if="variants.length > 0">
+				<label for="sprite_variants">Variants:</label>
+				<fast-select
+					size="5"
+					id="sprite_variants"
+					@input="selectedVariant = $event.target.selectedIndex"
 				>
-					{{ variant }}
-				</option>
-			</select>
-		</p>
-		<ImageCollection
-			v-if="selectedVariant !== -1"
-			:imageCollection="variants[selectedVariant]"
-			:folder="folder"
-		/>
+					<fast-option
+						v-for="(variant, i) of variants"
+						:value="i"
+						:selected="i === selectedVariant"
+						@select="console.log($event)"
+						@input="console.log($event)"
+						@change="console.log($event)"
+					>
+						{{ variant.length === 1 ? variant[0] : variant }}
+					</fast-option>
+				</fast-select>
+			</div>
+			<div class="grower">
+				<ImageCollection
+					v-if="selectedVariant !== -1"
+					:imageCollection="variants[selectedVariant]"
+					:folder="folder"
+				/>
+			</div>
+		</div>
 	</fieldset>
 </template>
+
+<style scoped>
+fast-select {
+	width: 256px;
+	display: block;
+}
+
+.grower {
+	flex-grow: 1;
+}
+
+.variant_splitter {
+	display: flex;
+}
+</style>

@@ -13,3 +13,5 @@ export function MountPack(arg1:string):Promise<void>;
 export function TriggerCoreStateUpdate():Promise<void>;
 
 export function UpdateDddgPath():Promise<void>;
+
+export function UploadFile(arg1:string,arg2:Array<number>):Promise<void>;

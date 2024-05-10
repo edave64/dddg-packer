@@ -1,5 +1,6 @@
 import { ref } from "vue";
 import { EventsOn } from "../wailsjs/runtime/runtime";
+import { UploadFile } from "../wailsjs/go/main/App";
 
 export type Stage = "startup" | "selectDDDG" | "selectPack" | "pack";
 
@@ -14,23 +15,18 @@ EventsOn("coreStateChanged", (newState: CoreState) => {
 	coreState.value = newState;
 });
 
-export async function saveFile(path: string, data: Blob | string) {
+export async function saveFile(path: string, data: Blob | Uint8Array | string) {
 	const formData = new FormData();
 
-	let normalizedData: Blob;
+	let normalizedData: Uint8Array;
 
 	if (typeof data === "string") {
 		const encoder = new TextEncoder();
-		normalizedData = new File([encoder.encode(data)], "data", {
-			type: "text/json",
-		});
+		normalizedData = encoder.encode(data);
+	} else if (data instanceof Blob) {
+		normalizedData = new Uint8Array(await data.arrayBuffer());
 	} else {
 		normalizedData = data;
 	}
-
-	formData.append("data", normalizedData);
-	await fetch(`/mountedPack/${path}`, {
-		method: "PUT",
-		body: formData,
-	});
+	UploadFile(path, Array.from(normalizedData));
 }

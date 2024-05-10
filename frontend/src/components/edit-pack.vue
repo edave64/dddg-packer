@@ -126,7 +126,7 @@ async function save() {
 }
 
 async function saveRepo(repoV: ISupportedRepo) {
-	await saveFile("repo.json", JSON.stringify(repoV));
+	await saveFile("repo.json", JSON.stringify(repoV, undefined, "\t"));
 }
 
 async function savePack(repoV: ISupportedRepo) {

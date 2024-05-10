@@ -8,6 +8,8 @@ import {
 	type PropType,
 	type StyleValue,
 } from "vue";
+import ImageInput from "../shared/image-input.vue";
+
 const props = defineProps({
 	imageCollection: {
 		type: Array as PropType<string[] | undefined>,
@@ -26,6 +28,7 @@ watch(
 		if (!ary || ary.length === 0) selectedImage.value = -1;
 		selectedImage.value = 0;
 	},
+	{ immediate: true }
 );
 
 const previewStyle = computed((): CSSProperties => {
@@ -39,53 +42,71 @@ const previewStyle = computed((): CSSProperties => {
 
 		background += `no-repeat url(${joinNormalize(
 			props.folder,
-			ic,
+			ic
 		)}) center / contain`;
 	}
 
 	return {
 		background,
-		height: "128px",
-		width: "128px",
 	};
 });
 </script>
 <template>
-	<div v-if="imageCollection">
-		<label from="sprite_images">Images:</label>
-		<select
-			id="sprite_images"
-			multiple
-			@change="selectedImage = +($event.target as HTMLSelectElement).value"
-		>
-			<option
-				v-for="(img, i) of imageCollection"
-				:value="i"
-				:selected="i == selectedImage"
+	<div class="img_splitter" v-if="imageCollection">
+		<div>
+			<label from="sprite_images">Images:</label>
+			<fast-select
+				size="5"
+				id="sprite_variants"
+				@input="selectedImage = $event.target.selectedIndex"
 			>
-				{{ img }}
-			</option>
-		</select>
-		<button
-			@click="
-				imageCollection.push('');
-				selectedImage = imageCollection.length - 1;
-			"
-		>
-			Add image
-		</button>
-		<button
-			:disabled="imageCollection.length < 2"
-			@click="imageCollection.splice(selectedImage, 1)"
-		>
-			Remove image</button
-		><br />
-		<label for="sprite_image">Image path:</label>
-		<input
-			id="sprite_image"
-			:disabled="selectedImage === -1"
-			v-model="imageCollection[selectedImage]"
-		/>
-		<div id="sprite_preview" :style="previewStyle"></div>
+				<fast-option
+					v-for="(variant, i) of imageCollection"
+					:value="i"
+					:selected="i === selectedImage"
+					@select="console.log($event)"
+					@input="console.log($event)"
+					@change="console.log($event)"
+				>
+					{{ variant.length === 1 ? variant[0] : variant }}
+				</fast-option>
+			</fast-select>
+			<button
+				@click="
+					imageCollection.push('');
+					selectedImage = imageCollection.length - 1;
+				"
+			>
+				Add image
+			</button>
+			<button
+				:disabled="imageCollection.length < 2"
+				@click="imageCollection.splice(selectedImage, 1)"
+			>
+				Remove image</button
+			><br />
+			<image-input
+				id="sprite_image"
+				label="Image path"
+				:disabled="selectedImage === -1"
+				v-model="imageCollection[selectedImage]"
+			/>
+		</div>
+		<div class="sprite_preview" :style="previewStyle"></div>
 	</div>
 </template>
+
+<style scoped>
+fast-select {
+	width: 256px;
+	display: block;
+}
+
+.img_splitter {
+	display: flex;
+}
+.sprite_preview {
+	aspect-ration: 1;
+	flex-grow: 1;
+}
+</style>

@@ -25,3 +25,7 @@ export function TriggerCoreStateUpdate() {
 export function UpdateDddgPath() {
   return window['go']['main']['App']['UpdateDddgPath']();
 }
+
+export function UploadFile(arg1, arg2) {
+  return window['go']['main']['App']['UploadFile'](arg1, arg2);
+}

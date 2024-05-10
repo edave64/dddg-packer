@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
@@ -61,6 +62,25 @@ func (a *App) TriggerCoreStateUpdate() {
 func (a *App) MountPack(id string) {
 	a.MountedPackPath = id
 	a.TriggerCoreStateUpdate()
+}
+
+// This is temporary until I get the PUT handler to work
+func (a *App) UploadFile(mountedPath string, contents []byte) {
+	fi, err := os.Create(path.Join(a.DddgPath, "localRepo", a.MountedPackPath, mountedPath))
+	if err == nil {
+		// close fi on exit and check for its returned error
+		defer func() {
+			if err := fi.Close(); err != nil {
+				panic(err)
+			}
+		}()
+
+		fmt.Printf("a %+v\n", fi)
+
+		fi.Write(contents)
+	} else {
+		fmt.Printf("%+v\n", err)
+	}
 }
 
 func (a *App) UpdateDddgPath() {

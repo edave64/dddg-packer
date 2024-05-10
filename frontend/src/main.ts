@@ -11,6 +11,10 @@ import {
 	fastTreeItem,
 	fastTreeView,
 	fastTextField,
+	fastListbox,
+	fastOption,
+	fastSelect,
+	fastDialog,
 } from "@microsoft/fast-components";
 
 provideFASTDesignSystem().register(
@@ -23,6 +27,10 @@ provideFASTDesignSystem().register(
 	fastTreeItem(),
 	fastTreeView(),
 	fastTextField(),
+	fastListbox(),
+	fastSelect(),
+	fastOption(),
+	fastDialog(),
 );
 
 createApp(App).mount("#app");
