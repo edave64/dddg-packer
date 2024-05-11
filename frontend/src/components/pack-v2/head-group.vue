@@ -5,6 +5,7 @@ import ImageCollection from "./image-collection.vue";
 import Variations from "./variations.vue";
 import Code from "../shared/code.vue";
 import { joinNormalize } from "../../path-tools";
+import PInput from "../shared/p-input.vue";
 
 const props = defineProps({
 	headGroup: {
@@ -43,9 +44,8 @@ const f = computed(() => {
 	</teleport>
 	<h2>Head group</h2>
 	<p>
-		<label for="head_id">ID: </label>
-		<input
-			id="head_id"
+		<PInput
+			label="ID"
 			:value="id"
 			@input="$emit('updateKey', ($event.target as HTMLInputElement).value)"
 		/>

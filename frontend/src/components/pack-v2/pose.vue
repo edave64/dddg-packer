@@ -32,10 +32,7 @@ const f = computed(() => {
 		<fast-tree-item @click="$emit('leave')">Back to style</fast-tree-item>
 	</teleport>
 	<h2>Pose</h2>
-	<p>
-		<label for="pose_id">ID: </label>
-		<input id="pose_id" v-model="pose.id" />
-	</p>
+	<PInput label="ID" v-model="pose.id" />
 	<table>
 		<thead>
 			<tr>

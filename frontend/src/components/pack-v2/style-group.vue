@@ -3,13 +3,11 @@ import { computed, ref, type PropType } from "vue";
 import Code from "../shared/code.vue";
 import { joinNormalize } from "../../path-tools";
 import type {
-	JSONCharacter,
-	JSONPose,
 	JSONStyleGroup,
-	JSONHeadCollection,
 	JSONStyle,
 } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
 import Style from "./style.vue";
+import PInput from "../shared/p-input.vue";
 
 const props = defineProps({
 	styleGroup: {
@@ -60,8 +58,7 @@ const f = computed(() => {
 		</teleport>
 		<h2>Style group</h2>
 		<p>
-			<label for="style_group_id">ID: </label>
-			<input id="style_group_id" v-model="styleGroup.id" />
+			<PInput label="ID" v-model="styleGroup.id" />
 		</p>
 		<Code :obj="styleGroup" />
 	</template>

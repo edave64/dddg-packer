@@ -5,6 +5,7 @@ import ImageCollection from "./image-collection.vue";
 import Variations from "./variations.vue";
 import Code from "../shared/code.vue";
 import { joinNormalize } from "../../path-tools";
+import PInput from "../shared/p-input.vue";
 
 const props = defineProps({
 	sprite: {
@@ -33,14 +34,8 @@ const f = computed(() => {
 		<fast-tree-item @click="$emit('leave')">Back to pack</fast-tree-item>
 	</teleport>
 	<h2>Sprite</h2>
-	<p>
-		<label for="sprite_id">ID: </label>
-		<input id="sprite_id" v-model="sprite.id" />
-	</p>
-	<p>
-		<label for="sprite_id">Label: </label>
-		<input id="sprite_id" v-model="sprite.label" />
-	</p>
+	<PInput label="ID" v-model="sprite.id" />
+	<PInput label="Label" v-model="sprite.label" />
 	<ImageCollection
 		v-if="sprite.variants?.length === 1"
 		:imageCollection="sprite.variants[0]"
