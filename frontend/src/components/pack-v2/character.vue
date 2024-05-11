@@ -2,18 +2,15 @@
 import { computed, ref, type PropType } from "vue";
 import type {
 	JSONCharacter,
-	JSONPose,
 	JSONStyleGroup,
 	JSONHeadCollection,
-	JSONStyle,
 } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
-import ImageCollection from "./image-collection.vue";
-import Variations from "./variations.vue";
 import PInput from "../shared/p-input.vue";
 import Code from "../shared/code.vue";
 import HeadGroup from "./head-group.vue";
 import StyleGroup from "./style-group.vue";
 import { joinNormalize } from "../../path-tools";
+import ImageInput from "../shared/image-input.vue";
 
 const props = defineProps({
 	char: {
@@ -108,7 +105,7 @@ type State =
 		<PInput label="ID" v-model="char.id" />
 		<PInput label="Label" v-model="char.label" />
 		<p>
-			<PInput label="Chibi" v-model="char.chibi" />
+			<ImageInput label="Chibi" v-model="char.chibi" />
 			<br />
 			<img :src="joinNormalize(f, char.chibi)" />
 		</p>

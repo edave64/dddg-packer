@@ -86,7 +86,6 @@ const previewStyle = computed((): CSSProperties => {
 				Remove image</button
 			><br />
 			<image-input
-				id="sprite_image"
 				label="Image path"
 				:disabled="selectedImage === -1"
 				v-model="imageCollection[selectedImage]"
