@@ -202,3 +202,9 @@ const compositeOptions = [
 		</td>
 	</tr>
 </template>
+
+<style scoped>
+td {
+	vertical-align: bottom;
+}
+</style>
