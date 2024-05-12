@@ -71,19 +71,19 @@ const previewStyle = computed((): CSSProperties => {
 					{{ variant.length === 1 ? variant[0] : variant }}
 				</fast-option>
 			</fast-select>
-			<button
+			<fast-button
 				@click="
 					imageCollection.push('');
 					selectedImage = imageCollection.length - 1;
 				"
 			>
 				Add image
-			</button>
-			<button
+			</fast-button>
+			<fast-button
 				:disabled="imageCollection.length < 2"
 				@click="imageCollection.splice(selectedImage, 1)"
 			>
-				Remove image</button
+				Remove image</fast-button
 			><br />
 			<image-input
 				label="Image path"
