@@ -52,7 +52,7 @@ type DynamicAssetHandler struct {
 
 func (handler *DynamicAssetHandler) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	println(r.RequestURI)
-	mountedPath, isMountedPath := strings.CutPrefix(r.RequestURI, "/mountedPack")
+	mountedPath, isMountedPath := strings.CutPrefix(r.URL.Path, "/mountedPack")
 	if isMountedPath {
 		handler.ServeMounted(rw, r, mountedPath)
 	}

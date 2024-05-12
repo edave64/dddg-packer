@@ -38,10 +38,9 @@ const previewStyle = computed((): CSSProperties => {
 			background += ", ";
 		}
 
-		background += `no-repeat url(${joinNormalize(
-			props.folder,
-			ic
-		)}) center / contain`;
+		background += `no-repeat url(${joinNormalize(props.folder, ic)}?cache=${
+			coreState.value?.mountedPackPath
+		}) center / contain`;
 	}
 
 	return {
