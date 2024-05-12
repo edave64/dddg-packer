@@ -37,13 +37,25 @@ const selectedVariant = ref(props.variants.length > 0 ? 0 : -1);
 						v-for="(variant, i) of variants"
 						:value="i"
 						:selected="i === selectedVariant"
-						@select="console.log($event)"
-						@input="console.log($event)"
-						@change="console.log($event)"
 					>
 						{{ variant.length === 1 ? variant[0] : variant }}
 					</fast-option>
 				</fast-select>
+				<fast-button
+					@click="
+						variants.push([]);
+						selectedVariant = variants.length - 1;
+					"
+					>Add variation</fast-button
+				>
+				<fast-button
+					:disabled="selectedVariant === -1"
+					@click="
+						variants.splice(selectedVariant, 1);
+						selectedVariant = 0;
+					"
+					>Remove variation</fast-button
+				>
 			</div>
 			<div class="grower">
 				<ImageCollection
