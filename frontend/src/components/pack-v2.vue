@@ -14,6 +14,7 @@ import { joinNormalize } from "../path-tools";
 import { MountPack } from "../../wailsjs/go/main/App";
 import type { ISupportedRepo } from "@/repo";
 import Code from "./shared/code.vue";
+import ImageCollection from "./pack-v2/image-collection.vue";
 
 const props = defineProps({
 	json: {
@@ -119,6 +120,11 @@ type State =
 			<PInput label="Name" v-model="repo.pack.name" />
 			<PInput label="Source" v-model="repo.pack.source" />
 			<PInput label="Description" v-model="repo.pack.description" />
+			<ImageCollection
+				title="Preview"
+				:imageCollection="repo.pack.preview"
+				folder="./"
+			/>
 			<Code :obj="repo" />
 		</template>
 		<Sprites

@@ -1,18 +1,16 @@
 <script setup lang="ts">
 import { joinNormalize } from "../../path-tools";
-import {
-	computed,
-	ref,
-	watch,
-	type CSSProperties,
-	type PropType,
-	type StyleValue,
-} from "vue";
+import { computed, ref, watch, type CSSProperties, type PropType } from "vue";
 import ImageInput from "../shared/image-input.vue";
+import { coreState } from "@/core-state";
 
 const props = defineProps({
 	imageCollection: {
 		type: Array as PropType<string[] | undefined>,
+	},
+	title: {
+		type: String,
+		default: "Images",
 	},
 	folder: {
 		type: String,
@@ -54,7 +52,7 @@ const previewStyle = computed((): CSSProperties => {
 <template>
 	<div class="img_splitter" v-if="imageCollection">
 		<div>
-			<label from="sprite_images">Images:</label>
+			<label from="sprite_images">{{ title }}:</label>
 			<fast-select
 				size="5"
 				id="sprite_variants"
