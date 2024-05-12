@@ -1,9 +1,15 @@
 <script setup lang="ts">
 import { computed, type PropType } from "vue";
-import type { JSONPose } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
+import type {
+	JSONPose,
+	JSONPoseCommand,
+} from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
 import Code from "../shared/code.vue";
 import { joinNormalize } from "../../path-tools";
 import Variations from "./variations.vue";
+import PoseRenderCommand from "./pose-render-command.vue";
+import PInput from "../shared/p-input.vue";
+import { aryMove } from "@/array-tools";
 
 const props = defineProps({
 	pose: {
@@ -23,6 +29,74 @@ const emit = defineEmits<{
 const f = computed(() => {
 	return joinNormalize(props.folder, props.pose.folder);
 });
+
+const defaultParts = ["Left", "Right", "Variant"];
+
+const renderCommandsDefaultIssue = computed(() => {
+	const rcs = props.pose.renderCommands;
+	if (!rcs) return "There are no render commands";
+	let lastIdx = -1;
+	for (let i = 0, l = rcs.length; i < l; ++i) {
+		const rc = rcs[i];
+		switch (rc.type) {
+			case "head":
+				if (i > 0)
+					return "The heads are the first part in the default render commands";
+				break;
+			case "image":
+				return "Image render commands are not available in the default render commands";
+			case "pose-part": {
+				const defaultIdx = defaultParts.indexOf(rc.part);
+				if (defaultIdx === -1) {
+					return "The render commands contain poses that are not Left, Right or Variant";
+				}
+				if (lastIdx > defaultIdx) {
+					return "For defaults, the pose-part render commands must be in the order: Left, Right or Variant";
+				}
+				lastIdx = defaultIdx;
+			}
+		}
+	}
+	return "";
+});
+
+function addCustomRenderCommands() {
+	const commands: JSONPoseCommand[] = [];
+	if (props.pose.compatibleHeads && props.pose.compatibleHeads.length > 0) {
+		commands.push({ type: "head" });
+	}
+	if (props.pose.positions) {
+		for (const part of defaultParts) {
+			if (props.pose.positions && props.pose.positions[part] != null) {
+				commands.push({ type: "pose-part", part });
+			}
+		}
+		for (const part in props.pose.positions) {
+			if (!defaultParts.includes(part)) {
+				commands.push({ type: "pose-part", part });
+			}
+		}
+	}
+	props.pose.renderCommands = commands;
+}
+
+function moveRcUp(index: number) {
+	const rcs = props.pose.renderCommands;
+	if (!rcs) return;
+	aryMove(rcs, index, index - 1);
+}
+
+function moveRcDown(index: number) {
+	const rcs = props.pose.renderCommands;
+	if (!rcs) return;
+	aryMove(rcs, index, index + 1);
+}
+
+function deleteRc(index: number) {
+	const rcs = props.pose.renderCommands;
+	if (!rcs) return;
+	rcs.splice(index, 1);
+}
 </script>
 <template>
 	<teleport to="#breadcrumb">
@@ -33,105 +107,51 @@ const f = computed(() => {
 	</teleport>
 	<h2>Pose</h2>
 	<PInput label="ID" v-model="pose.id" />
-	<table>
-		<thead>
-			<tr>
-				<th>Render commands</th>
-			</tr>
-			<tr>
-				<th>Type</th>
-				<th>Folder</th>
-				<th>Option</th>
-				<th>Offset</th>
-				<th>Composite</th>
-				<th>Action</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr v-for="(command, rcKey) in pose.renderCommands" :key="'rc-' + rcKey">
-				<td>
-					<select v-model="command.type">
-						<option value="pose-part">Pose position</option>
-						<option value="head">Head</option>
-						<option value="image">Images</option>
-					</select>
-				</td>
-				<template v-if="command.type === 'pose-part'">
-					<td></td>
-					<td>
-						<select v-model="command.part">
-							<option
-								v-for="(_, key) of pose.positions"
-								:key="'pose-position:' + key"
-								:value="key"
-							>
-								{{ key }}
-							</option>
-						</select>
-					</td>
-				</template>
-				<template v-else-if="command.type === 'head'">
-					<td></td>
-					<td></td>
-				</template>
-				<template v-else-if="command.type === 'image'">
-					<td><input /></td>
-					<td><input /></td>
-				</template>
-				<td>
-					<label :for="'rc-offset-x:' + rcKey">X:</label>
-					<input
-						:id="'rc-offset-x:' + rcKey"
-						type="number"
-						step="1"
-						style="width: 32px"
-					/>
-					<label :for="'rc-offset-y:' + rcKey">Y:</label>
-					<input
-						:id="'rc-offset-y:' + rcKey"
-						type="number"
-						step="1"
-						style="width: 32px"
-					/>
-				</td>
-				<td>
-					<select v-model="command.composite">
-						<option value="source-in">source-in</option>
-						<option value="source-out">source-out</option>
-						<option value="source-atop">source-atop</option>
-						<option value="destination-over">destination-over</option>
-						<option value="destination-in">destination-in</option>
-						<option value="destination-out">destination-out</option>
-						<option value="destination-atop">destination-atop</option>
-						<option value="lighter">lighter</option>
-						<option value="copy">copy</option>
-						<option value="xor">xor</option>
-						<option value="multiply">multiply</option>
-						<option value="screen">screen</option>
-						<option value="overlay">overlay</option>
-						<option value="darken">darken</option>
-						<option value="lighten">lighten</option>
-						<option value="color-dodge">color-dodge</option>
-						<option value="color-burn">color-burn</option>
-						<option value="hard-light">hard-light</option>
-						<option value="soft-light">soft-light</option>
-						<option value="difference">difference</option>
-						<option value="exclusion">exclusion</option>
-						<option value="hue">hue</option>
-						<option value="saturation">saturation</option>
-						<option value="color">color</option>
-						<option value="luminosity">luminosity</option>
-					</select>
-				</td>
-
-				<td>
-					<button>Delete</button>
-					<button>Up</button>
-					<button>Down</button>
-				</td>
-			</tr>
-		</tbody>
-	</table>
+	<template v-if="pose.renderCommands">
+		<table>
+			<thead>
+				<tr>
+					<th>Render commands</th>
+				</tr>
+				<tr>
+					<th>Type</th>
+					<th>Folder</th>
+					<th>Option</th>
+					<th>Offset</th>
+					<th>Composite</th>
+					<th>Action</th>
+				</tr>
+			</thead>
+			<tbody>
+				<PoseRenderCommand
+					v-for="(command, rcI) in pose.renderCommands"
+					:key="'rc-' + rcI"
+					:folder="f"
+					:command="command"
+					:pose-positions="pose.positions ? Object.keys(pose.positions) : []"
+					@move-up="moveRcUp(rcI)"
+					@move-down="moveRcDown(rcI)"
+					@delete="deleteRc(rcI)"
+				/>
+			</tbody>
+		</table>
+		<fast-button
+			@click="pose.renderCommands.push({ type: 'image', images: [] })"
+			>Add render command</fast-button
+		>
+		<fast-button
+			:disabled="renderCommandsDefaultIssue != ''"
+			:title="renderCommandsDefaultIssue"
+			@click="delete pose.renderCommands"
+			>Switch to default</fast-button
+		>
+	</template>
+	<template v-else>
+		<p>Default render commands: Heads, Left, Right, Variant</p>
+		<fast-button @click="addCustomRenderCommands()"
+			>Add custom render commands</fast-button
+		>
+	</template>
 	<Variations
 		v-for="(v, k) in pose.positions"
 		:label="'' + k"

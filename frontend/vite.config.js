@@ -18,6 +18,7 @@ export default defineConfig({
 							"fast-select",
 							"fast-dialog",
 							"fast-button",
+							"fast-number-field",
 						].includes(tag),
 				},
 			},

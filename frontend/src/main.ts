@@ -15,6 +15,7 @@ import {
 	fastOption,
 	fastSelect,
 	fastDialog,
+	fastNumberField,
 } from "@microsoft/fast-components";
 
 provideFASTDesignSystem().register(
@@ -27,6 +28,7 @@ provideFASTDesignSystem().register(
 	fastTreeItem(),
 	fastTreeView(),
 	fastTextField(),
+	fastNumberField(),
 	fastListbox(),
 	fastSelect(),
 	fastOption(),
