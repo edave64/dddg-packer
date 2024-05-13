@@ -9,6 +9,7 @@ import type { JSONContentPack as V2Json } from "@edave64/doki-doki-dialog-genera
 import PackV2 from "./pack-v2.vue";
 import { MountPack } from "../../wailsjs/go/main/App";
 import type { IPack, IRepo, ISupportedRepo } from "@/repo";
+import PackV1 from "./pack-v1.vue";
 const props = defineProps({
 	coreState: {
 		required: true,
@@ -126,11 +127,16 @@ async function save() {
 }
 
 async function saveRepo(repoV: ISupportedRepo) {
+	repoV.$schema =
+		"https://raw.githubusercontent.com/edave64/doki-doki-dialog-generator-pack-format/master/src/repo_schema.json";
 	await saveFile("repo.json", JSON.stringify(repoV, undefined, "\t"));
 }
 
 async function savePack(repoV: ISupportedRepo) {
-	await saveFile(getPackJsonPath(repoV.pack), JSON.stringify(pack.value));
+	await saveFile(
+		getPackJsonPath(repoV.pack),
+		JSON.stringify(pack.value, undefined, "\t")
+	);
 }
 </script>
 <template>
@@ -155,9 +161,7 @@ async function savePack(repoV: ISupportedRepo) {
 			:json="pack"
 			:id="coreState.mountedPackPath"
 		/>
-		<p v-else>
-			{{ JSON.stringify(pack) }}
-		</p>
+		<PackV1 v-else :repo="repo" :json="pack" :id="coreState.mountedPackPath" />
 	</main>
 	<footer>
 		<a v-if="repoChanges || packChanges" href="#" @click="save()"
