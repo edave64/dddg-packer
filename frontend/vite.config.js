@@ -19,6 +19,7 @@ export default defineConfig({
 							"fast-dialog",
 							"fast-button",
 							"fast-number-field",
+							"fast-checkbox",
 						].includes(tag),
 				},
 			},

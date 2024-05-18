@@ -10,11 +10,16 @@ import Variations from "./variations.vue";
 import PoseRenderCommand from "./pose-render-command.vue";
 import PInput from "../shared/p-input.vue";
 import { aryMove } from "@/array-tools";
+import type { JSONHeadCollections } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
 
 const props = defineProps({
 	pose: {
 		required: true,
 		type: Object as PropType<JSONPose>,
+	},
+	headGroups: {
+		required: true,
+		type: Object as PropType<JSONHeadCollections>,
 	},
 	folder: {
 		type: String,
@@ -107,9 +112,9 @@ function deleteRc(index: number) {
 	</teleport>
 	<h2>Pose</h2>
 	<PInput label="ID" v-model="pose.id" />
-	<template v-if="pose.renderCommands">
-		<details>
-			<summary>Render commands</summary>
+	<details>
+		<summary>Render commands</summary>
+		<template v-if="pose.renderCommands">
 			<table>
 				<thead>
 					<tr>
@@ -144,14 +149,33 @@ function deleteRc(index: number) {
 				@click="delete pose.renderCommands"
 				>Switch to default</fast-button
 			>
-		</details>
-	</template>
-	<template v-else>
-		<p>Default render commands: Heads, Left, Right, Variant</p>
-		<fast-button @click="addCustomRenderCommands()"
-			>Add custom render commands</fast-button
-		>
-	</template>
+		</template>
+		<template v-else>
+			<p>Default render commands: Heads, Left, Right, Variant</p>
+			<fast-button @click="addCustomRenderCommands()"
+				>Add custom render commands</fast-button
+			>
+		</template>
+	</details>
+	<details
+		v-if="
+			(pose.compatibleHeads && pose.compatibleHeads.length > 0) ||
+			pose.renderCommands?.find((x) => x.type === 'head')
+		"
+	>
+		<summary>Head groups</summary>
+		<fast-select multiple>
+			<fast-option
+				v-for="(_, key) of headGroups"
+				:value="key"
+				:selected="pose.compatibleHeads?.includes(key as string)"
+				:key="`hg:${key}`"
+				@selected="console.log($event)"
+			>
+				{{ key }}
+			</fast-option>
+		</fast-select>
+	</details>
 	<Variations
 		v-for="(v, k) in pose.positions"
 		:label="'' + k"

@@ -10,7 +10,7 @@ import { joinNormalize } from "../../path-tools";
 import { MountPack } from "../../../wailsjs/go/main/App";
 import type { ISupportedRepo } from "@/repo";
 import Code from "../shared/code.vue";
-import ImageCollection from "./image-collection.vue";
+import ImageCollection from "../pack-v2/image-collection.vue";
 
 type HeadDummy = Record<string, JSONHeadCollection>;
 

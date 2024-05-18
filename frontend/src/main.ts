@@ -16,6 +16,7 @@ import {
 	fastSelect,
 	fastDialog,
 	fastNumberField,
+	fastCheckbox,
 } from "@microsoft/fast-components";
 
 provideFASTDesignSystem().register(
@@ -33,6 +34,7 @@ provideFASTDesignSystem().register(
 	fastSelect(),
 	fastOption(),
 	fastDialog(),
+	fastCheckbox(),
 );
 
 createApp(App).mount("#app");

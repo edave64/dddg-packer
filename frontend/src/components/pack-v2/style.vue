@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, type PropType } from "vue";
 import type {
+	JSONHeadCollections,
 	JSONPose,
 	JSONStyle,
 } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
@@ -12,6 +13,10 @@ const props = defineProps({
 	style: {
 		required: true,
 		type: Object as PropType<JSONStyle>,
+	},
+	headGroups: {
+		required: true,
+		type: Object as PropType<JSONHeadCollections>,
 	},
 	folder: {
 		type: String,
@@ -65,6 +70,7 @@ type State = null | {
 		:pose="state.obj"
 		:folder="folder"
 		@leave="state = null"
+		:head-groups="headGroups"
 		v-else-if="state.t === 'pose'"
 	/>
 </template>

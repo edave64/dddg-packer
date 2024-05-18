@@ -230,6 +230,7 @@ function deleteObj() {
 	<StyleGroup
 		:style-group="state.obj"
 		:folder="folder"
+		:head-groups="char.heads ?? {}"
 		@leave="state = null"
 		@delete="deleteObj"
 		v-else-if="state && state.t === 'style-group'"

@@ -87,6 +87,7 @@ const id = computed({
 	<Pose
 		:pose="state.obj"
 		:folder="folder"
+		:head-groups="Object.keys(char.heads ?? {})"
 		@leave="state = null"
 		v-else-if="state.t === 'pose'"
 	/>

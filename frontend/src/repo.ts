@@ -20,6 +20,7 @@ export interface IPack {
 	name: string;
 	dddg1Path?: string;
 	dddg2Path?: string;
+	preview: string[];
 	characters: string[];
 	authors: string[];
 }

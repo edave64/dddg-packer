@@ -5,6 +5,7 @@ import { joinNormalize } from "../../path-tools";
 import type {
 	JSONStyleGroup,
 	JSONStyle,
+	JSONHeadCollections,
 } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
 import Style from "./style.vue";
 import PInput from "../shared/p-input.vue";
@@ -14,6 +15,10 @@ const props = defineProps({
 	styleGroup: {
 		required: true,
 		type: Object as PropType<JSONStyleGroup>,
+	},
+	headGroups: {
+		required: true,
+		type: Object as PropType<JSONHeadCollections>,
 	},
 	folder: {
 		type: String,
@@ -79,6 +84,7 @@ async function deleteThis() {
 	<Style
 		:style="state.obj"
 		:folder="folder"
+		:head-groups="headGroups"
 		@leave="state = null"
 		v-else-if="state.t === 'style'"
 	/>
