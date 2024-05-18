@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch, type PropType } from "vue";
+import { computed, ref, type PropType } from "vue";
 import type {
 	JSONBackground,
 	JSONCharacter,
@@ -7,14 +7,14 @@ import type {
 	JSONSprite,
 	JSONContentPack as V2Json,
 } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
-import Sprites from "./pack-v2/sprites.vue";
-import Character from "./pack-v2/character.vue";
-import PInput from "./shared/p-input.vue";
-import { joinNormalize } from "../path-tools";
-import { MountPack } from "../../wailsjs/go/main/App";
+import Sprites from "./sprites.vue";
+import Character from "./character.vue";
+import PInput from "../shared/p-input.vue";
+import { joinNormalize } from "../../path-tools";
+import { MountPack } from "../../../wailsjs/go/main/App";
 import type { ISupportedRepo } from "@/repo";
-import Code from "./shared/code.vue";
-import ImageCollection from "./pack-v2/image-collection.vue";
+import Code from "../shared/code.vue";
+import ImageCollection from "./image-collection.vue";
 
 const props = defineProps({
 	json: {

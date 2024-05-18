@@ -8,6 +8,7 @@ import type {
 } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v1/jsonFormat";
 import Code from "../shared/code.vue";
 import Pose from "./pose.vue";
+import PInput from "../shared/p-input.vue";
 
 const props = defineProps({
 	style: {
@@ -35,6 +36,25 @@ type State = null | {
 	t: "pose";
 	obj: JSONPoseMeta<HeadDummy>;
 };
+
+const id = computed({
+	get(): string {
+		return props.style.name;
+	},
+	set(val: string) {
+		const oldVal = props.style.name;
+		if (oldVal === val) return;
+
+		if (props.char.poses) {
+			for (const pose of props.char.poses) {
+				if (pose.style === oldVal) {
+					pose.style = val;
+				}
+			}
+		}
+		props.style.name = val;
+	},
+});
 </script>
 <template>
 	<teleport to="#breadcrumb">
@@ -60,7 +80,8 @@ type State = null | {
 			</fast-tree-item>
 		</teleport>
 		<h2>Style</h2>
-		<p></p>
+		<PInput label="Id" v-model="id" />
+		<PInput label="Label" v-model="style.label" />
 		<Code :obj="style" />
 	</template>
 	<Pose

@@ -6,10 +6,10 @@ import type {
 	JSONHeadCollection,
 } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v1/jsonFormat";
 import type { JSONContentPack as V2Json } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
-import PackV2 from "./pack-v2.vue";
+import PackV2 from "./pack-v2/pack-v2.vue";
 import { MountPack } from "../../wailsjs/go/main/App";
 import type { IPack, IRepo, ISupportedRepo } from "@/repo";
-import PackV1 from "./pack-v1.vue";
+import PackV1 from "./pack-v1/pack-v1.vue";
 const props = defineProps({
 	coreState: {
 		required: true,
