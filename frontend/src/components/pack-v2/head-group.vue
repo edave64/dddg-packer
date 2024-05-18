@@ -6,6 +6,7 @@ import Variations from "./variations.vue";
 import Code from "../shared/code.vue";
 import { joinNormalize } from "../../path-tools";
 import PInput from "../shared/p-input.vue";
+import { Confirm } from "@wails/go/main/App";
 
 const props = defineProps({
 	headGroup: {
@@ -24,6 +25,7 @@ const props = defineProps({
 const emit = defineEmits<{
 	updateKey: [newName: string];
 	leave: [];
+	delete: [];
 }>();
 
 const f = computed(() => {
@@ -34,6 +36,17 @@ const f = computed(() => {
 			: props.headGroup.folder
 	);
 });
+
+async function deleteThis() {
+	if (
+		await Confirm(
+			"Do you really want to delete this head group? This cannot be undone.",
+			"Deleting head group"
+		)
+	) {
+		emit("delete");
+	}
+}
 </script>
 <template>
 	<teleport to="#tree">
@@ -57,5 +70,6 @@ const f = computed(() => {
 		label="Variants"
 		:folder="f"
 	/>
+	<fast-button @click="deleteThis">Delete character</fast-button>
 	<Code :obj="headGroup" />
 </template>

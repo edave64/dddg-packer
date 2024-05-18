@@ -12,6 +12,7 @@ import StyleGroup from "./style-group.vue";
 import { joinNormalize } from "../../path-tools";
 import ImageInput from "../shared/image-input.vue";
 import { Confirm } from "@wails/go/main/App";
+import { seekFreeIds } from "@/array-tools";
 
 const props = defineProps({
 	char: {
@@ -69,6 +70,23 @@ async function deleteThis() {
 	}
 }
 
+function createHeadGroup() {
+	const id = seekFreeIds("head_group", Object.keys(props.char.heads ?? {}));
+	if (!props.char.heads) {
+		props.char.heads = {};
+	}
+	const obj: JSONHeadCollection = {
+		variants: [],
+	};
+	props.char.heads[id] = obj;
+	state.value = {
+		t: "head-group",
+		obj,
+		key: id,
+		parent: props.char.heads,
+	};
+}
+
 type State =
 	| null
 	| {
@@ -81,6 +99,30 @@ type State =
 			t: "style-group";
 			obj: JSONStyleGroup;
 	  };
+
+function deleteObj() {
+	const s = state.value;
+	if (s === null) return;
+	state.value = null;
+	switch (s.t) {
+		case "head-group":
+			if (!props.char.heads) break;
+			delete props.char.heads[s.key];
+			if (Object.keys(props.char.heads).length === 0) {
+				delete props.char.heads;
+			}
+			break;
+		case "style-group": {
+			if (!props.char.styleGroups) break;
+			const idx = props.char.styleGroups.findIndex((x) => x.id === s.obj.id);
+			props.char.styleGroups?.splice(idx, 1);
+			if (props.char.styleGroups.length === 0) {
+				delete props.char.styleGroups;
+			}
+			break;
+		}
+	}
+}
 </script>
 <template>
 	<teleport to="#breadcrumb">
@@ -92,6 +134,12 @@ type State =
 		<teleport to="#tree">
 			<fast-tree-item @click="$emit('leave')">Back to pack</fast-tree-item>
 
+			<fast-tree-item
+				v-if="!char.heads || Object.keys(char.heads).length === 0"
+				@click="createHeadGroup"
+			>
+				Add head group
+			</fast-tree-item>
 			<fast-tree-item
 				v-if="char.heads && Object.keys(char.heads).length > 0"
 				expanded
@@ -112,6 +160,15 @@ type State =
 				>
 					{{ k }}
 				</fast-tree-item>
+				<fast-tree-item @click="createHeadGroup">
+					Add head group
+				</fast-tree-item>
+			</fast-tree-item>
+			<fast-tree-item
+				v-if="!char.styleGroups || char.styleGroups.length === 0"
+				@click="createStyleGroup"
+			>
+				Add style group
 			</fast-tree-item>
 			<fast-tree-item
 				v-if="char.styleGroups && char.styleGroups.length > 0"
@@ -125,6 +182,9 @@ type State =
 					@click="state = { t: 'style-group', obj: sg }"
 				>
 					{{ sg.id }}
+				</fast-tree-item>
+				<fast-tree-item @click="createStyleGroup">
+					Add style group
 				</fast-tree-item>
 			</fast-tree-item>
 		</teleport>
@@ -145,6 +205,7 @@ type State =
 		:id="state.key"
 		@leave="state = null"
 		@update-key="updateHeadkey(state.key, $event)"
+		@delete="deleteObj"
 		v-else-if="state && state.t === 'head-group'"
 	/>
 	<StyleGroup

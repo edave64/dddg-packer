@@ -16,6 +16,7 @@ import { MountPack } from "../../../wailsjs/go/main/App";
 import type { ISupportedRepo } from "@/repo";
 import Code from "../shared/code.vue";
 import ImageCollection from "./image-collection.vue";
+import { seekFreeIds } from "@/array-tools";
 
 const props = defineProps({
 	json: {
@@ -63,7 +64,10 @@ function reset() {
 }
 
 function createBackground() {
-	const id = seekFreeIds(props.json.backgrounds ?? [], "background");
+	const id = seekFreeIds(
+		"background",
+		props.json.backgrounds?.map((x) => x.id)
+	);
 	if (!props.json.backgrounds) {
 		props.json.backgrounds = [];
 	}
@@ -79,8 +83,30 @@ function createBackground() {
 	};
 }
 
+function createCharacter() {
+	const id = seekFreeIds(
+		"character",
+		props.json.backgrounds?.map((x) => x.id)
+	);
+	if (!props.json.characters) {
+		props.json.characters = [];
+	}
+	const obj: JSONCharacter = {
+		id,
+		label: "New Character",
+	};
+	props.json.characters.push(obj);
+	state.value = {
+		t: "char",
+		obj,
+	};
+}
+
 function createSprite() {
-	const id = seekFreeIds(props.json.sprites ?? [], "sprite");
+	const id = seekFreeIds(
+		"sprite",
+		props.json.sprites?.map((x) => x.id)
+	);
 	if (!props.json.sprites) {
 		props.json.sprites = [];
 	}
@@ -94,16 +120,6 @@ function createSprite() {
 		t: "sprite",
 		obj,
 	};
-}
-
-function seekFreeIds(list: { id: string }[], prefix: string) {
-	let i = list.length;
-	let ret: string;
-	do {
-		++i;
-		ret = `${prefix}_${i}`;
-	} while (list.find((x) => x.id === ret));
-	return ret;
 }
 
 function deleteObj() {
@@ -148,7 +164,9 @@ function deleteObj() {
 		<template v-if="state === null">
 			<teleport to="#tree">
 				<fast-tree-item @click="MountPack('')">Back to packs</fast-tree-item>
-				<fast-tree-item v-if="!json.characters || json.characters.length === 0"
+				<fast-tree-item
+					@click="createCharacter"
+					v-if="!json.characters || json.characters.length === 0"
 					>Add character</fast-tree-item
 				>
 				<fast-tree-item expanded v-else>
@@ -160,7 +178,9 @@ function deleteObj() {
 					>
 						{{ char.label ? `${char.label} [${char.id}]` : char.id }}
 					</fast-tree-item>
-					<fast-tree-item>Add character</fast-tree-item>
+					<fast-tree-item @click="createCharacter"
+						>Add character</fast-tree-item
+					>
 				</fast-tree-item>
 				<fast-tree-item
 					@click="createSprite"
