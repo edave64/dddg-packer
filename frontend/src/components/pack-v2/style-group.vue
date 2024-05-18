@@ -8,6 +8,7 @@ import type {
 } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
 import Style from "./style.vue";
 import PInput from "../shared/p-input.vue";
+import { Confirm } from "@wails/go/main/App";
 
 const props = defineProps({
 	styleGroup: {
@@ -22,6 +23,7 @@ const props = defineProps({
 
 const emit = defineEmits<{
 	leave: [];
+	delete: [];
 }>();
 
 const state = ref(null as State);
@@ -34,6 +36,17 @@ type State = null | {
 const f = computed(() => {
 	return joinNormalize(props.folder, props.styleGroup.folder);
 });
+
+async function deleteThis() {
+	if (
+		await Confirm(
+			"Do you really want to delete this style group? This cannot be undone.",
+			"Deleting style group"
+		)
+	) {
+		emit("delete");
+	}
+}
 </script>
 <template>
 	<teleport to="#breadcrumb">
@@ -60,6 +73,7 @@ const f = computed(() => {
 		<p>
 			<PInput label="ID" v-model="styleGroup.id" />
 		</p>
+		<fast-button @click="deleteThis">Delete character</fast-button>
 		<Code :obj="styleGroup" />
 	</template>
 	<Style

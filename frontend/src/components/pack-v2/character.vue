@@ -87,6 +87,25 @@ function createHeadGroup() {
 	};
 }
 
+function createStyleGroup() {
+	const id = seekFreeIds(
+		"style_group",
+		props.char.styleGroups?.map((x) => x.id) ?? []
+	);
+	if (!props.char.styleGroups) {
+		props.char.styleGroups = [];
+	}
+	const obj: JSONStyleGroup = {
+		id,
+		styles: [],
+	};
+	props.char.styleGroups.push(obj);
+	state.value = {
+		t: "style-group",
+		obj,
+	};
+}
+
 type State =
 	| null
 	| {
@@ -212,6 +231,7 @@ function deleteObj() {
 		:style-group="state.obj"
 		:folder="folder"
 		@leave="state = null"
+		@delete="deleteObj"
 		v-else-if="state && state.t === 'style-group'"
 	/>
 </template>
