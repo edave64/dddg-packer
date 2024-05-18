@@ -224,6 +224,7 @@ function deleteObj() {
 			:char="state.obj"
 			:folder="folder"
 			@leave="reset"
+			@delete="deleteObj"
 			v-else-if="state.t === 'char'"
 		/>
 		<Background

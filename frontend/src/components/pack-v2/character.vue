@@ -11,6 +11,7 @@ import HeadGroup from "./head-group.vue";
 import StyleGroup from "./style-group.vue";
 import { joinNormalize } from "../../path-tools";
 import ImageInput from "../shared/image-input.vue";
+import { Confirm } from "@wails/go/main/App";
 
 const props = defineProps({
 	char: {
@@ -25,6 +26,7 @@ const props = defineProps({
 
 const emit = defineEmits<{
 	leave: [];
+	delete: [];
 }>();
 
 const f = computed(() => {
@@ -40,6 +42,17 @@ function updateHeadkey(oldKey: string, newKey: string) {
 	props.char.heads[newKey] = state.value.obj;
 	state.value.key = newKey;
 	delete state.value.parent[oldKey];
+}
+
+async function deleteThis() {
+	if (
+		await Confirm(
+			"Do you really want to delete this character? This cannot be undone.",
+			"Deleting character"
+		)
+	) {
+		emit("delete");
+	}
 }
 
 type State =
@@ -109,6 +122,7 @@ type State =
 			<br />
 			<img :src="joinNormalize(f, char.chibi)" />
 		</p>
+		<fast-button @click="deleteThis">Delete character</fast-button>
 		<Code :obj="char" />
 	</template>
 	<HeadGroup
