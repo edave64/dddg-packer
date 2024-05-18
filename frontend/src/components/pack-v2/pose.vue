@@ -108,43 +108,43 @@ function deleteRc(index: number) {
 	<h2>Pose</h2>
 	<PInput label="ID" v-model="pose.id" />
 	<template v-if="pose.renderCommands">
-		<table>
-			<thead>
-				<tr>
-					<th>Render commands</th>
-				</tr>
-				<tr>
-					<th>Type</th>
-					<th>Folder</th>
-					<th>Option</th>
-					<th>Offset</th>
-					<th>Composite</th>
-					<th>Action</th>
-				</tr>
-			</thead>
-			<tbody>
-				<PoseRenderCommand
-					v-for="(command, rcI) in pose.renderCommands"
-					:key="'rc-' + rcI"
-					:folder="f"
-					:command="command"
-					:pose-positions="pose.positions ? Object.keys(pose.positions) : []"
-					@move-up="moveRcUp(rcI)"
-					@move-down="moveRcDown(rcI)"
-					@delete="deleteRc(rcI)"
-				/>
-			</tbody>
-		</table>
-		<fast-button
-			@click="pose.renderCommands.push({ type: 'image', images: [] })"
-			>Add render command</fast-button
-		>
-		<fast-button
-			:disabled="renderCommandsDefaultIssue != ''"
-			:title="renderCommandsDefaultIssue"
-			@click="delete pose.renderCommands"
-			>Switch to default</fast-button
-		>
+		<details>
+			<summary>Render commands</summary>
+			<table>
+				<thead>
+					<tr>
+						<th>Type</th>
+						<th>Folder</th>
+						<th>Option</th>
+						<th>Offset</th>
+						<th>Composite</th>
+						<th>Action</th>
+					</tr>
+				</thead>
+				<tbody>
+					<PoseRenderCommand
+						v-for="(command, rcI) in pose.renderCommands"
+						:key="'rc-' + rcI"
+						:folder="f"
+						:command="command"
+						:pose-positions="pose.positions ? Object.keys(pose.positions) : []"
+						@move-up="moveRcUp(rcI)"
+						@move-down="moveRcDown(rcI)"
+						@delete="deleteRc(rcI)"
+					/>
+				</tbody>
+			</table>
+			<fast-button
+				@click="pose.renderCommands.push({ type: 'image', images: [] })"
+				>Add render command</fast-button
+			>
+			<fast-button
+				:disabled="renderCommandsDefaultIssue != ''"
+				:title="renderCommandsDefaultIssue"
+				@click="delete pose.renderCommands"
+				>Switch to default</fast-button
+			>
+		</details>
 	</template>
 	<template v-else>
 		<p>Default render commands: Heads, Left, Right, Variant</p>
