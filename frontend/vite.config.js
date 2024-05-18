@@ -30,6 +30,7 @@ export default defineConfig({
 	resolve: {
 		alias: {
 			"@": "/src/",
+			"@wails": "/wailsjs/",
 		},
 	},
 

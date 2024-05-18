@@ -100,6 +100,20 @@ func (a *App) UpdateDddgPath() {
 	a.TriggerCoreStateUpdate()
 }
 
+func (a *App) Confirm(text string, title string) bool {
+	x, err := runtime.MessageDialog(a.ctx, runtime.MessageDialogOptions{
+		Title:         title,
+		Message:       text,
+		Type:          runtime.QuestionDialog,
+		Buttons:       []string{"Yes", "No"},
+		DefaultButton: "No",
+	})
+	if err != nil {
+		panic("Confirm dialog broken")
+	}
+	return x == "Yes"
+}
+
 type Pack struct {
 	Id string `json:"id"`
 }

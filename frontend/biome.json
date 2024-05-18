@@ -12,6 +12,11 @@
 						"filenameCases": ["kebab-case"]
 					}
 				}
+			},
+			"performance": {
+				"noDelete": {
+					"level": "off"
+				}
 			}
 		}
 	}

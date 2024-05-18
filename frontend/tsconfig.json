@@ -14,7 +14,8 @@
 		"baseUrl": ".",
 		"alwaysStrict": true,
 		"paths": {
-			"@/*": ["src/*"]
+			"@/*": ["src/*"],
+			"@wails/*": ["wailsjs/*"]
 		},
 		"lib": ["esnext", "dom", "dom.iterable", "scripthost"]
 	},

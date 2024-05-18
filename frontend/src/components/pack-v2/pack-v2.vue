@@ -8,6 +8,7 @@ import type {
 	JSONContentPack as V2Json,
 } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
 import Sprites from "./sprites.vue";
+import Background from "./background.vue";
 import Character from "./character.vue";
 import PInput from "../shared/p-input.vue";
 import { joinNormalize } from "../../path-tools";
@@ -56,6 +57,86 @@ type State =
 			t: "color";
 			obj: JSONColor;
 	  };
+
+function reset() {
+	state.value = null;
+}
+
+function createBackground() {
+	const id = seekFreeIds(props.json.backgrounds ?? [], "background");
+	if (!props.json.backgrounds) {
+		props.json.backgrounds = [];
+	}
+	const obj: JSONBackground = {
+		id,
+		variants: [],
+		label: "New Background",
+	};
+	props.json.backgrounds.push(obj);
+	state.value = {
+		t: "background",
+		obj,
+	};
+}
+
+function createSprite() {
+	const id = seekFreeIds(props.json.sprites ?? [], "sprite");
+	if (!props.json.sprites) {
+		props.json.sprites = [];
+	}
+	const obj: JSONSprite = {
+		id,
+		variants: [],
+		label: "New Sprite",
+	};
+	props.json.sprites.push(obj);
+	state.value = {
+		t: "sprite",
+		obj,
+	};
+}
+
+function seekFreeIds(list: { id: string }[], prefix: string) {
+	let i = list.length;
+	let ret: string;
+	do {
+		++i;
+		ret = `${prefix}_${i}`;
+	} while (list.find((x) => x.id === ret));
+	return ret;
+}
+
+function deleteObj() {
+	const s = state.value;
+	if (s === null) return;
+	state.value = null;
+	const list = (
+		{
+			char: props.json.backgrounds,
+			sprite: props.json.sprites,
+			background: props.json.backgrounds,
+		} as Record<string, Array<{ id: string }>>
+	)[s.t];
+
+	const idx = list.findIndex((x) => x.id === s.obj.id);
+	list.splice(idx, 1);
+	if (list.length === 0) {
+		switch (s.t) {
+			case "char":
+				delete props.json.characters;
+				break;
+			case "sprite":
+				delete props.json.sprites;
+				break;
+			case "background":
+				delete props.json.backgrounds;
+				break;
+			case "color":
+				delete props.json.colors;
+				break;
+		}
+	}
+}
 </script>
 <template>
 	<teleport to="#breadcrumb">
@@ -81,7 +162,9 @@ type State =
 					</fast-tree-item>
 					<fast-tree-item>Add character</fast-tree-item>
 				</fast-tree-item>
-				<fast-tree-item v-if="!json.sprites || json.sprites.length === 0"
+				<fast-tree-item
+					@click="createSprite"
+					v-if="!json.sprites || json.sprites.length === 0"
 					>Add sprite</fast-tree-item
 				>
 				<fast-tree-item expanded v-else>
@@ -93,10 +176,11 @@ type State =
 					>
 						{{ sprite.label ? `${sprite.label} [${sprite.id}]` : sprite.id }}
 					</fast-tree-item>
-					<fast-tree-item>Add sprite</fast-tree-item>
+					<fast-tree-item @click="createSprite">Add sprite</fast-tree-item>
 				</fast-tree-item>
 				<fast-tree-item
 					v-if="!json.backgrounds || json.backgrounds.length === 0"
+					@click="createBackground"
 					>Add background</fast-tree-item
 				>
 				<fast-tree-item expanded v-else>
@@ -112,7 +196,9 @@ type State =
 								: background.id
 						}}
 					</fast-tree-item>
-					<fast-tree-item>Add sprite</fast-tree-item>
+					<fast-tree-item @click="createBackground"
+						>Add background</fast-tree-item
+					>
 				</fast-tree-item>
 			</teleport>
 			<h2>Pack</h2>
@@ -130,14 +216,22 @@ type State =
 		<Sprites
 			:sprite="state.obj"
 			:folder="folder"
-			@leave="state = null"
+			@leave="reset"
+			@delete="deleteObj"
 			v-else-if="state.t === 'sprite'"
 		/>
 		<Character
 			:char="state.obj"
 			:folder="folder"
-			@leave="state = null"
+			@leave="reset"
 			v-else-if="state.t === 'char'"
+		/>
+		<Background
+			:background="state.obj"
+			:folder="folder"
+			@leave="reset"
+			@delete="deleteObj"
+			v-else-if="state.t === 'background'"
 		/>
 	</div>
 </template>
