@@ -12,10 +12,3 @@ const props = defineProps({
 		<pre><code>{{ JSON.stringify(obj, undefined, 2) }}</code></pre>
 	</details>
 </template>
-
-<style scoped>
-summary {
-	user-select: none;
-	-webkit-user-select: none;
-}
-</style>
