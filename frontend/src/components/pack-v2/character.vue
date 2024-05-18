@@ -41,6 +41,20 @@ function updateHeadkey(oldKey: string, newKey: string) {
 	if (!props.char.heads) return;
 	props.char.heads[newKey] = state.value.obj;
 	state.value.key = newKey;
+
+	if (props.char.styleGroups) {
+		for (const sg of props.char.styleGroups) {
+			for (const s of sg.styles) {
+				for (const p of s.poses) {
+					if (p.compatibleHeads) {
+						const idx = p.compatibleHeads.indexOf(oldKey);
+						p.compatibleHeads[idx] = newKey;
+					}
+				}
+			}
+		}
+	}
+
 	delete state.value.parent[oldKey];
 }
 
