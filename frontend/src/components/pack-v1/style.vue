@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { seekFreeIds } from "@/array-tools";
 import type {
 	JSONCharacter,
 	JSONPoseMeta,
@@ -86,6 +87,27 @@ function deleteObj() {
 		}
 	}
 }
+
+function createPose() {
+	const id = seekFreeIds(
+		"pose",
+		// don't filter by style, since all poses can collide name, even in different styles
+		props.char.poses?.map((x) => x.name),
+	);
+	if (!props.char.poses) {
+		props.char.poses = [];
+	}
+	const obj = {
+		name: id,
+		style: props.style.name,
+		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+	} as any;
+	props.char.poses.push(obj);
+	state.value = {
+		t: "pose",
+		obj,
+	};
+}
 </script>
 <template>
 	<teleport to="#breadcrumb">
@@ -108,6 +130,7 @@ function deleteObj() {
 				>
 					{{ pose.name }}
 				</fast-tree-item>
+				<fast-tree-item @click="createPose">Add pose</fast-tree-item>
 			</fast-tree-item>
 		</teleport>
 		<h2>Style</h2>

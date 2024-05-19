@@ -122,12 +122,15 @@ async function deleteThis() {
 			"
 			>Initialize as split-pose</fast-button
 		>
+		<br />
 		<fast-button @click="(pose as any).variant = []"
 			>Initialize as variants</fast-button
 		>
+		<br />
 		<fast-button @click="(pose as any).static = ''"
 			>Initialize as static</fast-button
 		>
+		<br />
 	</template>
 	<fast-button @click="deleteThis">Delete Pose</fast-button>
 	<Code :obj="pose" />

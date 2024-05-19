@@ -77,7 +77,7 @@ const nsfw = computed({
 });
 </script>
 <template>
-	<div class="img_splitter" v-if="model">
+	<div class="img_splitter" v-if="model !== undefined">
 		<div>
 			<label from="sprite_images">{{ title }}:</label>
 			<image-input label="Image path" v-model="img" />

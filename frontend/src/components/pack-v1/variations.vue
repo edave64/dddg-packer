@@ -24,7 +24,7 @@ const selectedVariant = ref(props.variants.length > 0 ? 0 : -1);
 	<fieldset>
 		<legend>{{ label }}</legend>
 		<div class="variant_splitter">
-			<div v-if="variants.length > 0">
+			<div>
 				<label for="sprite_variants">Variants:</label>
 				<fast-select
 					size="5"
