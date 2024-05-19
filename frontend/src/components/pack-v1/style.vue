@@ -28,6 +28,7 @@ const props = defineProps({
 
 const emit = defineEmits<{
 	leave: [];
+	delete: [];
 }>();
 
 const state = ref(null as State);
@@ -55,6 +56,19 @@ const id = computed({
 		props.style.name = val;
 	},
 });
+
+async function deleteThis() {
+	const hasPoses =
+		props.char.poses?.find((x) => x.style === props.style.name) ?? false;
+	if (
+		await Confirm(
+			`Do you really want to delete this style? This cannot be undone.${hasPoses ? " All associated poses will be deleted, too" : ""}`,
+			"Deleting style",
+		)
+	) {
+		emit("delete");
+	}
+}
 </script>
 <template>
 	<teleport to="#breadcrumb">
@@ -82,6 +96,7 @@ const id = computed({
 		<h2>Style</h2>
 		<PInput label="Id" v-model="id" />
 		<PInput label="Label" v-model="style.label" />
+		<fast-button @click="deleteThis">Delete Style</fast-button>
 		<Code :obj="style" />
 	</template>
 	<Pose

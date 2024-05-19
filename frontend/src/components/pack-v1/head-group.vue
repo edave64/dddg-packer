@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { JSONHeadCollections } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v1/jsonFormat";
+import { Confirm } from "@wails/go/main/App";
 import { computed, type PropType } from "vue";
 import { joinNormalize } from "../../path-tools";
 import Code from "../shared/code.vue";
@@ -23,6 +24,7 @@ const props = defineProps({
 const emit = defineEmits<{
 	updateKey: [newName: string];
 	leave: [];
+	delete: [];
 }>();
 
 const f = computed(() => {
@@ -33,6 +35,17 @@ const f = computed(() => {
 			: props.headGroup.folder,
 	);
 });
+
+async function deleteThis() {
+	if (
+		await Confirm(
+			"Do you really want to delete this head group? This cannot be undone.",
+			"Deleting head group",
+		)
+	) {
+		emit("delete");
+	}
+}
 </script>
 <template>
 	<teleport to="#tree">
@@ -60,5 +73,6 @@ const f = computed(() => {
 		label="Variants"
 		:folder="f"
 	/>
+	<fast-button @click="deleteThis">Delete head group</fast-button>
 	<Code :obj="headGroup" />
 </template>

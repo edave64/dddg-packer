@@ -74,6 +74,14 @@ function deleteObj() {
 			if (Object.keys(props.char.heads).length === 0) {
 				delete props.char.heads;
 			}
+			if (props.char.poses) {
+				for (const pose of props.char.poses) {
+					if (pose.compatibleHeads) {
+						const idx = pose.compatibleHeads.indexOf(s.key);
+						pose.compatibleHeads.splice(idx, 1);
+					}
+				}
+			}
 			break;
 		case "style": {
 			if (!props.char.styles) break;
@@ -81,6 +89,17 @@ function deleteObj() {
 			props.char.styles.splice(idx, 1);
 			if (props.char.styles.length === 0) {
 				delete props.char.styles;
+			}
+			if (props.char.poses) {
+				const list = props.char.poses;
+				const l = list.length;
+				for (let i = 0; i < l; ++i) {
+					const pose = list[i];
+					if (pose.style === s.obj.name) {
+						list.splice(i, 1);
+						--i;
+					}
+				}
 			}
 			break;
 		}
@@ -145,6 +164,7 @@ function deleteObj() {
 		:folder="folder"
 		:id="state.key"
 		@leave="state = null"
+		@delete="deleteObj"
 		@update-key="updateHeadkey(state.key, $event)"
 		v-else-if="state && state.t === 'head-group'"
 	/>
@@ -152,6 +172,7 @@ function deleteObj() {
 		:style="state.obj"
 		:folder="folder"
 		:char="char"
+		@delete="deleteObj"
 		@leave="state = null"
 		v-else-if="state && state.t === 'style'"
 	/>
