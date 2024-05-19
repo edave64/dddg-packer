@@ -28,6 +28,7 @@ const props = defineProps({
 
 const emit = defineEmits<{
 	leave: [];
+	delete: [];
 }>();
 
 const f = computed(() => {
@@ -61,6 +62,17 @@ function updateCompatibleHeads(event: CustomEvent) {
 		delete props.pose.compatibleHeads;
 	}
 	props.pose.compatibleHeads = Array.from(newVals);
+}
+
+async function deleteThis() {
+	if (
+		await Confirm(
+			"Do you really want to delete this pose? This cannot be undone.",
+			"Deleting pose",
+		)
+	) {
+		emit("delete");
+	}
 }
 </script>
 <template>
@@ -98,7 +110,7 @@ function updateCompatibleHeads(event: CustomEvent) {
 	/>
 	<ImageCollection
 		v-if="'static' in pose"
-		label="Static"
+		title="Static"
 		:folder="f"
 		v-model="pose.static"
 	/>
@@ -117,5 +129,6 @@ function updateCompatibleHeads(event: CustomEvent) {
 			>Initialize as static</fast-button
 		>
 	</template>
+	<fast-button @click="deleteThis">Delete Pose</fast-button>
 	<Code :obj="pose" />
 </template>

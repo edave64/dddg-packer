@@ -69,6 +69,23 @@ async function deleteThis() {
 		emit("delete");
 	}
 }
+
+function deleteObj() {
+	const s = state.value;
+	if (s === null) return;
+	state.value = null;
+	switch (s.t) {
+		case "pose": {
+			if (!props.char.poses) break;
+			const idx = props.char.poses.findIndex((x) => x.name === s.obj.name);
+			props.char.poses.splice(idx, 1);
+			if (props.char.poses.length === 0) {
+				delete props.char.poses;
+			}
+			break;
+		}
+	}
+}
 </script>
 <template>
 	<teleport to="#breadcrumb">
@@ -104,6 +121,7 @@ async function deleteThis() {
 		:folder="folder"
 		:head-groups="Object.keys(char.heads ?? {})"
 		@leave="state = null"
+		@delete="deleteObj"
 		v-else-if="state.t === 'pose'"
 	/>
 </template>
