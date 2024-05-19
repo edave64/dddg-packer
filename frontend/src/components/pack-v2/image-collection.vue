@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { joinNormalize } from "../../path-tools";
-import { computed, ref, watch, type CSSProperties, type PropType } from "vue";
-import ImageInput from "../shared/image-input.vue";
 import { coreState } from "@/core-state";
+import { computed, ref, watch, type CSSProperties, type PropType } from "vue";
+import { joinNormalize } from "../../path-tools";
+import ImageInput from "../shared/image-input.vue";
 
 const props = defineProps({
 	imageCollection: {
@@ -26,7 +26,7 @@ watch(
 		if (!ary || ary.length === 0) selectedImage.value = -1;
 		selectedImage.value = 0;
 	},
-	{ immediate: true }
+	{ immediate: true },
 );
 
 const previewStyle = computed((): CSSProperties => {

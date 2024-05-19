@@ -1,20 +1,20 @@
 <script setup lang="ts">
-import { computed, ref, type PropType } from "vue";
 import type {
-	JSONCharacter as V1Json,
 	JSONHeadCollection,
-	JSONStyle,
 	JSONHeadCollections,
 	JSONPoseMeta,
+	JSONStyle,
+	JSONCharacter as V1Json,
 } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v1/jsonFormat";
-import PInput from "../shared/p-input.vue";
-import Code from "../shared/code.vue";
-import HeadGroup from "./head-group.vue";
-import Style from "./style.vue";
-import { joinNormalize } from "../../path-tools";
-import ImageInput from "../shared/image-input.vue";
 import type { NsfwAbleImg } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v1/model";
+import { computed, ref, type PropType } from "vue";
+import { joinNormalize } from "../../path-tools";
+import Code from "../shared/code.vue";
+import ImageInput from "../shared/image-input.vue";
+import PInput from "../shared/p-input.vue";
+import HeadGroup from "./head-group.vue";
 import type { HeadDummy } from "./headDummy";
+import Style from "./style.vue";
 
 const props = defineProps({
 	char: {

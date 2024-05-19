@@ -1,16 +1,16 @@
 <script setup lang="ts">
-import { computed, type PropType } from "vue";
+import { aryMove } from "@/array-tools";
 import type {
+	JSONHeadCollections,
 	JSONPose,
 	JSONPoseCommand,
 } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
-import Code from "../shared/code.vue";
+import { computed, type PropType } from "vue";
 import { joinNormalize } from "../../path-tools";
-import Variations from "./variations.vue";
-import PoseRenderCommand from "./pose-render-command.vue";
+import Code from "../shared/code.vue";
 import PInput from "../shared/p-input.vue";
-import { aryMove } from "@/array-tools";
-import type { JSONHeadCollections } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
+import PoseRenderCommand from "./pose-render-command.vue";
+import Variations from "./variations.vue";
 
 const props = defineProps({
 	pose: {

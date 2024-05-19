@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, type PropType } from "vue";
+import type { PropType } from "vue";
 import type { IFileInfo } from "./file-tree";
 
 const props = defineProps({

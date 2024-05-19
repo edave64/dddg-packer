@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed, ref, type PropType } from "vue";
+import { seekFreeIds } from "@/array-tools";
+import type { ISupportedRepo } from "@/repo";
 import type {
 	JSONBackground,
 	JSONCharacter,
@@ -7,16 +8,15 @@ import type {
 	JSONSprite,
 	JSONContentPack as V2Json,
 } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
-import Sprites from "./sprites.vue";
+import { computed, ref, type PropType } from "vue";
+import { MountPack } from "../../../wailsjs/go/main/App";
+import { joinNormalize } from "../../path-tools";
+import Code from "../shared/code.vue";
+import PInput from "../shared/p-input.vue";
 import Background from "./background.vue";
 import Character from "./character.vue";
-import PInput from "../shared/p-input.vue";
-import { joinNormalize } from "../../path-tools";
-import { MountPack } from "../../../wailsjs/go/main/App";
-import type { ISupportedRepo } from "@/repo";
-import Code from "../shared/code.vue";
 import ImageCollection from "./image-collection.vue";
-import { seekFreeIds } from "@/array-tools";
+import Sprites from "./sprites.vue";
 
 const props = defineProps({
 	json: {
@@ -66,7 +66,7 @@ function reset() {
 function createBackground() {
 	const id = seekFreeIds(
 		"background",
-		props.json.backgrounds?.map((x) => x.id)
+		props.json.backgrounds?.map((x) => x.id),
 	);
 	if (!props.json.backgrounds) {
 		props.json.backgrounds = [];
@@ -86,7 +86,7 @@ function createBackground() {
 function createCharacter() {
 	const id = seekFreeIds(
 		"character",
-		props.json.backgrounds?.map((x) => x.id)
+		props.json.backgrounds?.map((x) => x.id),
 	);
 	if (!props.json.characters) {
 		props.json.characters = [];
@@ -105,7 +105,7 @@ function createCharacter() {
 function createSprite() {
 	const id = seekFreeIds(
 		"sprite",
-		props.json.sprites?.map((x) => x.id)
+		props.json.sprites?.map((x) => x.id),
 	);
 	if (!props.json.sprites) {
 		props.json.sprites = [];

@@ -1,15 +1,11 @@
 <script setup lang="ts">
-import { computed, type PropType } from "vue";
-import type {
-	JSONBackground,
-	JSONSprite,
-} from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
-import ImageCollection from "./image-collection.vue";
-import Variations from "./variations.vue";
-import Code from "../shared/code.vue";
-import { joinNormalize } from "../../path-tools";
-import PInput from "../shared/p-input.vue";
+import type { JSONBackground } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
 import { Confirm } from "@wails/go/main/App";
+import { computed, type PropType } from "vue";
+import { joinNormalize } from "../../path-tools";
+import Code from "../shared/code.vue";
+import PInput from "../shared/p-input.vue";
+import Variations from "./variations.vue";
 
 const props = defineProps({
 	background: {
@@ -35,7 +31,7 @@ async function deleteThis() {
 	if (
 		await Confirm(
 			"Do you really want to delete this background? This cannot be undone.",
-			"Deleting background"
+			"Deleting background",
 		)
 	) {
 		emit("delete");

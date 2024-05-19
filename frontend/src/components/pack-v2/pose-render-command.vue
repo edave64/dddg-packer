@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, type PropType } from "vue";
 import type { JSONPoseCommand } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
+import { computed, type PropType } from "vue";
 import { joinNormalize } from "../../path-tools";
 import Combo from "../shared/combo.vue";
 import NumberInput from "../shared/number-input.vue";
@@ -29,7 +29,7 @@ const emit = defineEmits<{
 const f = computed(() => {
 	return joinNormalize(
 		props.folder,
-		props.command.type === "image" ? props.command.folder : undefined
+		props.command.type === "image" ? props.command.folder : undefined,
 	);
 });
 
@@ -94,7 +94,6 @@ const composite = computed({
 		if (val === "source-over" && props.command.composite === undefined) return;
 		if (props.command.composite === val) return;
 		if (val === "source-over") {
-			// biome-ignore lint/performance/noDelete: <explanation>
 			delete props.command.composite;
 			return;
 		}

@@ -20,6 +20,8 @@
 	"devDependencies": {
 		"@biomejs/biome": "^1.7.3",
 		"@vitejs/plugin-vue": "^3.0.3",
+		"@volar/vue-typescript": "^1.6.5",
+		"prettier-plugin-organize-imports": "^3.2.4",
 		"vite": "^3.0.7"
 	}
 }

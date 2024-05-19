@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { joinNormalize } from "../../path-tools";
-import { computed, ref, watch, type CSSProperties, type PropType } from "vue";
-import ImageInput from "../shared/image-input.vue";
 import { coreState } from "@/core-state";
 import type { NsfwAbleImg } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v1/model";
+import { computed, type CSSProperties } from "vue";
+import { joinNormalize } from "../../path-tools";
+import ImageInput from "../shared/image-input.vue";
 
 const props = defineProps({
 	title: {
@@ -25,7 +25,7 @@ const previewStyle = computed((): CSSProperties => {
 
 	background += `no-repeat url(${joinNormalize(
 		props.folder,
-		img.value
+		img.value,
 	)}?cache=${coreState.value?.mountedPackPath}) center / contain`;
 
 	return {

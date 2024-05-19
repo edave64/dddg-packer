@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
-import StartUp from "./components/start-up.vue";
+import { ref, watch } from "vue";
+import { TriggerCoreStateUpdate } from "../wailsjs/go/main/App";
+import EditPack from "./components/edit-pack.vue";
 import SelectDDDG from "./components/select-dddg.vue";
 import SelectPack from "./components/select-pack.vue";
-import EditPack from "./components/edit-pack.vue";
-import { TriggerCoreStateUpdate } from "../wailsjs/go/main/App";
+import StartUp from "./components/start-up.vue";
 import { coreState, type Stage } from "./core-state";
 
 const stage = ref("startup" as Stage);
@@ -20,7 +20,7 @@ watch(
 		} else {
 			stage.value = "selectDDDG";
 		}
-	}
+	},
 );
 
 TriggerCoreStateUpdate();

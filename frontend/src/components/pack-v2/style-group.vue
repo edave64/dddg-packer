@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { computed, ref, type PropType } from "vue";
-import Code from "../shared/code.vue";
-import { joinNormalize } from "../../path-tools";
 import type {
-	JSONStyleGroup,
-	JSONStyle,
 	JSONHeadCollections,
+	JSONStyle,
+	JSONStyleGroup,
 } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
-import Style from "./style.vue";
-import PInput from "../shared/p-input.vue";
 import { Confirm } from "@wails/go/main/App";
+import { computed, ref, type PropType } from "vue";
+import { joinNormalize } from "../../path-tools";
+import Code from "../shared/code.vue";
+import PInput from "../shared/p-input.vue";
+import Style from "./style.vue";
 
 const props = defineProps({
 	styleGroup: {
@@ -46,7 +46,7 @@ async function deleteThis() {
 	if (
 		await Confirm(
 			"Do you really want to delete this style group? This cannot be undone.",
-			"Deleting style group"
+			"Deleting style group",
 		)
 	) {
 		emit("delete");

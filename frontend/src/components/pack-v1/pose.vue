@@ -1,15 +1,15 @@
 <script setup lang="ts">
+import type { JSONPoseMeta } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v1/jsonFormat";
+import type { Select } from "@microsoft/fast-components";
+import { Confirm } from "@wails/go/main/App";
 import { computed, type PropType } from "vue";
-import Code from "../shared/code.vue";
 import { joinNormalize } from "../../path-tools";
-import Variations from "./variations.vue";
+import Code from "../shared/code.vue";
 import PInput from "../shared/p-input.vue";
 import ToggleBox from "../shared/toggle-box.vue";
-import type { JSONPoseMeta } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v1/jsonFormat";
-import ImageCollection from "./image-collection.vue";
-import type { Select } from "@microsoft/fast-components";
 import type { HeadDummy } from "./headDummy";
-import type { PoseMeta } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v1/model";
+import ImageCollection from "./image-collection.vue";
+import Variations from "./variations.vue";
 
 const props = defineProps({
 	pose: {

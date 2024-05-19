@@ -1,9 +1,6 @@
 <script setup lang="ts">
-import { computed, ref, watch, type PropType } from "vue";
-import type { JSONSprite } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
+import { ref, type PropType } from "vue";
 import ImageCollection from "./image-collection.vue";
-import Code from "../shared/code.vue";
-import { joinNormalize } from "@/path-tools";
 
 const props = defineProps({
 	variants: {

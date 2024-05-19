@@ -1,14 +1,15 @@
 <script setup lang="ts">
-import { computed, ref, type PropType } from "vue";
 import type {
 	JSONCharacter,
 	JSONPoseMeta,
 	JSONStyle,
 } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v1/jsonFormat";
+import { Confirm } from "@wails/go/main/App";
+import { computed, ref, type PropType } from "vue";
 import Code from "../shared/code.vue";
-import Pose from "./pose.vue";
 import PInput from "../shared/p-input.vue";
 import type { HeadDummy } from "./headDummy";
+import Pose from "./pose.vue";
 
 const props = defineProps({
 	style: {

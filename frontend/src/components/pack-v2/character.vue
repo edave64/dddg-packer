@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import { computed, ref, type PropType } from "vue";
+import { seekFreeIds } from "@/array-tools";
 import type {
 	JSONCharacter,
-	JSONStyleGroup,
 	JSONHeadCollection,
+	JSONStyleGroup,
 } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
-import PInput from "../shared/p-input.vue";
+import { Confirm } from "@wails/go/main/App";
+import { computed, ref, type PropType } from "vue";
+import { joinNormalize } from "../../path-tools";
 import Code from "../shared/code.vue";
+import ImageInput from "../shared/image-input.vue";
+import PInput from "../shared/p-input.vue";
 import HeadGroup from "./head-group.vue";
 import StyleGroup from "./style-group.vue";
-import { joinNormalize } from "../../path-tools";
-import ImageInput from "../shared/image-input.vue";
-import { Confirm } from "@wails/go/main/App";
-import { seekFreeIds } from "@/array-tools";
 
 const props = defineProps({
 	char: {
@@ -63,7 +63,7 @@ async function deleteThis() {
 	if (
 		await Confirm(
 			"Do you really want to delete this character? This cannot be undone.",
-			"Deleting character"
+			"Deleting character",
 		)
 	) {
 		emit("delete");
@@ -90,7 +90,7 @@ function createHeadGroup() {
 function createStyleGroup() {
 	const id = seekFreeIds(
 		"style_group",
-		props.char.styleGroups?.map((x) => x.id) ?? []
+		props.char.styleGroups?.map((x) => x.id) ?? [],
 	);
 	if (!props.char.styleGroups) {
 		props.char.styleGroups = [];

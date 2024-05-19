@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { computed, ref, type PropType } from "vue";
 import type {
 	JSONHeadCollections,
 	JSONPose,
 	JSONStyle,
 } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
-import Code from "../shared/code.vue";
+import { computed, ref, type PropType } from "vue";
 import { joinNormalize } from "../../path-tools";
+import Code from "../shared/code.vue";
 import Pose from "./pose.vue";
 
 const props = defineProps({

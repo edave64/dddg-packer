@@ -2,7 +2,7 @@
 import { ref, watch, type PropType } from "vue";
 import { GetPacks, MountPack, UpdateDddgPath } from "../../wailsjs/go/main/App";
 import type { main } from "../../wailsjs/go/models";
-import type { Stage, CoreState } from "../core-state";
+import type { CoreState } from "../core-state";
 const packs = ref(null as null | main.Pack[]);
 const props = defineProps({
 	coreState: {

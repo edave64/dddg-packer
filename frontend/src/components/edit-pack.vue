@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { ref, watch, type PropType } from "vue";
-import { saveFile, type CoreState } from "../core-state";
+import type { IPack, ISupportedRepo } from "@/repo";
 import type { JSONCharacter as V1Json } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v1/jsonFormat";
 import type { JSONContentPack as V2Json } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
-import PackV2 from "./pack-v2/pack-v2.vue";
+import { ref, watch, type PropType } from "vue";
 import { MountPack } from "../../wailsjs/go/main/App";
-import type { IPack, ISupportedRepo } from "@/repo";
-import PackV1 from "./pack-v1/pack-v1.vue";
+import { saveFile, type CoreState } from "../core-state";
 import type { HeadDummy } from "./pack-v1/headDummy";
+import PackV1 from "./pack-v1/pack-v1.vue";
+import PackV2 from "./pack-v2/pack-v2.vue";
 const props = defineProps({
 	coreState: {
 		required: true,
