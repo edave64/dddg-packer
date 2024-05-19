@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { seekFreeIds } from "@/array-tools";
 import type {
 	JSONHeadCollections,
 	JSONPose,
@@ -38,6 +39,25 @@ type State = null | {
 	t: "pose";
 	obj: JSONPose;
 };
+
+function createPose() {
+	const id = seekFreeIds(
+		"pose",
+		// don't filter by style, since all poses can collide name, even in different styles
+		props.style.poses.map((x) => x.id),
+	);
+	if (!props.style.poses) {
+		props.style.poses = [];
+	}
+	const obj: JSONPose = {
+		id,
+	};
+	props.style.poses.push(obj);
+	state.value = {
+		t: "pose",
+		obj,
+	};
+}
 </script>
 <template>
 	<teleport to="#breadcrumb">
@@ -60,6 +80,7 @@ type State = null | {
 				>
 					{{ pose.id }}
 				</fast-tree-item>
+				<fast-tree-item @click="createPose">Create pose</fast-tree-item>
 			</fast-tree-item>
 		</teleport>
 		<h2>Style</h2>
