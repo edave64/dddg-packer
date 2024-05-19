@@ -210,7 +210,7 @@ async function deleteThis() {
 		:folder="f"
 		:variants="v"
 		:label-editable="!!pose.renderCommands"
-		@update:label="renamePosition(k, $event)"
+		@update:label="renamePosition(k as string, $event)"
 	/>
 	<template v-if="!pose.renderCommands">
 		<p v-if="!pose.positions?.['Left']">
