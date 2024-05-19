@@ -212,6 +212,41 @@ async function deleteThis() {
 		:label-editable="!!pose.renderCommands"
 		@update:label="renamePosition(k, $event)"
 	/>
+	<template v-if="!pose.renderCommands">
+		<p v-if="!pose.positions?.['Left']">
+			<fast-button
+				@click="
+					if (!pose.positions) {
+						pose.positions = {};
+					}
+					pose.positions!.Left = [];
+				"
+				>Create left pose position</fast-button
+			>
+		</p>
+		<p v-if="!pose.positions?.['Right']">
+			<fast-button
+				@click="
+					if (!pose.positions) {
+						pose.positions = {};
+					}
+					pose.positions!.Right = [];
+				"
+				>Create right pose position</fast-button
+			>
+		</p>
+		<p v-if="!pose.positions?.['Variant']">
+			<fast-button
+				@click="
+					if (!pose.positions) {
+						pose.positions = {};
+					}
+					pose.positions!.Variant = [];
+				"
+				>Create variant pose position</fast-button
+			>
+		</p>
+	</template>
 	<fast-button @click="deleteThis">Delete pose</fast-button>
 	<Code :obj="pose" />
 </template>
