@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { JSONHeadCollection } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
+import type { JSONHeadCollections } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v1/jsonFormat";
 import { computed, type PropType } from "vue";
 import { joinNormalize } from "../../path-tools";
 import Code from "../shared/code.vue";
@@ -9,7 +9,7 @@ import Variations from "./variations.vue";
 const props = defineProps({
 	headGroup: {
 		required: true,
-		type: Object as PropType<JSONHeadCollection | string[][]>,
+		type: Object as PropType<JSONHeadCollections[string]>,
 	},
 	id: {
 		type: String,
@@ -51,7 +51,11 @@ const f = computed(() => {
 	</p>
 	<Variations
 		:variants="
-			Array.isArray(headGroup) || !headGroup ? headGroup : headGroup.variants
+			!headGroup
+				? headGroup
+				: Array.isArray(headGroup)
+					? headGroup
+					: headGroup.all
 		"
 		label="Variants"
 		:folder="f"

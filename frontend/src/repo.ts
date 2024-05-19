@@ -18,6 +18,8 @@ export interface ISupportedRepo {
 export interface IPack {
 	id: string;
 	name: string;
+	source: string;
+	description: string;
 	dddg1Path?: string;
 	dddg2Path?: string;
 	preview: string[];

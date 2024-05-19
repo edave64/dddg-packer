@@ -44,7 +44,6 @@ const offsetX = computed({
 		if (val === 0) {
 			if (props.command.offset) {
 				if (offsetY.value === 0) {
-					// biome-ignore lint/performance/noDelete: <explanation>
 					delete props.command.offset;
 					return;
 				}
@@ -68,7 +67,6 @@ const offsetY = computed({
 		if (val === 0) {
 			if (props.command.offset) {
 				if (offsetX.value === 0) {
-					// biome-ignore lint/performance/noDelete: <explanation>
 					delete props.command.offset;
 					return;
 				}

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { JSONHeadCollection } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
+import type { JSONHeadCollections } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
 import { Confirm } from "@wails/go/main/App";
 import { computed, type PropType } from "vue";
 import { joinNormalize } from "../../path-tools";
@@ -10,7 +10,7 @@ import Variations from "./variations.vue";
 const props = defineProps({
 	headGroup: {
 		required: true,
-		type: Object as PropType<JSONHeadCollection | string[][]>,
+		type: Object as PropType<JSONHeadCollections[string]>,
 	},
 	id: {
 		type: String,

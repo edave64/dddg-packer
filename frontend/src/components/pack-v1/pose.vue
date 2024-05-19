@@ -105,13 +105,17 @@ function updateCompatibleHeads(event: CustomEvent) {
 	<template v-if="!('left' in pose || 'variant' in pose || 'static' in pose)">
 		<fast-button
 			@click="
-				pose.left = [];
-				pose.right = [];
+				(pose as any).left = [];
+				(pose as any).right = [];
 			"
 			>Initialize as split-pose</fast-button
 		>
-		<fast-button @click="pose.variant = []">Initialize as variants</fast-button>
-		<fast-button @click="pose.static = ''">Initialize as static</fast-button>
+		<fast-button @click="(pose as any).variant = []"
+			>Initialize as variants</fast-button
+		>
+		<fast-button @click="(pose as any).static = ''"
+			>Initialize as static</fast-button
+		>
 	</template>
 	<Code :obj="pose" />
 </template>

@@ -125,13 +125,20 @@ function createSprite() {
 function deleteObj() {
 	const s = state.value;
 	if (s === null) return;
+	if (s.t === "color") {
+		const list = props.json.colors;
+		if (!list) return;
+		const idx = list.findIndex((x) => x.color === s.obj.color);
+		list.splice(idx, 1);
+		return;
+	}
 	state.value = null;
 	const list = (
 		{
 			char: props.json.backgrounds,
 			sprite: props.json.sprites,
 			background: props.json.backgrounds,
-		} as Record<string, Array<{ id: string }>>
+		} as Record<typeof s.t, Array<{ id: string }>>
 	)[s.t];
 
 	const idx = list.findIndex((x) => x.id === s.obj.id);
@@ -146,9 +153,6 @@ function deleteObj() {
 				break;
 			case "background":
 				delete props.json.backgrounds;
-				break;
-			case "color":
-				delete props.json.colors;
 				break;
 		}
 	}

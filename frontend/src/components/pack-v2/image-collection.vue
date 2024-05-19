@@ -102,7 +102,7 @@ fast-select {
 	display: flex;
 }
 .sprite_preview {
-	aspect-ration: 1;
+	aspect-ratio: 1;
 	flex-grow: 1;
 }
 </style>

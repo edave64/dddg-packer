@@ -26,7 +26,7 @@ function openPack(id: string) {
 	MountPack(id);
 }
 
-function createPack() {}
+function createPack(baseId?: string) {}
 </script>
 <template>
 	<teleport to="#breadcrumb">
@@ -38,7 +38,7 @@ function createPack() {}
 	</p>
 	<h1>Create a new pack:</h1>
 	<ul>
-		<li>Create empty pack</li>
+		<li><a href="#" @click="createPack()">Create empty pack</a></li>
 		<li>Create from image folder</li>
 	</ul>
 	<h1>Select pack to edit:</h1>
