@@ -97,7 +97,11 @@ function createStyleGroup() {
 	}
 	const obj: JSONStyleGroup = {
 		id,
-		styles: [],
+		styles: [
+			{
+				poses: [],
+			},
+		],
 	};
 	props.char.styleGroups.push(obj);
 	state.value = {
