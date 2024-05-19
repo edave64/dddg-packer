@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { seekFreeIds } from "@/array-tools";
 import type {
 	JSONHeadCollection,
 	JSONHeadCollections,
@@ -105,6 +106,40 @@ function deleteObj() {
 		}
 	}
 }
+
+function createHeadGroup() {
+	const id = seekFreeIds("heads", Object.keys(props.char.heads ?? {}));
+	if (!props.char.heads) {
+		props.char.heads = {};
+	}
+	const obj: string[] = [];
+	props.char.heads[id] = obj;
+	state.value = {
+		t: "head-group",
+		obj,
+		key: id,
+		parent: props.char.heads,
+	};
+}
+
+function createStyle() {
+	const id = seekFreeIds(
+		"style",
+		props.char.styles?.map((x) => x.name),
+	);
+	if (!props.char.styles) {
+		props.char.styles = [];
+	}
+	const obj: JSONStyle = {
+		label: id,
+		name: id,
+	};
+	props.char.styles.push(obj);
+	state.value = {
+		t: "style",
+		obj,
+	};
+}
 </script>
 <template>
 	<teleport to="#breadcrumb">
@@ -136,7 +171,11 @@ function deleteObj() {
 				>
 					{{ k }}
 				</fast-tree-item>
+				<fast-tree-item @click="createHeadGroup">Add head group</fast-tree-item>
 			</fast-tree-item>
+			<fast-tree-item v-else @click="createHeadGroup"
+				>Add head group</fast-tree-item
+			>
 			<fast-tree-item v-if="char.styles && char.styles.length > 0" expanded>
 				Styles
 				<fast-tree-item
@@ -147,7 +186,11 @@ function deleteObj() {
 				>
 					{{ sg.label }}
 				</fast-tree-item>
+				<fast-tree-item @click="createStyle">Add style group</fast-tree-item>
 			</fast-tree-item>
+			<fast-tree-item v-else @click="createStyle"
+				>Add style group</fast-tree-item
+			>
 		</teleport>
 		<h2>Character</h2>
 		<PInput label="ID" v-model="char.id" />
