@@ -5,15 +5,12 @@ import { joinNormalize } from "../../path-tools";
 import Variations from "./variations.vue";
 import PInput from "../shared/p-input.vue";
 import ToggleBox from "../shared/toggle-box.vue";
-import type {
-	JSONHeadCollection,
-	JSONPoseMeta,
-} from "@edave64/doki-doki-dialog-generator-pack-format/dist/v1/jsonFormat";
+import type { JSONPoseMeta } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v1/jsonFormat";
 import ImageCollection from "./image-collection.vue";
 import type { Select } from "@microsoft/fast-components";
+import type { HeadDummy } from "./headDummy";
 import type { PoseMeta } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v1/model";
 
-type HeadDummy = Record<string, JSONHeadCollection>;
 const props = defineProps({
 	pose: {
 		required: true,
@@ -57,7 +54,7 @@ const headInForeground = computed({
 
 function updateCompatibleHeads(event: CustomEvent) {
 	const newVals = new Set(
-		(event.target as Select).selectedOptions.map((x) => x.value)
+		(event.target as Select).selectedOptions.map((x) => x.value),
 	);
 
 	if (newVals.size === 0) {

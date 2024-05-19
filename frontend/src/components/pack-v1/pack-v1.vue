@@ -1,18 +1,14 @@
 <script setup lang="ts">
-import { computed, ref, type PropType } from "vue";
-import type {
-	JSONCharacter as V1Json,
-	JSONHeadCollection,
-} from "@edave64/doki-doki-dialog-generator-pack-format/dist/v1/jsonFormat";
-import Character from "./character.vue";
-import PInput from "../shared/p-input.vue";
-import { joinNormalize } from "../../path-tools";
-import { MountPack } from "../../../wailsjs/go/main/App";
 import type { ISupportedRepo } from "@/repo";
-import Code from "../shared/code.vue";
+import type { JSONCharacter as V1Json } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v1/jsonFormat";
+import { computed, ref, type PropType } from "vue";
+import { MountPack } from "../../../wailsjs/go/main/App";
+import { joinNormalize } from "../../path-tools";
 import ImageCollection from "../pack-v2/image-collection.vue";
-
-type HeadDummy = Record<string, JSONHeadCollection>;
+import Code from "../shared/code.vue";
+import PInput from "../shared/p-input.vue";
+import Character from "./character.vue";
+import type { HeadDummy } from "./headDummy";
 
 const props = defineProps({
 	json: {

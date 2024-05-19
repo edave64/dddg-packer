@@ -14,11 +14,7 @@ import Style from "./style.vue";
 import { joinNormalize } from "../../path-tools";
 import ImageInput from "../shared/image-input.vue";
 import type { NsfwAbleImg } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v1/model";
-
-type HeadDummy = Record<
-	string,
-	JSONHeadCollection | Array<string | NsfwAbleImg>
->;
+import type { HeadDummy } from "./headDummy";
 
 const props = defineProps({
 	char: {
@@ -66,6 +62,30 @@ type State =
 			t: "pose";
 			obj: JSONPoseMeta<HeadDummy>;
 	  };
+
+function deleteObj() {
+	const s = state.value;
+	if (s === null) return;
+	state.value = null;
+	switch (s.t) {
+		case "head-group":
+			if (!props.char.heads) break;
+			delete props.char.heads[s.key];
+			if (Object.keys(props.char.heads).length === 0) {
+				delete props.char.heads;
+			}
+			break;
+		case "style": {
+			if (!props.char.styles) break;
+			const idx = props.char.styles.findIndex((x) => x.name === s.obj.name);
+			props.char.styles.splice(idx, 1);
+			if (props.char.styles.length === 0) {
+				delete props.char.styles;
+			}
+			break;
+		}
+	}
+}
 </script>
 <template>
 	<teleport to="#breadcrumb">

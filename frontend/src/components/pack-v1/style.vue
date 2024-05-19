@@ -2,13 +2,13 @@
 import { computed, ref, type PropType } from "vue";
 import type {
 	JSONCharacter,
-	JSONHeadCollection,
 	JSONPoseMeta,
 	JSONStyle,
 } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v1/jsonFormat";
 import Code from "../shared/code.vue";
 import Pose from "./pose.vue";
 import PInput from "../shared/p-input.vue";
+import type { HeadDummy } from "./headDummy";
 
 const props = defineProps({
 	style: {
@@ -30,7 +30,6 @@ const emit = defineEmits<{
 }>();
 
 const state = ref(null as State);
-type HeadDummy = Record<string, JSONHeadCollection>;
 
 type State = null | {
 	t: "pose";

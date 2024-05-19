@@ -1,15 +1,13 @@
 <script setup lang="ts">
 import { ref, watch, type PropType } from "vue";
 import { saveFile, type CoreState } from "../core-state";
-import type {
-	JSONCharacter as V1Json,
-	JSONHeadCollection,
-} from "@edave64/doki-doki-dialog-generator-pack-format/dist/v1/jsonFormat";
+import type { JSONCharacter as V1Json } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v1/jsonFormat";
 import type { JSONContentPack as V2Json } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
 import PackV2 from "./pack-v2/pack-v2.vue";
 import { MountPack } from "../../wailsjs/go/main/App";
-import type { IPack, IRepo, ISupportedRepo } from "@/repo";
+import type { IPack, ISupportedRepo } from "@/repo";
 import PackV1 from "./pack-v1/pack-v1.vue";
+import type { HeadDummy } from "./pack-v1/headDummy";
 const props = defineProps({
 	coreState: {
 		required: true,
@@ -17,7 +15,6 @@ const props = defineProps({
 	},
 });
 
-type HeadDummy = Record<string, JSONHeadCollection>;
 const repo = ref(null as null | ISupportedRepo);
 const pack = ref(null as null | V1Json<HeadDummy> | V2Json);
 
@@ -39,7 +36,7 @@ watch(
 			console.error("Cannot load repo.json", e);
 		}
 	},
-	{ immediate: true }
+	{ immediate: true },
 );
 
 watch(
@@ -65,7 +62,7 @@ watch(
 			console.error("Cannot load index.json", e);
 		}
 	},
-	{ immediate: true }
+	{ immediate: true },
 );
 
 let repoUpdated = false;
@@ -80,7 +77,7 @@ watch(
 		repoChanges.value = !repoUpdated;
 		repoUpdated = false;
 	},
-	{ deep: true }
+	{ deep: true },
 );
 
 watch(
@@ -89,7 +86,7 @@ watch(
 		packChanges.value = !packUpdated;
 		packUpdated = false;
 	},
-	{ deep: true }
+	{ deep: true },
 );
 
 function normalizeRepoPath(path: string): string {
@@ -135,7 +132,7 @@ async function saveRepo(repoV: ISupportedRepo) {
 async function savePack(repoV: ISupportedRepo) {
 	await saveFile(
 		getPackJsonPath(repoV.pack),
-		JSON.stringify(pack.value, undefined, "\t")
+		JSON.stringify(pack.value, undefined, "\t"),
 	);
 }
 </script>
