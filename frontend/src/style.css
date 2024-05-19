@@ -42,7 +42,7 @@ a:visited {
 	color: lightblue;
 }
 
-summary, label, h1, h2, h3, h4, fast-button, fast-option, fast-tree-item {
+* {
 	user-select: none;
 	-webkit-user-select: none;
 } 
