@@ -6,6 +6,7 @@ import type {
 	JSONPose,
 	JSONPoseCommand,
 } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
+import { Confirm } from "@wails/go/main/App";
 import { computed, type PropType } from "vue";
 import { joinNormalize } from "../../path-tools";
 import Code from "../shared/code.vue";
@@ -30,6 +31,7 @@ const props = defineProps({
 
 const emit = defineEmits<{
 	leave: [];
+	delete: [];
 }>();
 
 const f = computed(() => {
@@ -117,6 +119,17 @@ function renamePosition(oldName: string, newName: string) {
 		}
 	}
 }
+
+async function deleteThis() {
+	if (
+		await Confirm(
+			"Do you really want to delete this pose? This cannot be undone.",
+			"Deleting pose",
+		)
+	) {
+		emit("delete");
+	}
+}
 </script>
 <template>
 	<teleport to="#breadcrumb">
@@ -199,5 +212,6 @@ function renamePosition(oldName: string, newName: string) {
 		:label-editable="!!pose.renderCommands"
 		@update:label="renamePosition(k, $event)"
 	/>
+	<fast-button @click="deleteThis">Delete pose</fast-button>
 	<Code :obj="pose" />
 </template>

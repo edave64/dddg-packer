@@ -58,6 +58,19 @@ function createPose() {
 		obj,
 	};
 }
+
+function deleteObj() {
+	const s = state.value;
+	if (s === null) return;
+	state.value = null;
+	switch (s.t) {
+		case "pose": {
+			const idx = props.style.poses.findIndex((x) => x.id === s.obj.id);
+			props.style.poses.splice(idx, 1);
+			break;
+		}
+	}
+}
 </script>
 <template>
 	<teleport to="#breadcrumb">
@@ -84,14 +97,14 @@ function createPose() {
 			</fast-tree-item>
 		</teleport>
 		<h2>Style</h2>
-		<p></p>
 		<Code :obj="style" />
 	</template>
 	<Pose
 		:pose="state.obj"
 		:folder="folder"
-		@leave="state = null"
 		:head-groups="headGroups"
+		@leave="state = null"
+		@delete="deleteObj"
 		v-else-if="state.t === 'pose'"
 	/>
 </template>
