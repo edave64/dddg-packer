@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { aryMove } from "@/array-tools";
+import { renameKey } from "@/obj-tools";
 import type {
 	JSONHeadCollections,
 	JSONPose,
@@ -102,6 +103,20 @@ function deleteRc(index: number) {
 	if (!rcs) return;
 	rcs.splice(index, 1);
 }
+
+function renamePosition(oldName: string, newName: string) {
+	if (!props.pose.positions) return;
+	const newPositions = renameKey(props.pose.positions, oldName, newName);
+	if (newPositions === null) return;
+	props.pose.positions = newPositions;
+	if (props.pose.renderCommands) {
+		for (const rc of props.pose.renderCommands) {
+			if (rc.type === "pose-part" && rc.part === oldName) {
+				rc.part = newName;
+			}
+		}
+	}
+}
 </script>
 <template>
 	<teleport to="#breadcrumb">
@@ -181,6 +196,8 @@ function deleteRc(index: number) {
 		:label="'' + k"
 		:folder="f"
 		:variants="v"
+		:label-editable="!!pose.renderCommands"
+		@update:label="renamePosition(k, $event)"
 	/>
 	<Code :obj="pose" />
 </template>

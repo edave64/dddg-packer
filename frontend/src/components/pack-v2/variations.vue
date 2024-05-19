@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, type PropType } from "vue";
+import PInput from "../shared/p-input.vue";
 import ImageCollection from "./image-collection.vue";
 
 const props = defineProps({
@@ -7,21 +8,29 @@ const props = defineProps({
 		required: true,
 		type: Array as PropType<string[][]>,
 	},
-	label: {
-		required: true,
-		type: String,
-	},
 	folder: {
 		type: String,
 		required: true,
 	},
+	labelEditable: {
+		type: Boolean,
+		default: false,
+	},
+});
+
+const label = defineModel("label", {
+	required: false,
+	type: String,
 });
 
 const selectedVariant = ref(props.variants.length > 0 ? 0 : -1);
 </script>
 <template>
 	<fieldset>
-		<legend>{{ label }}</legend>
+		<legend>
+			<template v-if="!labelEditable">{{ label }}</template>
+			<PInput v-else v-model="label" label="" />
+		</legend>
 		<div class="variant_splitter">
 			<div v-if="variants">
 				<label for="sprite_variants">Variants:</label>
