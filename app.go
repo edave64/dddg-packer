@@ -114,6 +114,19 @@ func (a *App) Confirm(text string, title string) bool {
 	return x == "Yes"
 }
 
+func (a *App) Alert(text string, title string) {
+	_, err := runtime.MessageDialog(a.ctx, runtime.MessageDialogOptions{
+		Title:         title,
+		Message:       text,
+		Type:          runtime.InfoDialog,
+		Buttons:       []string{"Ok"},
+		DefaultButton: "Ok",
+	})
+	if err != nil {
+		panic("Confirm dialog broken")
+	}
+}
+
 type Pack struct {
 	Id string `json:"id"`
 }
