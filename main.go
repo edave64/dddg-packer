@@ -73,6 +73,7 @@ func (handler *DynamicAssetHandler) ServeMounted(rw http.ResponseWriter, r *http
 }
 
 func (handler *DynamicAssetHandler) ServeMountedGet(rw http.ResponseWriter, r *http.Request, mountedPath string) {
+	rw.Header().Add("Cache-Control", "no-cache")
 	dirPath, isDirPath := strings.CutSuffix(mountedPath, "/*.json")
 	if isDirPath {
 		path := path.Join(handler.app.DddgPath, "localRepo", handler.app.MountedPackPath, dirPath)
