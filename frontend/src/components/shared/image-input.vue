@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, ref, watch } from "vue";
 import type { IFileInfo } from "./file-tree";
 import FileTree from "./file-tree.vue";
 
@@ -23,7 +23,19 @@ const props = defineProps({
 
 const folderStructure = ref(null as null | IFileInfo);
 
-const model = defineModel({});
+const model = defineModel({
+	type: String,
+});
+const selected = ref(undefined as undefined | string);
+
+watch(
+	() => model.value,
+	(newVal) => {
+		selected.value = newVal;
+	},
+	{ immediate: true },
+);
+
 const dlgOpen = ref(false);
 const root = new URL("/mountedPack/", location.origin);
 
@@ -34,6 +46,11 @@ const root = new URL("/mountedPack/", location.origin);
 	folderStructure.value = tree;
 	console.log(tree);
 })();
+
+const fullUrl = computed(() => {
+	if (!model.value) return "";
+	return `${new URL(selected.value, new URL(props.folder, root))}`;
+});
 </script>
 <template>
 	<div style="display: flex; align-items: end">
@@ -60,14 +77,21 @@ const root = new URL("/mountedPack/", location.origin);
 				"
 			>
 				<h2>Select a file</h2>
-				<FileTree
-					:folderStructure="folderStructure!"
-					style="flex-shrink: 1; overflow: auto"
-					@selected="
-						model = $event;
+				<div style="display: flex; overflow: hidden">
+					<FileTree
+						:folderStructure="folderStructure!"
+						style="overflow: auto"
+						@selected="selected = $event"
+					/>
+					<img :src="fullUrl" style="max-height: 50vh" />
+				</div>
+				<fast-button
+					@click="
+						model = selected;
 						dlgOpen = false;
 					"
-				/>
+					>Confirm</fast-button
+				>
 				<fast-button @click="dlgOpen = false">Close</fast-button>
 			</div>
 		</fast-dialog>
