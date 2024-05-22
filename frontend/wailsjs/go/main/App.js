@@ -10,6 +10,10 @@ export function Confirm(arg1, arg2) {
   return window['go']['main']['App']['Confirm'](arg1, arg2);
 }
 
+export function CreatePack(arg1, arg2, arg3) {
+  return window['go']['main']['App']['CreatePack'](arg1, arg2, arg3);
+}
+
 export function GetDddgPath() {
   return window['go']['main']['App']['GetDddgPath']();
 }

@@ -127,6 +127,42 @@ func (a *App) Alert(text string, title string) {
 	}
 }
 
+func (a *App) CreatePack(id string, repoBody string, indexBody string) error {
+	basePath := path.Join(a.DddgPath, "localRepo", id)
+	if err := os.Mkdir(basePath, os.ModePerm); err != nil {
+		return err
+	}
+
+	fiRepo, err := os.Create(path.Join(basePath, "repo.json"))
+	if err != nil {
+		return err
+	}
+
+	// close fi on exit and check for its returned error
+	defer func() {
+		if err := fiRepo.Close(); err != nil {
+			panic(err)
+		}
+	}()
+
+	fiRepo.Write([]byte(repoBody))
+
+	fiIndex, err := os.Create(path.Join(basePath, "index.json"))
+	if err != nil {
+		return err
+	}
+
+	// close fi on exit and check for its returned error
+	defer func() {
+		if err := fiIndex.Close(); err != nil {
+			panic(err)
+		}
+	}()
+
+	fiIndex.Write([]byte(indexBody))
+	return nil
+}
+
 type Pack struct {
 	Id string `json:"id"`
 }

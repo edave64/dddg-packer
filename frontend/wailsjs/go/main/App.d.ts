@@ -6,6 +6,8 @@ export function Alert(arg1:string,arg2:string):Promise<void>;
 
 export function Confirm(arg1:string,arg2:string):Promise<boolean>;
 
+export function CreatePack(arg1:string,arg2:string,arg3:string):Promise<void>;
+
 export function GetDddgPath():Promise<string>;
 
 export function GetPacks():Promise<Array<main.Pack>>;
