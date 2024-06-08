@@ -18,7 +18,14 @@ const props = defineProps({
 	},
 });
 
+const quickAddOpen = ref(false);
 const selectedVariant = ref(props.variants.length > 0 ? 0 : -1);
+
+function addVariant(newVariant: string) {
+	props.variants.push(newVariant);
+	selectedVariant.value = props.variants.length - 1;
+	console.log(selectedVariant.value);
+}
 </script>
 <template>
 	<fieldset>
@@ -39,13 +46,7 @@ const selectedVariant = ref(props.variants.length > 0 ? 0 : -1);
 						{{ typeof variant === "string" ? variant : variant.img }}
 					</fast-option>
 				</fast-select>
-				<fast-button
-					@click="
-						variants.push('');
-						selectedVariant = variants.length - 1;
-					"
-					>Add variation</fast-button
-				>
+				<fast-button @click="quickAddOpen = true">Add variation</fast-button>
 				<fast-button
 					:disabled="selectedVariant === -1"
 					@click="
@@ -64,6 +65,15 @@ const selectedVariant = ref(props.variants.length > 0 ? 0 : -1);
 				/>
 			</div>
 		</div>
+		<file-select-dialog
+			v-if="quickAddOpen"
+			:folder="folder"
+			@selected="
+				addVariant($event);
+				quickAddOpen = false;
+			"
+			@close="quickAddOpen = false"
+		/>
 	</fieldset>
 </template>
 
