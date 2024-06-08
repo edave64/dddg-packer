@@ -30,6 +30,10 @@ export function MountPack(arg1) {
   return window['go']['main']['App']['MountPack'](arg1);
 }
 
+export function OpenFolder() {
+  return window['go']['main']['App']['OpenFolder']();
+}
+
 export function TriggerCoreStateUpdate() {
   return window['go']['main']['App']['TriggerCoreStateUpdate']();
 }

@@ -5,9 +5,11 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"os/exec"
 	"path"
+	"runtime"
 
-	"github.com/wailsapp/wails/v2/pkg/runtime"
+	wails_runtime "github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 // App struct
@@ -56,7 +58,7 @@ func (a *App) GetDddgPath() string {
 }
 
 func (a *App) TriggerCoreStateUpdate() {
-	runtime.EventsEmit(a.ctx, "coreStateChanged", a)
+	wails_runtime.EventsEmit(a.ctx, "coreStateChanged", a)
 }
 
 func (a *App) MountPack(id string) {
@@ -84,7 +86,7 @@ func (a *App) UploadFile(mountedPath string, contents []byte) {
 }
 
 func (a *App) UpdateDddgPath() {
-	x, err := runtime.OpenDirectoryDialog(a.ctx, runtime.OpenDialogOptions{
+	x, err := wails_runtime.OpenDirectoryDialog(a.ctx, wails_runtime.OpenDialogOptions{
 		DefaultDirectory:           a.DddgPath,
 		DefaultFilename:            "",
 		Title:                      "Select DDDG location",
@@ -101,10 +103,10 @@ func (a *App) UpdateDddgPath() {
 }
 
 func (a *App) Confirm(text string, title string) bool {
-	x, err := runtime.MessageDialog(a.ctx, runtime.MessageDialogOptions{
+	x, err := wails_runtime.MessageDialog(a.ctx, wails_runtime.MessageDialogOptions{
 		Title:         title,
 		Message:       text,
-		Type:          runtime.QuestionDialog,
+		Type:          wails_runtime.QuestionDialog,
 		Buttons:       []string{"Yes", "No"},
 		DefaultButton: "No",
 	})
@@ -115,10 +117,10 @@ func (a *App) Confirm(text string, title string) bool {
 }
 
 func (a *App) Alert(text string, title string) {
-	_, err := runtime.MessageDialog(a.ctx, runtime.MessageDialogOptions{
+	_, err := wails_runtime.MessageDialog(a.ctx, wails_runtime.MessageDialogOptions{
 		Title:         title,
 		Message:       text,
-		Type:          runtime.InfoDialog,
+		Type:          wails_runtime.InfoDialog,
 		Buttons:       []string{"Ok"},
 		DefaultButton: "Ok",
 	})
@@ -187,4 +189,27 @@ func (a *App) GetPacks() ([]Pack, error) {
 	}
 	fmt.Printf("%+v\n", ret)
 	return ret, nil
+}
+
+func (a *App) OpenFolder() error {
+	if a.DddgPath == "" {
+		return errors.New("no DDDG path set")
+	}
+	if a.MountedPackPath == "" {
+		return errors.New("no pack path set")
+	}
+	targetPath := path.Join(a.DddgPath, "localRepo", a.MountedPackPath)
+	var cmd *exec.Cmd
+	if runtime.GOOS == "windows" {
+		cmd = exec.Command("explorer", "/select,"+targetPath)
+	} else if runtime.GOOS == "darwin" {
+		cmd = exec.Command("open", targetPath)
+	} else {
+		cmd = exec.Command("xdg-open", targetPath)
+	}
+	err := cmd.Start()
+	if err != nil {
+		return err
+	}
+	return nil
 }

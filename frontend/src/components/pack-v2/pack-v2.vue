@@ -9,7 +9,7 @@ import type {
 	JSONContentPack as V2Json,
 } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
 import { computed, ref, type PropType } from "vue";
-import { MountPack } from "../../../wailsjs/go/main/App";
+import { MountPack, OpenFolder } from "../../../wailsjs/go/main/App";
 import { joinNormalize } from "../../path-tools";
 import Code from "../shared/code.vue";
 import PInput from "../shared/p-input.vue";
@@ -226,6 +226,7 @@ function deleteObj() {
 				</fast-tree-item>
 			</teleport>
 			<h2>Pack</h2>
+			<fast-button @click="OpenFolder()">Open folder in explorer</fast-button>
 			<PInput label="ID" v-model="repo.pack.id" />
 			<PInput label="Name" v-model="repo.pack.name" />
 			<PInput label="Source" v-model="repo.pack.source" />

@@ -16,6 +16,8 @@ export function Greet(arg1:string):Promise<string>;
 
 export function MountPack(arg1:string):Promise<void>;
 
+export function OpenFolder():Promise<void>;
+
 export function TriggerCoreStateUpdate():Promise<void>;
 
 export function UpdateDddgPath():Promise<void>;

@@ -2,7 +2,7 @@
 import type { ISupportedRepo } from "@/repo";
 import type { JSONCharacter as V1Json } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v1/jsonFormat";
 import { computed, ref, type PropType } from "vue";
-import { MountPack } from "../../../wailsjs/go/main/App";
+import { MountPack, OpenFolder } from "../../../wailsjs/go/main/App";
 import { joinNormalize } from "../../path-tools";
 import ImageCollection from "../pack-v2/image-collection.vue";
 import Code from "../shared/code.vue";
@@ -55,6 +55,7 @@ type State = null | {
 				</fast-tree-item>
 			</teleport>
 			<h2>Pack</h2>
+			<fast-button @click="OpenFolder()">Open folder in explorer</fast-button>
 			<PInput label="ID" v-model="repo.pack.id" />
 			<PInput label="Name" v-model="repo.pack.name" />
 			<PInput label="Source" v-model="repo.pack.source" />
