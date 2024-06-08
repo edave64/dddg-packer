@@ -28,18 +28,22 @@ const emit = defineEmits<{
 			:key="'f:' + layerPath + '/' + child.name"
 			:folderStructure="child"
 			subStructure="."
-			@selected="$emit('selected', $event)"
+			@selected-change="
+				if ($event.detail?._selected) {
+					emit('selected', $event.detail?.getAttribute('value')!);
+				}
+			"
 		/>
 	</fast-tree-view>
-	<fast-tree-item expanded @click="$emit('selected', layerPath)" v-else>
+	<fast-tree-item expanded v-else>
 		{{ folderStructure.name }}
 		<FileTree
 			v-if="folderStructure.isDir && folderStructure.children"
 			v-for="child of folderStructure.children"
+			:value="layerPath + '/' + child.name"
 			:key="'f:' + layerPath + '/' + child.name"
 			:folderStructure="child"
 			:subStructure="layerPath"
-			@selected="$emit('selected', $event)"
 		/>
 	</fast-tree-item>
 </template>

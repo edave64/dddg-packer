@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, type PropType } from "vue";
+import FileSelectDialog from "../shared/file-select-dialog.vue";
 import PInput from "../shared/p-input.vue";
 import ImageCollection from "./image-collection.vue";
 
@@ -23,7 +24,15 @@ const label = defineModel("label", {
 	type: String,
 });
 
+const quickAddOpen = ref(false);
+
 const selectedVariant = ref(props.variants.length > 0 ? 0 : -1);
+
+function addVariant(newVariant: string) {
+	props.variants.push([newVariant]);
+	selectedVariant.value = props.variants.length - 1;
+	console.log(selectedVariant.value);
+}
 </script>
 <template>
 	<fieldset>
@@ -37,23 +46,14 @@ const selectedVariant = ref(props.variants.length > 0 ? 0 : -1);
 				<fast-select
 					size="5"
 					id="sprite_variants"
+					:selectedIndex="selectedVariant"
 					@input="selectedVariant = $event.target.selectedIndex"
 				>
-					<fast-option
-						v-for="(variant, i) of variants"
-						:value="i"
-						:selected="i === selectedVariant"
-					>
+					<fast-option v-for="(variant, i) of variants" :value="i">
 						{{ variant.length === 1 ? variant[0] : variant }}
 					</fast-option>
 				</fast-select>
-				<fast-button
-					@click="
-						variants.push([]);
-						selectedVariant = variants.length - 1;
-					"
-					>Add variation</fast-button
-				>
+				<fast-button @click="quickAddOpen = true">Add variation</fast-button>
 				<fast-button
 					:disabled="selectedVariant === -1"
 					@click="
@@ -71,6 +71,15 @@ const selectedVariant = ref(props.variants.length > 0 ? 0 : -1);
 				/>
 			</div>
 		</div>
+		<file-select-dialog
+			v-if="quickAddOpen"
+			:folder="folder"
+			@selected="
+				addVariant($event);
+				quickAddOpen = false;
+			"
+			@close="quickAddOpen = false"
+		/>
 	</fieldset>
 </template>
 
