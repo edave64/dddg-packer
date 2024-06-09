@@ -11,7 +11,7 @@ import Code from "../shared/code.vue";
 import Pose from "./pose.vue";
 
 const props = defineProps({
-	style: {
+	styleObj: {
 		required: true,
 		type: Object as PropType<JSONStyle>,
 	},
@@ -30,7 +30,7 @@ const emit = defineEmits<{
 }>();
 
 const f = computed(() => {
-	return joinNormalize(props.folder, props.style.folder);
+	return joinNormalize(props.folder, props.styleObj.folder);
 });
 
 const state = ref(null as State);
@@ -44,15 +44,15 @@ function createPose() {
 	const id = seekFreeIds(
 		"pose",
 		// don't filter by style, since all poses can collide name, even in different styles
-		props.style.poses.map((x) => x.id),
+		props.styleObj.poses.map((x) => x.id),
 	);
-	if (!props.style.poses) {
-		props.style.poses = [];
+	if (!props.styleObj.poses) {
+		props.styleObj.poses = [];
 	}
 	const obj: JSONPose = {
 		id,
 	};
-	props.style.poses.push(obj);
+	props.styleObj.poses.push(obj);
 	state.value = {
 		t: "pose",
 		obj,
@@ -65,8 +65,8 @@ function deleteObj() {
 	state.value = null;
 	switch (s.t) {
 		case "pose": {
-			const idx = props.style.poses.findIndex((x) => x.id === s.obj.id);
-			props.style.poses.splice(idx, 1);
+			const idx = props.styleObj.poses.findIndex((x) => x.id === s.obj.id);
+			props.styleObj.poses.splice(idx, 1);
 			break;
 		}
 	}
@@ -86,7 +86,7 @@ function deleteObj() {
 			<fast-tree-item expanded>
 				Poses
 				<fast-tree-item
-					v-for="pose of style.poses"
+					v-for="pose of styleObj.poses"
 					:key="'p:' + pose.id"
 					expanded
 					@click="state = { t: 'pose', obj: pose }"
@@ -97,7 +97,7 @@ function deleteObj() {
 			</fast-tree-item>
 		</teleport>
 		<h2>Style</h2>
-		<Code :obj="style" />
+		<Code :obj="styleObj" />
 	</template>
 	<Pose
 		:pose="state.obj"

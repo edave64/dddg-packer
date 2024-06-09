@@ -179,12 +179,12 @@ function createStyle() {
 			<fast-tree-item v-if="char.styles && char.styles.length > 0" expanded>
 				Styles
 				<fast-tree-item
-					v-for="sg of char.styles"
-					:key="'sg:' + sg.name"
+					v-for="style of char.styles"
+					:key="'sg:' + style.name"
 					expanded
-					@click="state = { t: 'style', obj: sg }"
+					@click="state = { t: 'style', obj: style }"
 				>
-					{{ sg.label }}
+					{{ style.label }}
 				</fast-tree-item>
 				<fast-tree-item @click="createStyle">Add style group</fast-tree-item>
 			</fast-tree-item>
@@ -212,7 +212,7 @@ function createStyle() {
 		v-else-if="state && state.t === 'head-group'"
 	/>
 	<Style
-		:style="state.obj"
+		:style-obj="state.obj"
 		:folder="folder"
 		:char="char"
 		@delete="deleteObj"

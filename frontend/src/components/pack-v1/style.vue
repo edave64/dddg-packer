@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { seekFreeIds } from "@/array-tools";
+import { normalizeId } from "@/id-tools";
 import type {
 	JSONCharacter,
 	JSONPoseMeta,
@@ -7,14 +8,14 @@ import type {
 } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v1/jsonFormat";
 import { Confirm } from "@wails/go/main/App";
 import Button from "primevue/button";
-import { computed, ref, type PropType } from "vue";
+import { computed, ref, watch, type PropType } from "vue";
 import Code from "../shared/code.vue";
 import PInput from "../shared/p-input.vue";
 import type { HeadDummy } from "./headDummy";
 import Pose from "./pose.vue";
 
 const props = defineProps({
-	style: {
+	styleObj: {
 		required: true,
 		type: Object as PropType<JSONStyle>,
 	},
@@ -42,10 +43,10 @@ type State = null | {
 
 const id = computed({
 	get(): string {
-		return props.style.name;
+		return props.styleObj.name;
 	},
 	set(val: string) {
-		const oldVal = props.style.name;
+		const oldVal = props.styleObj.name;
 		if (oldVal === val) return;
 
 		if (props.char.poses) {
@@ -55,13 +56,13 @@ const id = computed({
 				}
 			}
 		}
-		props.style.name = val;
+		props.styleObj.name = val;
 	},
 });
 
 async function deleteThis() {
 	const hasPoses =
-		props.char.poses?.find((x) => x.style === props.style.name) ?? false;
+		props.char.poses?.find((x) => x.style === props.styleObj.name) ?? false;
 	if (
 		await Confirm(
 			`Do you really want to delete this style? This cannot be undone.${hasPoses ? " All associated poses will be deleted, too" : ""}`,
@@ -100,7 +101,7 @@ function createPose() {
 	}
 	const obj = {
 		name: id,
-		style: props.style.name,
+		style: props.styleObj.name,
 		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	} as any;
 	props.char.poses.push(obj);
@@ -124,7 +125,7 @@ function createPose() {
 			<fast-tree-item expanded>
 				Poses
 				<fast-tree-item
-					v-for="pose of char.poses?.filter((x) => x.style === style.name)"
+					v-for="pose of char.poses?.filter((x) => x.style === styleObj.name)"
 					:key="'p:' + pose.name"
 					expanded
 					@click="state = { t: 'pose', obj: pose }"
@@ -135,10 +136,10 @@ function createPose() {
 			</fast-tree-item>
 		</teleport>
 		<h2>Style</h2>
+		<PInput label="Label" v-model="styleObj.label" />
 		<PInput label="Id" v-model="id" />
-		<PInput label="Label" v-model="style.label" />
 		<Button @click="deleteThis">Delete Style</Button>
-		<Code :obj="style" />
+		<Code :obj="styleObj" />
 	</template>
 	<Pose
 		:pose="state.obj"

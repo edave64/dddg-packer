@@ -83,7 +83,7 @@ async function deleteThis() {
 		<Code :obj="styleGroup" />
 	</template>
 	<Style
-		:style="state.obj"
+		:style-obj="state.obj"
 		:folder="folder"
 		:head-groups="headGroups"
 		@leave="state = null"
