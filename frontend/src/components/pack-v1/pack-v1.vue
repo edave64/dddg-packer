@@ -14,7 +14,7 @@ import type { HeadDummy } from "./headDummy";
 const props = defineProps({
 	json: {
 		required: true,
-		type: Object as PropType<V1Json<HeadDummy>>,
+		type: Object as PropType<V1Extended>,
 	},
 	repo: {
 		required: true,
@@ -37,6 +37,33 @@ type State = null | {
 	t: "char";
 	obj: V1Json<HeadDummy>;
 };
+
+window.j = props.json;
+
+interface V1Extended extends V1Json<HeadDummy> {
+	dependencies: string[];
+}
+
+if (!props.json.dependencies) {
+	const deps = new Set<string>();
+	// TODO: Detect V1 native dependencies
+	if (props.json.id.includes(":")) {
+		deps.add(props.json.id.split(":")[0]);
+
+		for (const pose of props.json.poses ?? []) {
+			if (!pose.name.includes(":")) continue;
+			deps.add(pose.name.split(":")[0]);
+		}
+
+		for (const head of Object.keys(props.json.heads ?? {})) {
+			if (!head.includes(":")) continue;
+			deps.add(head.split(":")[0]);
+		}
+	}
+
+	// TODO: Typing of dependencies is messed up
+	props.json.dependencies = Array.from(deps);
+}
 </script>
 <template>
 	<teleport to="#breadcrumb">

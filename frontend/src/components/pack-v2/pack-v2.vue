@@ -41,6 +41,52 @@ const folder = computed(() => {
 
 const state = ref(null as State);
 
+window.j = props.json;
+
+if (!props.json.dependencies) {
+	const deps = new Set<string>();
+	for (const char of props.json.characters ?? []) {
+		if (!char.id.includes(":")) continue;
+		deps.add(char.id.split(":")[0]);
+
+		for (const styleGroup of char.styleGroups ?? []) {
+			if (!styleGroup.id.includes(":")) continue;
+			deps.add(styleGroup.id.split(":")[0]);
+
+			for (const style of styleGroup.styles ?? []) {
+				for (const pose of style.poses ?? []) {
+					if (pose.id.includes(":")) {
+						deps.add(pose.id.split(":")[0]);
+					}
+
+					for (const head of pose.compatibleHeads ?? []) {
+						if (!head.includes(":")) continue;
+						deps.add(head.split(":")[0]);
+					}
+				}
+			}
+		}
+
+		for (const head of Object.keys(char.heads ?? {})) {
+			if (!head.includes(":")) continue;
+			deps.add(head.split(":")[0]);
+		}
+	}
+
+	for (const sprite of props.json.sprites ?? []) {
+		if (!sprite.id.includes(":")) continue;
+		deps.add(sprite.id.split(":")[0]);
+	}
+
+	for (const background of props.json.backgrounds ?? []) {
+		if (!background.id.includes(":")) continue;
+		deps.add(background.id.split(":")[0]);
+	}
+
+	// TODO: Typing of dependencies is messed up
+	props.json.dependencies = Array.from(deps) as [];
+}
+
 type State =
 	| null
 	| {
