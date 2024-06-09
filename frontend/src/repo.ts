@@ -25,6 +25,15 @@ export interface IPack {
 	preview: string[];
 	characters: string[];
 	authors: string[];
+	kind: (
+		| "Characters"
+		| "Sprites"
+		| "Backgrounds"
+		| "Colors"
+		| "Styles"
+		| "Expressions"
+		| "Poses"
+	)[];
 }
 
 export interface IAuthor {

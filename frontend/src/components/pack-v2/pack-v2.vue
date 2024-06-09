@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { seekFreeIds } from "@/array-tools";
+import { aryFindRemove, aryRemove, seekFreeIds } from "@/array-tools";
 import type { ISupportedRepo } from "@/repo";
 import type {
 	JSONBackground,
@@ -77,6 +77,7 @@ function createBackground() {
 		label: "New Background",
 	};
 	props.json.backgrounds.push(obj);
+	props.repo.pack.kind.push("Backgrounds");
 	state.value = {
 		t: "background",
 		obj,
@@ -96,6 +97,9 @@ function createCharacter() {
 		label: "New Character",
 	};
 	props.json.characters.push(obj);
+	props.repo.pack.characters.push(obj.label as string);
+	props.repo.pack.kind.push("Characters");
+
 	state.value = {
 		t: "char",
 		obj,
@@ -116,6 +120,7 @@ function createSprite() {
 		label: "New Sprite",
 	};
 	props.json.sprites.push(obj);
+	props.repo.pack.kind.push("Sprites");
 	state.value = {
 		t: "sprite",
 		obj,
@@ -126,10 +131,7 @@ function deleteObj() {
 	const s = state.value;
 	if (s === null) return;
 	if (s.t === "color") {
-		const list = props.json.colors;
-		if (!list) return;
-		const idx = list.findIndex((x) => x.color === s.obj.color);
-		list.splice(idx, 1);
+		aryFindRemove(props.json.colors, (x) => x.color === s.obj.color);
 		return;
 	}
 	state.value = null;
@@ -141,21 +143,78 @@ function deleteObj() {
 		} as Record<typeof s.t, Array<{ id: string }>>
 	)[s.t];
 
-	const idx = list.findIndex((x) => x.id === s.obj.id);
-	list.splice(idx, 1);
-	if (list.length === 0) {
-		switch (s.t) {
-			case "char":
-				delete props.json.characters;
-				break;
-			case "sprite":
-				delete props.json.sprites;
-				break;
-			case "background":
-				delete props.json.backgrounds;
-				break;
+	aryFindRemove(list, (x) => x.id === s.obj.id);
+
+	if (s.t === "char") {
+		aryRemove(props.repo.pack.characters, s.obj.label as string);
+
+		const oldClassification = classifyChar(s.obj);
+		const remainingClassifications =
+			props.json.characters?.reduce(
+				(acc, char) => acc | classifyChar(char),
+				0,
+			) ?? 0;
+		for (const kind of [
+			"Characters",
+			"Styles",
+			"Poses",
+			"Expressions",
+		] as const) {
+			if (
+				oldClassification & CharClassification[kind] &&
+				!(remainingClassifications & CharClassification[kind])
+			) {
+				aryRemove(props.repo.pack.kind, kind);
+			}
 		}
 	}
+
+	if (list.length === 0) {
+		switch (s.t) {
+			case "char": {
+				delete props.json.characters;
+				break;
+			}
+			case "sprite": {
+				delete props.json.sprites;
+				aryRemove(props.repo.pack.kind, "Sprites");
+				break;
+			}
+			case "background": {
+				delete props.json.backgrounds;
+				aryRemove(props.repo.pack.kind, "Backgrounds");
+				break;
+			}
+		}
+	}
+}
+
+enum CharClassification {
+	Characters = 1,
+	Poses = 2,
+	Styles = 4,
+	Expressions = 8,
+}
+
+function classifyChar(char: JSONCharacter): CharClassification {
+	if (!char.id.includes(":")) {
+		// Does not extend an existing character
+		return CharClassification.Characters;
+	}
+	let ret = 0;
+	for (const styleGroup of char.styleGroups ?? []) {
+		if (!styleGroup.id.includes(":")) {
+			ret |= CharClassification.Styles;
+		} else {
+			// A style group that extends an existing one can only add poses or styles.
+			// And style extensions are hard to detect and rare. TODO
+			ret |= CharClassification.Poses;
+		}
+	}
+	if (char.heads && Object.keys(char.heads).length > 0) {
+		ret |= CharClassification.Expressions;
+	}
+	return ret;
 }
 </script>
 <template>
