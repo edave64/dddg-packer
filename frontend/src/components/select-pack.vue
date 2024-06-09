@@ -2,6 +2,7 @@
 import { normalizeId } from "@/id-tools";
 import type { ISupportedRepo } from "@/repo";
 import type { JSONContentPack } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
+import Button from "primevue/button";
 import { ref, watch, type PropType } from "vue";
 import {
 	CreatePack,

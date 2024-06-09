@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import Checkbox from "primevue/checkbox";
+
 const props = defineProps({
 	label: {
 		type: String,
@@ -8,12 +10,8 @@ const props = defineProps({
 const model = defineModel({ type: Boolean });
 </script>
 <template>
-	<fast-checkbox :checked="model" @change="model = $event.target.checked">{{
-		label
-	}}</fast-checkbox>
+	<p>
+		<Checkbox v-model="model" binary />
+		<label v-if="label">{{ label }}</label>
+	</p>
 </template>
-<style>
-.fast-field {
-	width: calc(100% - 8px);
-}
-</style>

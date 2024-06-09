@@ -141,7 +141,7 @@ const compositeOptions = [
 	<tr>
 		<td>
 			<Combo
-				style="min-width: 140px"
+				style="min-width: 180px"
 				v-model="command.type"
 				:data="[
 					{ label: 'Pose position', value: 'pose-part' },
@@ -154,7 +154,7 @@ const compositeOptions = [
 			<td></td>
 			<td>
 				<Combo
-					style="min-width: 100px; width: 100px"
+					style="min-width: 130px; width: 130px"
 					v-model="command.part"
 					:data="
 						posePositions.map((x) => ({

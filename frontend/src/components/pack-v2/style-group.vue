@@ -5,6 +5,7 @@ import type {
 	JSONStyleGroup,
 } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
 import { Confirm } from "@wails/go/main/App";
+import Button from "primevue/button";
 import { computed, ref, type PropType } from "vue";
 import { joinNormalize } from "../../path-tools";
 import Code from "../shared/code.vue";

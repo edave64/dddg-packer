@@ -66,7 +66,7 @@ const fullUrl = computed(() => {
 					@selected="selected = $event"
 				/>
 				<div>
-					<img :src="fullUrl" style="max-width: 100%" />
+					<img :src="fullUrl" style="max-width: 100%; max-height: 50vh" />
 				</div>
 			</div>
 			<Button

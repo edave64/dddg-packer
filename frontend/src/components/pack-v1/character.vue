@@ -198,7 +198,7 @@ function createStyle() {
 		<p>
 			<ImageInput label="Chibi" v-model="char.chibi" />
 			<br />
-			<img :src="joinNormalize(f, char.chibi)" />
+			<img :src="joinNormalize(f, char.chibi)" style="max-height: 50vh" />
 		</p>
 		<Code :obj="char" />
 	</template>

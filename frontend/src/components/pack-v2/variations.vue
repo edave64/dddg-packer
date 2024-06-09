@@ -55,7 +55,7 @@ function addVariants(newVariants: string[]) {
 					:optionLabel="
 						(x) => (x.variant.length === 1 ? x.variant[0] : x.variant)
 					"
-					listStyle="height:256px"
+					listStyle="max-height:256px"
 				/>
 				<Button @click="quickAddOpen = true">Add variation</Button>
 				<Button

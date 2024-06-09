@@ -51,6 +51,7 @@ const previewStyle = computed((): CSSProperties => {
 
 	return {
 		background,
+		"max-height": "50vh",
 	};
 });
 </script>
@@ -63,6 +64,7 @@ const previewStyle = computed((): CSSProperties => {
 				:options="imageWithIdx"
 				optionValue="idx"
 				:optionLabel="(x) => (x.image.length === 1 ? x.image[0] : x.image)"
+				listStyle="max-height:256px"
 			/>
 			<Button
 				@click="

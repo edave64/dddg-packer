@@ -30,6 +30,7 @@ const previewStyle = computed((): CSSProperties => {
 
 	return {
 		background,
+		"max-height": "50vh",
 	};
 });
 

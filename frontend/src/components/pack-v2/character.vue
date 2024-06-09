@@ -229,7 +229,7 @@ watch(
 		<p>
 			<ImageInput label="Chibi" v-model="char.chibi" />
 			<br />
-			<img :src="joinNormalize(f, char.chibi)" />
+			<img :src="joinNormalize(f, char.chibi)" style="max-height: 50vh" />
 		</p>
 		<Button @click="deleteThis">Delete character</Button>
 		<Code :obj="char" />

@@ -13,6 +13,7 @@ const props = defineProps({
 		type: Array as PropType<IOptions[]>,
 		required: true,
 	},
+	style: {},
 });
 
 const model = defineModel({});
@@ -25,6 +26,7 @@ interface IOptions {
 <template>
 	<label v-if="label" style="width: 96px">{{ label }}</label>
 	<Dropdown
+		:style
 		v-model="model"
 		:options="data"
 		optionLabel="label"

@@ -16,7 +16,7 @@ const props = defineProps({
 	},
 	modelValue: {
 		type: String,
-		required: true,
+		default: "",
 	},
 });
 
@@ -69,7 +69,7 @@ function updateValue(value: string | undefined) {
 }
 </script>
 <template>
-	<div style="display: flex; width: calc(100% - 8px); align-items: baseline">
+	<div style="display: flex; width: calc(100% - 8px); align-items: center">
 		<label v-if="label" style="width: 96px" :for="id">{{ label }}</label>
 		<InputText
 			style="flex-grow: 1"

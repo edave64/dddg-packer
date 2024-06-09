@@ -8,7 +8,8 @@ import type {
 } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
 import { Confirm } from "@wails/go/main/App";
 import Button from "primevue/button";
-import { computed, type PropType } from "vue";
+import Listbox from "primevue/listbox";
+import { computed, ref, type PropType } from "vue";
 import { joinNormalize } from "../../path-tools";
 import Code from "../shared/code.vue";
 import PInput from "../shared/p-input.vue";
@@ -131,6 +132,29 @@ async function deleteThis() {
 		emit("delete");
 	}
 }
+
+const headGroupOptions = computed((): Array<{ value: string }> => {
+	return Object.entries(props.headGroups).map(([k, v]) => ({
+		value: k,
+	}));
+});
+
+const tmp = ref<string[]>([]);
+
+const selectedHeadGroups = computed({
+	get() {
+		return props.pose.compatibleHeads ?? [];
+	},
+	set(value: string[]) {
+		if (value.length === 0) {
+			if (props.pose.compatibleHeads) {
+				delete props.pose.compatibleHeads;
+			}
+		} else {
+			props.pose.compatibleHeads = value;
+		}
+	},
+});
 </script>
 <template>
 	<teleport to="#breadcrumb">
@@ -201,17 +225,13 @@ async function deleteThis() {
 		"
 	>
 		<summary>Head groups</summary>
-		<fast-select multiple>
-			<fast-option
-				v-for="(_, key) of headGroups"
-				:value="key"
-				:selected="pose.compatibleHeads?.includes(key as string)"
-				:key="`hg:${key}`"
-				@selected="console.log($event)"
-			>
-				{{ key }}
-			</fast-option>
-		</fast-select>
+		<Listbox
+			multiple
+			v-model="selectedHeadGroups"
+			:options="headGroupOptions"
+			optionLabel="value"
+			optionValue="value"
+		/>
 	</details>
 	<Variations
 		v-for="(v, k) in pose.positions"
