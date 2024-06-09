@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { JSONHeadCollections } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v1/jsonFormat";
 import { Confirm } from "@wails/go/main/App";
+import Button from "primevue/button";
 import { computed, type PropType } from "vue";
 import { joinNormalize } from "../../path-tools";
 import Code from "../shared/code.vue";
@@ -73,6 +74,6 @@ async function deleteThis() {
 		label="Variants"
 		:folder="f"
 	/>
-	<fast-button @click="deleteThis">Delete head group</fast-button>
+	<Button @click="deleteThis">Delete head group</Button>
 	<Code :obj="headGroup" />
 </template>

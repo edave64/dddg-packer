@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import type { PropType } from "vue";
+import Tree, { type TreeSelectionKeys } from "primevue/tree";
+import type { TreeNode } from "primevue/treenode";
+import { computed, ref, watch, type PropType } from "vue";
 import type { IFileInfo } from "./file-tree";
 
 const props = defineProps({
@@ -7,45 +9,59 @@ const props = defineProps({
 		type: Object as PropType<IFileInfo>,
 		required: true,
 	},
-	subStructure: {
-		type: String,
-		default: "",
+	multiple: {
+		type: Boolean,
+		default: false,
 	},
 });
 
-const layerPath = `${props.subStructure}/${props.folderStructure.name}`;
+const nodes = computed((): TreeNode[] => {
+	return props.folderStructure.isDir
+		? props.folderStructure.children?.map((x) => toTreeNode(x)) ?? []
+		: [];
+});
+
+function toTreeNode(node: IFileInfo, folder = "."): TreeNode {
+	const path = `${folder}/${node.name}`;
+	return {
+		label: node.name,
+		key: path,
+		children: node.isDir
+			? node?.children?.map((x) => toTreeNode(x, path))
+			: undefined,
+		expanded: true,
+		selectable: !node.isDir,
+	};
+}
+
+const selected = ref(undefined as undefined | TreeSelectionKeys);
+
+watch(selected, (newVal) => {
+	if (!newVal) return;
+	emitSelected(newVal);
+});
+
+function emitSelected(selected: TreeSelectionKeys): void {
+	console.log(selected);
+	selected.value = selected;
+	emit(
+		"selected",
+		Object.entries(selected)
+			.filter((x) => (props.multiple ? x[1].checked : !!x[1]))
+			.map((x) => x[0]),
+	);
+}
 
 const emit = defineEmits<{
-	selected: [string];
+	selected: [string[]];
 }>();
 </script>
 <template>
-	<fast-tree-view v-if="subStructure === ''">
-		{{ folderStructure.name }}
-		<FileTree
-			v-if="folderStructure.isDir && folderStructure.children"
-			v-for="child of folderStructure.children"
-			:key="'f:' + layerPath + '/' + child.name"
-			:folderStructure="child"
-			subStructure="."
-			@selected-change="
-				if ($event.detail?._selected) {
-					emit('selected', $event.detail?.getAttribute('value')!);
-				}
-			"
-		/>
-	</fast-tree-view>
-	<fast-tree-item expanded v-else>
-		{{ folderStructure.name }}
-		<FileTree
-			v-if="folderStructure.isDir && folderStructure.children"
-			v-for="child of folderStructure.children"
-			:value="layerPath + '/' + child.name"
-			:key="'f:' + layerPath + '/' + child.name"
-			:folderStructure="child"
-			:subStructure="layerPath"
-		/>
-	</fast-tree-item>
+	<Tree
+		:value="nodes"
+		:selectionMode="multiple ? 'checkbox' : 'single'"
+		v-model:selectionKeys="selected"
+	/>
 </template>
 <style>
 .fast-field {

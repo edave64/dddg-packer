@@ -76,9 +76,9 @@ async function deleteThis() {
 		</teleport>
 		<h2>Style group</h2>
 		<p>
-			<PInput label="ID" v-model="styleGroup.id" />
+			<PInput label="ID" v-model="styleGroup.id" type="id" />
 		</p>
-		<fast-button @click="deleteThis">Delete character</fast-button>
+		<Button @click="deleteThis">Delete character</Button>
 		<Code :obj="styleGroup" />
 	</template>
 	<Style

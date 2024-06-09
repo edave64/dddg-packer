@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import Button from "primevue/button";
+import InputText from "primevue/inputtext";
 import { ref, watch } from "vue";
 import FileSelectDialog from "./file-select-dialog.vue";
 
@@ -37,22 +39,20 @@ const dlgOpen = ref(false);
 </script>
 <template>
 	<div style="display: flex; align-items: end">
-		<fast-text-field
+		<InputText
 			class="fast-field"
-			appearance="filled"
 			:placeholder="placeholder ?? label"
-			:value="model"
+			v-model="model"
 			:disabled="disabled"
-			@input="model = $event.target.value"
-			>{{ label }}</fast-text-field
-		>
-		<fast-button :disabled="disabled" @click="dlgOpen = true">...</fast-button>
+			variant="filled"
+		/>
+		<Button :disabled="disabled" @click="dlgOpen = true">...</Button>
 	</div>
 	<file-select-dialog
 		v-if="dlgOpen"
 		:folder="folder"
 		@selected="
-			model = $event;
+			model = $event[0];
 			dlgOpen = false;
 		"
 		@close="dlgOpen = false"

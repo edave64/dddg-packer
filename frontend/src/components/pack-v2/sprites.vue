@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { JSONSprite } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
 import { Confirm } from "@wails/go/main/App";
+import Button from "primevue/button";
 import { computed, type PropType } from "vue";
 import { joinNormalize } from "../../path-tools";
 import Code from "../shared/code.vue";
@@ -47,7 +48,7 @@ async function deleteThis() {
 		<fast-tree-item @click="$emit('leave')">Back to pack</fast-tree-item>
 	</teleport>
 	<h2>Sprite</h2>
-	<PInput label="ID" v-model="sprite.id" />
+	<PInput label="ID" v-model="sprite.id" type="id" />
 	<PInput label="Label" v-model="sprite.label" />
 	<ImageCollection
 		v-if="sprite.variants?.length === 1"
@@ -55,6 +56,6 @@ async function deleteThis() {
 		:folder="f"
 	/>
 	<Variations :variants="sprite.variants" label="Variants" :folder="f" v-else />
-	<fast-button @click="deleteThis">Delete sprite</fast-button>
+	<Button @click="deleteThis">Delete sprite</Button>
 	<Code :obj="sprite" />
 </template>

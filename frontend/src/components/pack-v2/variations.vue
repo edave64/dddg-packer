@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { ref, type PropType } from "vue";
+import Button from "primevue/button";
+import Listbox from "primevue/listbox";
+import { computed, ref, type PropType } from "vue";
 import FileSelectDialog from "../shared/file-select-dialog.vue";
 import PInput from "../shared/p-input.vue";
 import ImageCollection from "./image-collection.vue";
@@ -28,10 +30,13 @@ const quickAddOpen = ref(false);
 
 const selectedVariant = ref(props.variants.length > 0 ? 0 : -1);
 
-function addVariant(newVariant: string) {
-	props.variants.push([newVariant]);
+const variantsWithIdx = computed(() =>
+	props.variants.map((x, i) => ({ idx: i, variant: x })),
+);
+
+function addVariants(newVariants: string[]) {
+	props.variants.push(...newVariants.map((x) => [x]));
 	selectedVariant.value = props.variants.length - 1;
-	console.log(selectedVariant.value);
 }
 </script>
 <template>
@@ -43,24 +48,23 @@ function addVariant(newVariant: string) {
 		<div class="variant_splitter">
 			<div v-if="variants">
 				<label for="sprite_variants">Variants:</label>
-				<fast-select
-					size="5"
-					id="sprite_variants"
-					:selectedIndex="selectedVariant"
-					@input="selectedVariant = $event.target.selectedIndex"
-				>
-					<fast-option v-for="(variant, i) of variants" :value="i">
-						{{ variant.length === 1 ? variant[0] : variant }}
-					</fast-option>
-				</fast-select>
-				<fast-button @click="quickAddOpen = true">Add variation</fast-button>
-				<fast-button
+				<Listbox
+					v-model="selectedVariant"
+					:options="variantsWithIdx"
+					optionValue="idx"
+					:optionLabel="
+						(x) => (x.variant.length === 1 ? x.variant[0] : x.variant)
+					"
+					listStyle="height:256px"
+				/>
+				<Button @click="quickAddOpen = true">Add variation</Button>
+				<Button
 					:disabled="selectedVariant === -1"
 					@click="
 						variants.splice(selectedVariant, 1);
 						selectedVariant = 0;
 					"
-					>Remove variation</fast-button
+					>Remove variation</Button
 				>
 			</div>
 			<div class="grower">
@@ -74,8 +78,9 @@ function addVariant(newVariant: string) {
 		<file-select-dialog
 			v-if="quickAddOpen"
 			:folder="folder"
+			multiple
 			@selected="
-				addVariant($event);
+				addVariants($event);
 				quickAddOpen = false;
 			"
 			@close="quickAddOpen = false"

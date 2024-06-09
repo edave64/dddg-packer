@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import Dropdown from "primevue/dropdown";
 import type { PropType } from "vue";
 
 const props = defineProps({
@@ -22,13 +23,11 @@ interface IOptions {
 }
 </script>
 <template>
-	<fast-select @input="model = $event.target.value" :value="model">
-		<fast-option
-			v-for="(option, i) of data"
-			:value="option.value"
-			:key="`cb:${i}:${option.value}`"
-		>
-			{{ option.label }}
-		</fast-option>
-	</fast-select>
+	<label v-if="label" style="width: 96px">{{ label }}</label>
+	<Dropdown
+		v-model="model"
+		:options="data"
+		optionLabel="label"
+		optionValue="value"
+	/>
 </template>

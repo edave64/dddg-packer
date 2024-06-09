@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import Button from "primevue/button";
+import Dialog from "primevue/dialog";
 import { computed, ref } from "vue";
 import type { IFileInfo } from "./file-tree";
 import FileTree from "./file-tree.vue";
@@ -8,16 +10,20 @@ const props = defineProps({
 		type: String,
 		default: "./",
 	},
+	multiple: {
+		type: Boolean,
+		default: false,
+	},
 });
 
 const folderStructure = ref(null as null | IFileInfo);
 
 const emit = defineEmits<{
-	selected: [newVal: string];
+	selected: [newVal: string[]];
 	close: [];
 }>();
 
-const selected = ref(undefined as undefined | string);
+const selected = ref(undefined as undefined | string[]);
 const root = new URL("/mountedPack/", location.origin);
 
 (async () => {
@@ -30,40 +36,47 @@ const root = new URL("/mountedPack/", location.origin);
 
 const fullUrl = computed(() => {
 	if (!selected.value) return "";
-	return `${new URL(selected.value, new URL(props.folder, root))}`;
+	return `${new URL(selected.value[0], new URL(props.folder, root))}`;
 });
 </script>
 <template>
-	<teleport to="#modalSlot">
-		<fast-dialog>
-			<div
-				v-if="folderStructure"
-				style="
-					padding: 0 10px 10px;
-					color: var(--neutral-foreground-rest);
-					display: flex;
-					flex-direction: column;
-					height: 100%;
-				"
-			>
-				<h2>Select a file</h2>
-				<div style="display: flex; overflow: hidden">
-					<FileTree
-						:folderStructure="folderStructure!"
-						style="overflow: auto; flex: 1"
-						@selected="selected = $event"
-					/>
-					<img :src="fullUrl" style="max-height: 50vh; flex: 1" />
+	<Dialog visible style="width: 90vw; height: 90vh">
+		<div
+			v-if="folderStructure"
+			style="
+				padding: 0 10px 10px;
+				color: var(--neutral-foreground-rest);
+				display: flex;
+				flex-direction: column;
+				height: 100%;
+			"
+		>
+			<h2>Select a file</h2>
+			<div style="display: flex; overflow: hidden; width: 100%; height: 100%">
+				<FileTree
+					:folderStructure="folderStructure!"
+					style="
+						overflow: auto;
+						flex: 1;
+						min-width: 256px;
+						max-height: 100%;
+						overflow: auto;
+					"
+					:multiple
+					@selected="selected = $event"
+				/>
+				<div>
+					<img :src="fullUrl" style="max-width: 100%" />
 				</div>
-				<fast-button
-					@click="$emit('selected', selected!)"
-					:disabled="selected === undefined"
-					>Confirm</fast-button
-				>
-				<fast-button @click="$emit('close')">Close</fast-button>
 			</div>
-		</fast-dialog>
-	</teleport>
+			<Button
+				@click="$emit('selected', selected!)"
+				:disabled="selected === undefined"
+				>Confirm</Button
+			>
+			<Button @click="$emit('close')">Close</Button>
+		</div>
+	</Dialog>
 </template>
 <style>
 .fast-field {

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { normalizeId } from "@/id-tools";
 import type { ISupportedRepo } from "@/repo";
 import type { JSONContentPack } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
 import { ref, watch, type PropType } from "vue";
@@ -72,13 +73,6 @@ watch(
 		packId.value = ret;
 	},
 );
-
-function normalizeId(str: string) {
-	return str
-		.toLocaleLowerCase()
-		.replace(/ /g, "_")
-		.replace(/[^a-z0-9\-_\.]/g, "");
-}
 
 async function createPack() {
 	const repo: ISupportedRepo = {
@@ -163,12 +157,12 @@ async function createPack() {
 		<PInput label="Artist" v-model="artist" />
 		<PInput
 			label="Pack id"
-			pattern="^[a-z_\.\-0-9]*$"
 			v-model="packId"
+			type="id"
 			@update:model-value="packIdCustomized = true"
 		/>
 		<p>
-			<fast-button @click="createPack">Create Pack</fast-button>
+			<Button @click="createPack">Create Pack</Button>
 		</p>
 	</template>
 </template>

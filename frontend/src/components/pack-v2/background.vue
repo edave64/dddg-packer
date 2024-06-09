@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { JSONBackground } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
 import { Confirm } from "@wails/go/main/App";
+import Button from "primevue/button";
 import { computed, type PropType } from "vue";
 import { joinNormalize } from "../../path-tools";
 import Code from "../shared/code.vue";
@@ -49,6 +50,6 @@ async function deleteThis() {
 	<PInput label="ID" v-model="background.id" />
 	<PInput label="Label" v-model="background.label" />
 	<Variations :variants="background.variants" label="Variants" :folder="f" />
-	<fast-button @click="deleteThis">Delete background</fast-button>
+	<Button @click="deleteThis">Delete background</Button>
 	<Code :obj="background" />
 </template>

@@ -7,6 +7,7 @@ import type {
 	JSONPoseCommand,
 } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
 import { Confirm } from "@wails/go/main/App";
+import Button from "primevue/button";
 import { computed, type PropType } from "vue";
 import { joinNormalize } from "../../path-tools";
 import Code from "../shared/code.vue";
@@ -139,7 +140,7 @@ async function deleteThis() {
 		<fast-tree-item @click="$emit('leave')">Back to style</fast-tree-item>
 	</teleport>
 	<h2>Pose</h2>
-	<PInput label="ID" v-model="pose.id" />
+	<PInput label="ID" v-model="pose.id" type="id" />
 	<details>
 		<summary>Render commands</summary>
 		<template v-if="pose.renderCommands">
@@ -149,9 +150,18 @@ async function deleteThis() {
 						<th>Type</th>
 						<th>Folder</th>
 						<th>Option</th>
-						<th>Offset</th>
+						<th colspan="2">Offset</th>
 						<th>Composite</th>
 						<th>Action</th>
+					</tr>
+					<tr>
+						<th></th>
+						<th></th>
+						<th></th>
+						<th>X</th>
+						<th>Y</th>
+						<th></th>
+						<th></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -167,21 +177,20 @@ async function deleteThis() {
 					/>
 				</tbody>
 			</table>
-			<fast-button
-				@click="pose.renderCommands.push({ type: 'image', images: [] })"
-				>Add render command</fast-button
+			<Button @click="pose.renderCommands.push({ type: 'image', images: [] })"
+				>Add render command</Button
 			>
-			<fast-button
+			<Button
 				:disabled="renderCommandsDefaultIssue != ''"
 				:title="renderCommandsDefaultIssue"
 				@click="delete pose.renderCommands"
-				>Switch to default</fast-button
+				>Switch to default</Button
 			>
 		</template>
 		<template v-else>
 			<p>Default render commands: Heads, Left, Right, Variant</p>
-			<fast-button @click="addCustomRenderCommands()"
-				>Add custom render commands</fast-button
+			<Button @click="addCustomRenderCommands()"
+				>Add custom render commands</Button
 			>
 		</template>
 	</details>
@@ -214,39 +223,39 @@ async function deleteThis() {
 	/>
 	<template v-if="!pose.renderCommands">
 		<p v-if="!pose.positions?.['Left']">
-			<fast-button
+			<Button
 				@click="
 					if (!pose.positions) {
 						pose.positions = {};
 					}
 					pose.positions!.Left = [];
 				"
-				>Create left pose position</fast-button
+				>Create left pose position</Button
 			>
 		</p>
 		<p v-if="!pose.positions?.['Right']">
-			<fast-button
+			<Button
 				@click="
 					if (!pose.positions) {
 						pose.positions = {};
 					}
 					pose.positions!.Right = [];
 				"
-				>Create right pose position</fast-button
+				>Create right pose position</Button
 			>
 		</p>
 		<p v-if="!pose.positions?.['Variant']">
-			<fast-button
+			<Button
 				@click="
 					if (!pose.positions) {
 						pose.positions = {};
 					}
 					pose.positions!.Variant = [];
 				"
-				>Create variant pose position</fast-button
+				>Create variant pose position</Button
 			>
 		</p>
 	</template>
-	<fast-button @click="deleteThis">Delete pose</fast-button>
+	<Button @click="deleteThis">Delete pose</Button>
 	<Code :obj="pose" />
 </template>

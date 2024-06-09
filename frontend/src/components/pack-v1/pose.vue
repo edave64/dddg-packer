@@ -2,6 +2,7 @@
 import type { JSONPoseMeta } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v1/jsonFormat";
 import type { Select } from "@microsoft/fast-components";
 import { Confirm } from "@wails/go/main/App";
+import Button from "primevue/button";
 import { computed, type PropType } from "vue";
 import { joinNormalize } from "../../path-tools";
 import Code from "../shared/code.vue";
@@ -115,23 +116,19 @@ async function deleteThis() {
 		v-model="pose.static"
 	/>
 	<template v-if="!('left' in pose || 'variant' in pose || 'static' in pose)">
-		<fast-button
+		<Button
 			@click="
 				(pose as any).left = [];
 				(pose as any).right = [];
 			"
-			>Initialize as split-pose</fast-button
+			>Initialize as split-pose</Button
 		>
 		<br />
-		<fast-button @click="(pose as any).variant = []"
-			>Initialize as variants</fast-button
-		>
+		<Button @click="(pose as any).variant = []">Initialize as variants</Button>
 		<br />
-		<fast-button @click="(pose as any).static = ''"
-			>Initialize as static</fast-button
-		>
+		<Button @click="(pose as any).static = ''">Initialize as static</Button>
 		<br />
 	</template>
-	<fast-button @click="deleteThis">Delete Pose</fast-button>
+	<Button @click="deleteThis">Delete Pose</Button>
 	<Code :obj="pose" />
 </template>

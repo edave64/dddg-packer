@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { JSONHeadCollections } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
 import { Confirm } from "@wails/go/main/App";
+import Button from "primevue/button";
 import { computed, type PropType } from "vue";
 import { joinNormalize } from "../../path-tools";
 import Code from "../shared/code.vue";
@@ -58,8 +59,9 @@ async function deleteThis() {
 	<p>
 		<PInput
 			label="ID"
-			:value="id"
-			@input="$emit('updateKey', ($event.target as HTMLInputElement).value)"
+			type="id"
+			:modelValue="id"
+			@update:modelValue="$emit('updateKey', $event)"
 		/>
 	</p>
 	<Variations
@@ -69,6 +71,6 @@ async function deleteThis() {
 		label="Variants"
 		:folder="f"
 	/>
-	<fast-button @click="deleteThis">Delete character</fast-button>
+	<Button @click="deleteThis">Delete character</Button>
 	<Code :obj="headGroup" />
 </template>

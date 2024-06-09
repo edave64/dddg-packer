@@ -8,6 +8,7 @@ import type {
 	JSONSprite,
 	JSONContentPack as V2Json,
 } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
+import Button from "primevue/button";
 import { computed, ref, type PropType } from "vue";
 import { MountPack, OpenFolder } from "../../../wailsjs/go/main/App";
 import { joinNormalize } from "../../path-tools";
@@ -285,7 +286,7 @@ function classifyChar(char: JSONCharacter): CharClassification {
 				</fast-tree-item>
 			</teleport>
 			<h2>Pack</h2>
-			<fast-button @click="OpenFolder()">Open folder in explorer</fast-button>
+			<Button @click="OpenFolder()">Open folder in explorer</Button>
 			<PInput label="ID" v-model="repo.pack.id" />
 			<PInput label="Name" v-model="repo.pack.name" />
 			<PInput label="Source" v-model="repo.pack.source" />

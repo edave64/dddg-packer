@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import InputText from "primevue/inputtext";
+import { getCurrentInstance, ref, watch, type PropType } from "vue";
+
 const props = defineProps({
 	label: {
 		type: String,
@@ -7,22 +10,77 @@ const props = defineProps({
 	placeholder: {
 		type: String,
 	},
+	type: {
+		type: String as PropType<"any" | "id">,
+		default: "any",
+	},
+	modelValue: {
+		type: String,
+		required: true,
+	},
 });
 
-const model = defineModel({});
+const emit = defineEmits<{
+	"update:modelValue": [string];
+}>();
+
+const id = ref(
+	(
+		getCurrentInstance()?.uid ?? Math.random() * Number.MAX_SAFE_INTEGER
+	).toString(),
+);
+
+const invalid = ref(false);
+const error = ref("");
+const temp_val = ref(props.modelValue);
+
+watch(
+	() => props.modelValue,
+	(newValue) => {
+		temp_val.value = newValue;
+	},
+	{ immediate: true },
+);
+
+function updateValue(value: string | undefined) {
+	if (value == null) {
+		invalid.value = true;
+		return;
+	}
+	temp_val.value = value;
+	if (props.type === "id") {
+		if (!value.match(/^[a-z]/)) {
+			invalid.value = true;
+			error.value = "IDs must start with a letter";
+			return;
+		}
+		if (!value.match(/^[a-z0-9_\-\.]+$/)) {
+			invalid.value = true;
+			error.value =
+				"IDs can only contain lowercase letters, numbers, underscores, dots and dashes";
+			return;
+		}
+		invalid.value = false;
+		error.value = "";
+		emit("update:modelValue", value);
+	} else {
+		emit("update:modelValue", value ?? "");
+	}
+}
 </script>
 <template>
-	<fast-text-field
-		class="fast-field"
-		appearance="filled"
-		:placeholder="placeholder ?? label"
-		:value="model"
-		@input="model = $event.target.value"
-		>{{ label }}</fast-text-field
-	>
+	<div style="display: flex; width: calc(100% - 8px); align-items: baseline">
+		<label v-if="label" style="width: 96px" :for="id">{{ label }}</label>
+		<InputText
+			style="flex-grow: 1"
+			type="text"
+			:value="temp_val"
+			@update:modelValue="updateValue($event)"
+			variant="filled"
+			:id
+			:invalid
+			:placeholder
+		/>
+	</div>
+	<p v-if="invalid" style="color: red">{{ error }}</p>
 </template>
-<style>
-.fast-field {
-	width: calc(100% - 8px);
-}
-</style>

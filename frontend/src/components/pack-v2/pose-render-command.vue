@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { JSONPoseCommand } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
+import Button from "primevue/button";
 import { computed, type PropType } from "vue";
 import { joinNormalize } from "../../path-tools";
 import Combo from "../shared/combo.vue";
@@ -174,12 +175,12 @@ const compositeOptions = [
 		</template>
 		<td>
 			<NumberInput
-				label="X"
 				style="width: 70px; display: inline-block"
 				v-model="offsetX"
 			/>
+		</td>
+		<td>
 			<NumberInput
-				label="Y"
 				style="width: 70px; display: inline-block"
 				v-model="offsetY"
 			/>
@@ -193,9 +194,9 @@ const compositeOptions = [
 		</td>
 
 		<td>
-			<fast-button @click="$emit('delete')">Delete</fast-button>
-			<fast-button @click="$emit('moveUp')">Up</fast-button>
-			<fast-button @click="$emit('moveDown')">Down</fast-button>
+			<Button @click="$emit('delete')">Delete</Button>
+			<Button @click="$emit('moveUp')">Up</Button>
+			<Button @click="$emit('moveDown')">Down</Button>
 		</td>
 	</tr>
 </template>

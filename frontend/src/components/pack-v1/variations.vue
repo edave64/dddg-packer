@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { NsfwAbleImg } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v1/model";
+import Button from "primevue/button";
 import { ref, type PropType } from "vue";
+import FileSelectDialog from "../shared/file-select-dialog.vue";
 import ImageCollection from "./image-collection.vue";
 
 const props = defineProps({
@@ -21,8 +23,8 @@ const props = defineProps({
 const quickAddOpen = ref(false);
 const selectedVariant = ref(props.variants.length > 0 ? 0 : -1);
 
-function addVariant(newVariant: string) {
-	props.variants.push(newVariant);
+function addVariants(newVariant: string[]) {
+	props.variants.push(...newVariant);
 	selectedVariant.value = props.variants.length - 1;
 	console.log(selectedVariant.value);
 }
@@ -46,14 +48,14 @@ function addVariant(newVariant: string) {
 						{{ typeof variant === "string" ? variant : variant.img }}
 					</fast-option>
 				</fast-select>
-				<fast-button @click="quickAddOpen = true">Add variation</fast-button>
-				<fast-button
+				<Button @click="quickAddOpen = true">Add variation</Button>
+				<Button
 					:disabled="selectedVariant === -1"
 					@click="
 						variants.splice(selectedVariant, 1);
 						selectedVariant = 0;
 					"
-					>Remove variation</fast-button
+					>Remove variation</Button
 				>
 			</div>
 			<div class="grower">
@@ -68,8 +70,9 @@ function addVariant(newVariant: string) {
 		<file-select-dialog
 			v-if="quickAddOpen"
 			:folder="folder"
+			multiple
 			@selected="
-				addVariant($event);
+				addVariants($event);
 				quickAddOpen = false;
 			"
 			@close="quickAddOpen = false"

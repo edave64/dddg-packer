@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { coreState } from "@/core-state";
+import Button from "primevue/button";
+import Listbox from "primevue/listbox";
 import { computed, ref, watch, type CSSProperties, type PropType } from "vue";
 import { joinNormalize } from "../../path-tools";
 import ImageInput from "../shared/image-input.vue";
@@ -19,6 +21,10 @@ const props = defineProps({
 });
 
 const selectedImage = ref(-1);
+
+const imageWithIdx = computed(() =>
+	props.imageCollection?.map((x, i) => ({ idx: i, image: x })),
+);
 
 watch(
 	() => props.imageCollection,
@@ -52,35 +58,25 @@ const previewStyle = computed((): CSSProperties => {
 	<div class="img_splitter" v-if="imageCollection">
 		<div>
 			<label from="sprite_images">{{ title }}:</label>
-			<fast-select
-				size="5"
-				id="sprite_variants"
-				@input="selectedImage = $event.target.selectedIndex"
-			>
-				<fast-option
-					v-for="(variant, i) of imageCollection"
-					:value="i"
-					:selected="i === selectedImage"
-					@select="console.log($event)"
-					@input="console.log($event)"
-					@change="console.log($event)"
-				>
-					{{ variant.length === 1 ? variant[0] : variant }}
-				</fast-option>
-			</fast-select>
-			<fast-button
+			<Listbox
+				v-model="selectedImage"
+				:options="imageWithIdx"
+				optionValue="idx"
+				:optionLabel="(x) => (x.image.length === 1 ? x.image[0] : x.image)"
+			/>
+			<Button
 				@click="
 					imageCollection.push('');
 					selectedImage = imageCollection.length - 1;
 				"
 			>
 				Add image
-			</fast-button>
-			<fast-button
+			</Button>
+			<Button
 				:disabled="imageCollection.length < 2"
 				@click="imageCollection.splice(selectedImage, 1)"
 			>
-				Remove image</fast-button
+				Remove image</Button
 			><br />
 			<image-input
 				label="Image path"

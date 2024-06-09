@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { seekFreeIds } from "@/array-tools";
+import { normalizeId } from "@/id-tools";
 import type {
 	JSONCharacter,
 	JSONHeadCollection,
 	JSONStyleGroup,
 } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
 import { Confirm } from "@wails/go/main/App";
-import { computed, ref, type PropType } from "vue";
+import Button from "primevue/button";
+import { computed, ref, watch, type PropType } from "vue";
 import { joinNormalize } from "../../path-tools";
 import Code from "../shared/code.vue";
 import ImageInput from "../shared/image-input.vue";
@@ -146,6 +148,16 @@ function deleteObj() {
 		}
 	}
 }
+
+watch(
+	() => props.char.label,
+	(newLabel, oldLabel) => {
+		if (newLabel === oldLabel) return;
+		if (newLabel && (!oldLabel || props.char.id === normalizeId(oldLabel))) {
+			props.char.id = normalizeId(newLabel);
+		}
+	},
+);
 </script>
 <template>
 	<teleport to="#breadcrumb">
@@ -212,14 +224,14 @@ function deleteObj() {
 			</fast-tree-item>
 		</teleport>
 		<h2>Character</h2>
-		<PInput label="ID" v-model="char.id" />
 		<PInput label="Label" v-model="char.label" />
+		<PInput label="ID" v-model="char.id" type="id" />
 		<p>
 			<ImageInput label="Chibi" v-model="char.chibi" />
 			<br />
 			<img :src="joinNormalize(f, char.chibi)" />
 		</p>
-		<fast-button @click="deleteThis">Delete character</fast-button>
+		<Button @click="deleteThis">Delete character</Button>
 		<Code :obj="char" />
 	</template>
 	<HeadGroup

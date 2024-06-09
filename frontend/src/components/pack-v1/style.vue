@@ -6,6 +6,7 @@ import type {
 	JSONStyle,
 } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v1/jsonFormat";
 import { Confirm } from "@wails/go/main/App";
+import Button from "primevue/button";
 import { computed, ref, type PropType } from "vue";
 import Code from "../shared/code.vue";
 import PInput from "../shared/p-input.vue";
@@ -136,7 +137,7 @@ function createPose() {
 		<h2>Style</h2>
 		<PInput label="Id" v-model="id" />
 		<PInput label="Label" v-model="style.label" />
-		<fast-button @click="deleteThis">Delete Style</fast-button>
+		<Button @click="deleteThis">Delete Style</Button>
 		<Code :obj="style" />
 	</template>
 	<Pose
