@@ -9,7 +9,7 @@ import type {
 import { Confirm } from "@wails/go/main/App";
 import Button from "primevue/button";
 import Listbox from "primevue/listbox";
-import { computed, ref, type PropType } from "vue";
+import { computed, type PropType } from "vue";
 import { joinNormalize } from "../../path-tools";
 import Code from "../shared/code.vue";
 import PInput from "../shared/p-input.vue";
@@ -138,8 +138,6 @@ const headGroupOptions = computed((): Array<{ value: string }> => {
 		value: k,
 	}));
 });
-
-const tmp = ref<string[]>([]);
 
 const selectedHeadGroups = computed({
 	get() {

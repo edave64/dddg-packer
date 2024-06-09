@@ -110,6 +110,17 @@ function createPose() {
 		obj,
 	};
 }
+
+watch(
+	() => props.styleObj.label,
+	(newLabel, oldLabel) => {
+		console.log(newLabel, oldLabel);
+		if (newLabel === oldLabel) return;
+		if (newLabel && (!oldLabel || id.value === normalizeId(oldLabel))) {
+			id.value = normalizeId(newLabel);
+		}
+	},
+);
 </script>
 <template>
 	<teleport to="#breadcrumb">
