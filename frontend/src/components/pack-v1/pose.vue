@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { JSONPoseMeta } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v1/jsonFormat";
-import type { Select } from "@microsoft/fast-components";
 import { Confirm } from "@wails/go/main/App";
 import Button from "primevue/button";
+import Listbox from "primevue/listbox";
 import { computed, type PropType } from "vue";
 import { joinNormalize } from "../../path-tools";
 import Code from "../shared/code.vue";
@@ -54,17 +54,6 @@ const headInForeground = computed({
 	},
 });
 
-function updateCompatibleHeads(event: CustomEvent) {
-	const newVals = new Set(
-		(event.target as Select).selectedOptions.map((x) => x.value),
-	);
-
-	if (newVals.size === 0) {
-		delete props.pose.compatibleHeads;
-	}
-	props.pose.compatibleHeads = Array.from(newVals);
-}
-
 async function deleteThis() {
 	if (
 		await Confirm(
@@ -75,6 +64,21 @@ async function deleteThis() {
 		emit("delete");
 	}
 }
+
+const selectedHeadGroups = computed({
+	get() {
+		return props.pose.compatibleHeads ?? [];
+	},
+	set(value: string[]) {
+		if (value.length === 0) {
+			if (props.pose.compatibleHeads) {
+				delete props.pose.compatibleHeads;
+			}
+		} else {
+			props.pose.compatibleHeads = value;
+		}
+	},
+});
 </script>
 <template>
 	<teleport to="#breadcrumb">
@@ -88,16 +92,7 @@ async function deleteThis() {
 	<toggle-box label="Head in foreground?" v-model="headInForeground" />
 	<details v-if="headGroups.length > 0">
 		<summary>Head groups</summary>
-		<fast-select multiple @input="updateCompatibleHeads">
-			<fast-option
-				v-for="key of headGroups"
-				:value="key"
-				:selected="pose.compatibleHeads?.includes(key as string)"
-				:key="`hg:${key}`"
-			>
-				{{ key }}
-			</fast-option>
-		</fast-select>
+		<Listbox multiple v-model="selectedHeadGroups" :options="headGroups" />
 	</details>
 	<template v-if="'left' in pose">
 		<Variations label="Left" :folder="f" :variants="pose.left" />

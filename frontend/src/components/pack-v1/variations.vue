@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import type { NsfwAbleImg } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v1/model";
 import Button from "primevue/button";
-import { ref, type PropType } from "vue";
+import Listbox from "primevue/listbox";
+import { computed, ref, type PropType } from "vue";
 import FileSelectDialog from "../shared/file-select-dialog.vue";
 import ImageCollection from "./image-collection.vue";
 
@@ -28,6 +29,10 @@ function addVariants(newVariant: string[]) {
 	selectedVariant.value = props.variants.length - 1;
 	console.log(selectedVariant.value);
 }
+
+const variantsWithIdx = computed(() =>
+	props.variants.map((x, i) => ({ idx: i, variant: x })),
+);
 </script>
 <template>
 	<fieldset>
@@ -35,19 +40,15 @@ function addVariants(newVariant: string[]) {
 		<div class="variant_splitter">
 			<div>
 				<label for="sprite_variants">Variants:</label>
-				<fast-select
-					size="5"
-					id="sprite_variants"
-					@input="selectedVariant = $event.target.selectedIndex"
-				>
-					<fast-option
-						v-for="(variant, i) of variants"
-						:value="i"
-						:selected="i === selectedVariant"
-					>
-						{{ typeof variant === "string" ? variant : variant.img }}
-					</fast-option>
-				</fast-select>
+				<Listbox
+					v-model="selectedVariant"
+					:options="variantsWithIdx"
+					optionValue="idx"
+					:optionLabel="
+						(x) => (typeof x.variant === 'string' ? x.variant : x.variant.img)
+					"
+					listStyle="max-height:256px"
+				/>
 				<Button @click="quickAddOpen = true">Add variation</Button>
 				<Button
 					:disabled="selectedVariant === -1"
