@@ -78,6 +78,7 @@ function addVariants(newVariants: string[]) {
 		<file-select-dialog
 			v-if="quickAddOpen"
 			:folder="folder"
+			:filter="/\.png|jpe?g|webp$/i"
 			multiple
 			@selected="
 				addVariants($event);

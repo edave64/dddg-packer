@@ -51,6 +51,7 @@ const dlgOpen = ref(false);
 	<file-select-dialog
 		v-if="dlgOpen"
 		:folder="folder"
+		:filter="/\.png|jpe?g|webp$/i"
 		@selected="
 			model = $event[0];
 			dlgOpen = false;

@@ -14,6 +14,9 @@ const props = defineProps({
 		type: Boolean,
 		default: false,
 	},
+	filter: {
+		type: RegExp,
+	},
 });
 
 const folderStructure = ref(null as null | IFileInfo);
@@ -40,7 +43,16 @@ const fullUrl = computed(() => {
 });
 </script>
 <template>
-	<Dialog visible style="width: 90vw; height: 90vh">
+	<Dialog
+		visible
+		style="width: 90vw; height: 90vh"
+		modal
+		@update:visible="
+			if (!$event) {
+				$emit('close');
+			}
+		"
+	>
 		<div
 			v-if="folderStructure"
 			style="
@@ -62,6 +74,7 @@ const fullUrl = computed(() => {
 						max-height: 100%;
 						overflow: auto;
 					"
+					:filter="filter"
 					:multiple
 					@selected="selected = $event"
 				/>
@@ -79,11 +92,14 @@ const fullUrl = computed(() => {
 	</Dialog>
 </template>
 <style>
-.fast-field {
-	width: calc(100% - 8px);
+.p-dialog {
+	background: rgba(0, 0, 0, 0.5);
+	-webkit-backdrop-filter: blur(16px);
+	backdrop-filter: blur(16px);
 }
 
-fast-dialog {
-	z-index: 10000;
+.p-dialog-header,
+.p-dialog-content {
+	background: none;
 }
 </style>

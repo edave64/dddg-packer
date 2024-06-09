@@ -13,22 +13,33 @@ const props = defineProps({
 		type: Boolean,
 		default: false,
 	},
+	filter: {
+		type: RegExp,
+	},
 });
 
 const nodes = computed((): TreeNode[] => {
-	return props.folderStructure.isDir
-		? props.folderStructure.children?.map((x) => toTreeNode(x)) ?? []
+	let children = props.folderStructure.isDir
+		? props.folderStructure.children ?? []
 		: [];
+	const filter = props.filter;
+	if (children && filter) {
+		children = children.filter((x) => x.name.match(filter));
+	}
+	return children.map((x) => toTreeNode(x));
 });
 
 function toTreeNode(node: IFileInfo, folder = "."): TreeNode {
 	const path = `${folder}/${node.name}`;
+	let children = node.isDir ? node.children ?? [] : undefined;
+	const filter = props.filter;
+	if (children && filter) {
+		children = children.filter((x) => x.name.match(filter));
+	}
 	return {
 		label: node.name,
 		key: path,
-		children: node.isDir
-			? node?.children?.map((x) => toTreeNode(x, path))
-			: undefined,
+		children,
 		expanded: true,
 		selectable: !node.isDir,
 	};
