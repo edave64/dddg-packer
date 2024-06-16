@@ -79,7 +79,7 @@ async function deleteThis() {
 		<p>
 			<PInput label="ID" v-model="styleGroup.id" type="id" />
 		</p>
-		<Button @click="deleteThis">Delete character</Button>
+		<Button @click="deleteThis">Delete style group</Button>
 		<Code :obj="styleGroup" />
 	</template>
 	<Style
