@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { aryFindRemove, aryRemove, seekFreeIds } from "@/array-tools";
-import type { ISupportedRepo } from "@/repo";
+import type { IPack, ISupportedRepo } from "@/repo";
 import type {
 	JSONBackground,
 	JSONCharacter,
@@ -125,7 +125,7 @@ function createBackground() {
 		label: "New Background",
 	};
 	props.json.backgrounds.push(obj);
-	props.repo.pack.kind.push("Backgrounds");
+	addKind("Backgrounds");
 	state.value = {
 		t: "background",
 		obj,
@@ -146,7 +146,7 @@ function createCharacter() {
 	};
 	props.json.characters.push(obj);
 	props.repo.pack.characters.push(obj.label as string);
-	props.repo.pack.kind.push("Characters");
+	addKind("Characters");
 
 	state.value = {
 		t: "char",
@@ -168,11 +168,19 @@ function createSprite() {
 		label: "New Sprite",
 	};
 	props.json.sprites.push(obj);
-	props.repo.pack.kind.push("Sprites");
+	addKind("Sprites");
 	state.value = {
 		t: "sprite",
 		obj,
 	};
+}
+
+function addKind(kind: IPack["kind"][0]) {
+	if (!props.repo.pack.kind) {
+		props.repo.pack.kind = [kind];
+	} else if (!props.repo.pack.kind.includes(kind)) {
+		props.repo.pack.kind.push(kind);
+	}
 }
 
 function deleteObj() {
@@ -185,7 +193,7 @@ function deleteObj() {
 	state.value = null;
 	const list = (
 		{
-			char: props.json.backgrounds,
+			char: props.json.characters,
 			sprite: props.json.sprites,
 			background: props.json.backgrounds,
 		} as Record<typeof s.t, Array<{ id: string }>>
@@ -221,6 +229,7 @@ function deleteObj() {
 		switch (s.t) {
 			case "char": {
 				delete props.json.characters;
+				aryRemove(props.repo.pack.kind, "Characters");
 				break;
 			}
 			case "sprite": {
@@ -276,6 +285,23 @@ function classifyChar(char: JSONCharacter): CharClassification {
 		ret |= CharClassification.Expressions;
 	}
 	return ret;
+}
+
+function updateCharName({
+	oldName,
+	newName,
+}: {
+	oldName: string;
+	newName: string;
+}) {
+	if (props.repo.pack.characters) {
+		const idx = props.repo.pack.characters.indexOf(oldName);
+		if (idx !== -1) {
+			props.repo.pack.characters[idx] = newName;
+		} else {
+			props.repo.pack.characters.push(newName);
+		}
+	}
 }
 
 function addDependency() {}
@@ -373,6 +399,7 @@ function addDependency() {}
 			:folder="folder"
 			@leave="reset"
 			@delete="deleteObj"
+			@updateCharName="updateCharName"
 			v-else-if="state.t === 'char'"
 		/>
 		<Background

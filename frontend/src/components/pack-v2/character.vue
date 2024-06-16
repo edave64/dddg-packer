@@ -11,8 +11,8 @@ import Button from "primevue/button";
 import { computed, ref, watch, type PropType } from "vue";
 import { joinNormalize } from "../../path-tools";
 import Code from "../shared/code.vue";
-import ImageInput from "../shared/image-input.vue";
 import PInput from "../shared/p-input.vue";
+import Chibi from "./chibi.vue";
 import HeadGroup from "./head-group.vue";
 import StyleGroup from "./style-group.vue";
 
@@ -30,6 +30,7 @@ const props = defineProps({
 const emit = defineEmits<{
 	leave: [];
 	delete: [];
+	updateCharName: [{ oldName: string; newName: string }];
 }>();
 
 const f = computed(() => {
@@ -158,6 +159,17 @@ watch(
 		}
 	},
 );
+
+const label = computed({
+	get() {
+		return props.char.label ? props.char.label : props.char.id;
+	},
+	set(value: string) {
+		const old = props.char.label ?? "";
+		props.char.label = value;
+		emit("updateCharName", { oldName: old, newName: value });
+	},
+});
 </script>
 <template>
 	<teleport to="#breadcrumb">
@@ -224,13 +236,9 @@ watch(
 			</fast-tree-item>
 		</teleport>
 		<h2>Character</h2>
-		<PInput label="Label" v-model="char.label" />
+		<PInput label="Label" v-model="label" />
 		<PInput label="ID" v-model="char.id" type="id" />
-		<p>
-			<ImageInput label="Chibi" v-model="char.chibi" />
-			<br />
-			<img :src="joinNormalize(f, char.chibi)" style="max-height: 50vh" />
-		</p>
+		<Chibi v-model="char.chibi" :folder="folder" />
 		<Button @click="deleteThis">Delete character</Button>
 		<Code :obj="char" />
 	</template>
