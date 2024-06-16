@@ -106,7 +106,9 @@ function loadImage(url: string): Promise<HTMLImageElement> {
 		<br />
 		<ImageInput id="chibi" label="Chibi" v-model="modelValue" />
 		<br />
-		<Button v-if="modelValue === ''" @click="selectorOpen = true"
+		<Button
+			v-if="modelValue === '' || modelValue === undefined"
+			@click="selectorOpen = true"
 			>Generate chibi</Button
 		>
 		<img
