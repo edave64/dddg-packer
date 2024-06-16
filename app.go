@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"os"
@@ -189,6 +190,78 @@ func (a *App) GetPacks() ([]Pack, error) {
 	}
 	fmt.Printf("%+v\n", ret)
 	return ret, nil
+}
+
+type TruePack struct {
+	Id          string   `json:"id"`
+	Name        string   `json:"name"`
+	Source      string   `json:"source"`
+	Description string   `json:"description"`
+	DDDG1Path   string   `json:"dddg1Path"`
+	DDDG2Path   string   `json:"dddg2Path"`
+	Preview     []string `json:"preview"`
+	Characters  []string `json:"characters"`
+	Authors     []string `json:"authors"`
+	Kind        string   `json:"kind"`
+}
+
+type Author struct {
+	Reddit     string `json:"reddit"`
+	Twitter    string `json:"twitter"`
+	Github     string `json:"github"`
+	Website    string `json:"website"`
+	Pixiv      string `json:"pixiv"`
+	DeviantArt string `json:"deviantart"`
+	Patreon    string `json:"patreon"`
+	Facebook   string `json:"facebook"`
+	Discord    string `json:"discord"`
+}
+
+type SingleRepoJson struct {
+	Pack    TruePack          `json:"pack"`
+	Authors map[string]Author `json:"authors"`
+}
+
+type MultiRepoJson struct {
+	Packs   []TruePack        `json:"packs"`
+	Authors map[string]Author `json:"authors"`
+}
+
+func (a *App) GetRepoJson() (*MultiRepoJson, error) {
+	if a.DddgPath == "" {
+		return nil, errors.New("no DDDG path set")
+	}
+	localRepoPath := path.Join(a.DddgPath, "localRepo")
+	entries, err := os.ReadDir(localRepoPath)
+	if err != nil {
+		return nil, err
+	}
+
+	var ret MultiRepoJson
+
+	ret.Packs = make([]TruePack, 0)
+
+	for _, file := range entries {
+		if !file.IsDir() {
+			continue
+		}
+
+		// read bytes from file
+		bytes, err := os.ReadFile(path.Join(localRepoPath, file.Name(), "repo.json"))
+		if err != nil {
+			println("Error reading repo.json", err)
+			continue
+		}
+		pack := TruePack{}
+		err = json.Unmarshal(bytes, &pack)
+		if err != nil {
+			println("Error unmarshalling repo.json", err)
+			continue
+		}
+		ret.Packs = append(ret.Packs, pack)
+	}
+
+	return &ret, nil
 }
 
 func (a *App) OpenFolder() error {

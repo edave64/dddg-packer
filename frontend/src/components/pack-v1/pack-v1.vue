@@ -46,7 +46,6 @@ interface V1Extended extends V1Json<HeadDummy> {
 
 if (!props.json.dependencies) {
 	const deps = new Set<string>();
-	// TODO: Detect V1 native dependencies
 	if (props.json.id.includes(":")) {
 		deps.add(props.json.id.split(":")[0]);
 
@@ -64,6 +63,34 @@ if (!props.json.dependencies) {
 	// TODO: Typing of dependencies is messed up
 	props.json.dependencies = Array.from(deps);
 }
+
+// V1 has a couple of character ids that implicitly extend existing characters
+// Don't know if I should even support this. New packs should just use V2.
+/*const implicitDependencies = computed(() => {
+	const deps = new Set<string>(props.json.dependencies ?? []);
+	switch (props.json.id) {
+		case "ddlc.monika":
+			deps.add("dddg.buildin.base.monika");
+			break;
+	}
+});*/
+
+const hasImplicitDependencies = computed(() => {
+	return (
+		props.json.id === "ddlc.monika" ||
+		props.json.id === "ddlc.sayori" ||
+		props.json.id === "ddlc.natsuki" ||
+		props.json.id === "ddlc.yuri" ||
+		props.json.id === "ddlc.fan.mc1" ||
+		props.json.id === "ddlc.fan.mc2" ||
+		props.json.id === "ddlc.fan.mc_chad" ||
+		props.json.id === "ddlc.fan.femc" ||
+		props.json.id === "ddlc.fan.amy1" ||
+		props.json.id === "ddlc.fan.amy2"
+	);
+});
+
+function addDependency() {}
 </script>
 <template>
 	<teleport to="#breadcrumb">
@@ -83,11 +110,20 @@ if (!props.json.dependencies) {
 				</fast-tree-item>
 			</teleport>
 			<h2>Pack</h2>
+			<p v-if="hasImplicitDependencies">
+				WARNING: This pack is an old style character extension. These are not
+				yet supported by this tool. Saving this pack might break it.
+			</p>
 			<Button @click="OpenFolder()">Open folder in explorer</Button>
 			<PInput label="ID" v-model="repo.pack.id" />
 			<PInput label="Name" v-model="repo.pack.name" />
 			<PInput label="Source" v-model="repo.pack.source" />
 			<PInput label="Description" v-model="repo.pack.description" />
+			<fieldset v-if="json.dependencies">
+				<legend>Dependencies</legend>
+				<Listbox :options="json.dependencies" />
+				<Button @click="addDependency()">Add dependency</Button>
+			</fieldset>
 			<ImageCollection
 				title="Preview"
 				:imageCollection="repo.pack.preview"

@@ -16,6 +16,7 @@ import Code from "../shared/code.vue";
 import PInput from "../shared/p-input.vue";
 import Background from "./background.vue";
 import Character from "./character.vue";
+import Dependencies from "./dependencies.vue";
 import ImageCollection from "./image-collection.vue";
 import Sprites from "./sprites.vue";
 
@@ -243,6 +244,19 @@ enum CharClassification {
 	Expressions = 8,
 }
 
+const dependencies = computed({
+	get() {
+		return (props.json.dependencies as string[]) ?? [];
+	},
+	set(value: Array<string>) {
+		if (value.length === 0) {
+			delete props.json.dependencies;
+		} else {
+			props.json.dependencies = value as [];
+		}
+	},
+});
+
 function classifyChar(char: JSONCharacter): CharClassification {
 	if (!char.id.includes(":")) {
 		// Does not extend an existing character
@@ -263,6 +277,8 @@ function classifyChar(char: JSONCharacter): CharClassification {
 	}
 	return ret;
 }
+
+function addDependency() {}
 </script>
 <template>
 	<teleport to="#breadcrumb">
@@ -337,6 +353,7 @@ function classifyChar(char: JSONCharacter): CharClassification {
 			<PInput label="Name" v-model="repo.pack.name" />
 			<PInput label="Source" v-model="repo.pack.source" />
 			<PInput label="Description" v-model="repo.pack.description" />
+			<Dependencies :dependencies="dependencies" />
 			<ImageCollection
 				title="Preview"
 				:imageCollection="repo.pack.preview"

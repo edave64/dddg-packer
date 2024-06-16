@@ -12,6 +12,8 @@ export function GetDddgPath():Promise<string>;
 
 export function GetPacks():Promise<Array<main.Pack>>;
 
+export function GetRepoJson():Promise<main.MultiRepoJson>;
+
 export function Greet(arg1:string):Promise<string>;
 
 export function MountPack(arg1:string):Promise<void>;

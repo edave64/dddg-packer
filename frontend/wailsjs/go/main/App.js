@@ -22,6 +22,10 @@ export function GetPacks() {
   return window['go']['main']['App']['GetPacks']();
 }
 
+export function GetRepoJson() {
+  return window['go']['main']['App']['GetRepoJson']();
+}
+
 export function Greet(arg1) {
   return window['go']['main']['App']['Greet'](arg1);
 }
