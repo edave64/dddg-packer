@@ -26,10 +26,6 @@ export function GetRepoJson() {
   return window['go']['main']['App']['GetRepoJson']();
 }
 
-export function Greet(arg1) {
-  return window['go']['main']['App']['Greet'](arg1);
-}
-
 export function MountPack(arg1) {
   return window['go']['main']['App']['MountPack'](arg1);
 }
