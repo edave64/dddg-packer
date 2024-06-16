@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { aryFindRemove, aryRemove, seekFreeIds } from "@/array-tools";
+import { normalizeId } from "@/id-tools";
 import type { IPack, ISupportedRepo } from "@/repo";
 import type {
 	JSONBackground,
@@ -133,16 +134,21 @@ function createBackground() {
 }
 
 function createCharacter() {
-	const id = seekFreeIds(
-		"character",
-		props.json.backgrounds?.map((x) => x.id),
-	);
 	if (!props.json.characters) {
 		props.json.characters = [];
 	}
+	const label =
+		props.json.characters.length === 0 ? props.repo.pack.name : "Character";
+	let id = normalizeId(label);
+	if (props.json.characters.some((x) => x.id === id)) {
+		id = seekFreeIds(
+			"character",
+			props.json.characters?.map((x) => x.id),
+		);
+	}
 	const obj: JSONCharacter = {
 		id,
-		label: "New Character",
+		label,
 	};
 	props.json.characters.push(obj);
 	props.repo.pack.characters.push(obj.label as string);
