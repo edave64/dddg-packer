@@ -219,7 +219,8 @@ const selectedHeadGroups = computed({
 	<details
 		v-if="
 			(pose.compatibleHeads && pose.compatibleHeads.length > 0) ||
-			pose.renderCommands?.find((x) => x.type === 'head')
+			pose.renderCommands?.find((x) => x.type === 'head') ||
+			!pose.renderCommands
 		"
 	>
 		<summary>Head groups</summary>
