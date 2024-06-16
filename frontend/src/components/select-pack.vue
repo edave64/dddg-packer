@@ -85,10 +85,10 @@ async function createPack() {
 			characters: [],
 			description: "",
 			id: packId.value,
-			name: "New pack",
+			name: name.value || "New pack",
 			preview: [],
 			source: "",
-			dddg2Path: "index.json",
+			dddg2Path: "./index.json",
 		},
 	};
 
