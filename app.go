@@ -34,6 +34,21 @@ func (a *App) startup(ctx context.Context) {
 	if a.DddgPath == "" {
 		a.UpdateDddgPath()
 	}
+
+	screens, err := wails_runtime.ScreenGetAll(ctx)
+
+	width, height := wails_runtime.WindowGetSize(ctx)
+	for _, screen := range screens {
+		if screen.IsCurrent {
+			if width > screen.Size.Width || height > screen.Size.Height {
+				wails_runtime.WindowMaximise(ctx)
+			}
+		}
+	}
+
+	if err != nil {
+		println("Error:", err.Error())
+	}
 }
 
 func seekDddgPath() string {
