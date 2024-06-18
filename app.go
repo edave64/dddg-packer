@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-	"path"
+	"path/filepath"
 	"runtime"
 
 	wails_runtime "github.com/wailsapp/wails/v2/pkg/runtime"
@@ -64,7 +64,7 @@ func (a *App) MountPack(id string) {
 
 // This is temporary until I get the PUT handler to work
 func (a *App) UploadFile(mountedPath string, contents []byte) {
-	fi, err := os.Create(path.Join(a.DddgPath, "localRepo", a.MountedPackPath, mountedPath))
+	fi, err := os.Create(filepath.Join(a.DddgPath, "localRepo", a.MountedPackPath, mountedPath))
 	if err == nil {
 		// close fi on exit and check for its returned error
 		defer func() {
@@ -126,12 +126,12 @@ func (a *App) Alert(text string, title string) {
 }
 
 func (a *App) CreatePack(id string, repoBody string, indexBody string) error {
-	basePath := path.Join(a.DddgPath, "localRepo", id)
+	basePath := filepath.Join(a.DddgPath, "localRepo", id)
 	if err := os.Mkdir(basePath, os.ModePerm); err != nil {
 		return err
 	}
 
-	fiRepo, err := os.Create(path.Join(basePath, "repo.json"))
+	fiRepo, err := os.Create(filepath.Join(basePath, "repo.json"))
 	if err != nil {
 		return err
 	}
@@ -145,7 +145,7 @@ func (a *App) CreatePack(id string, repoBody string, indexBody string) error {
 
 	fiRepo.Write([]byte(repoBody))
 
-	fiIndex, err := os.Create(path.Join(basePath, "index.json"))
+	fiIndex, err := os.Create(filepath.Join(basePath, "index.json"))
 	if err != nil {
 		return err
 	}
@@ -226,7 +226,7 @@ func (a *App) GetRepoJson() (*MultiRepoJson, error) {
 	if a.DddgPath == "" {
 		return nil, errors.New("no DDDG path set")
 	}
-	localRepoPath := path.Join(a.DddgPath, "localRepo")
+	localRepoPath := filepath.Join(a.DddgPath, "localRepo")
 	entries, err := os.ReadDir(localRepoPath)
 	if err != nil {
 		return nil, err
@@ -242,7 +242,7 @@ func (a *App) GetRepoJson() (*MultiRepoJson, error) {
 		}
 
 		// read bytes from file
-		bytes, err := os.ReadFile(path.Join(localRepoPath, file.Name(), "repo.json"))
+		bytes, err := os.ReadFile(filepath.Join(localRepoPath, file.Name(), "repo.json"))
 		if err != nil {
 			println("Error reading repo.json", err)
 			continue
@@ -266,10 +266,10 @@ func (a *App) OpenFolder() error {
 	if a.MountedPackPath == "" {
 		return errors.New("no pack path set")
 	}
-	targetPath := path.Join(a.DddgPath, "localRepo", a.MountedPackPath)
+	targetPath := filepath.Join(a.DddgPath, "localRepo", a.MountedPackPath)
 	var cmd *exec.Cmd
 	if runtime.GOOS == "windows" {
-		cmd = exec.Command("explorer", "/select,"+targetPath)
+		cmd = exec.Command("explorer", targetPath)
 	} else if runtime.GOOS == "darwin" {
 		cmd = exec.Command("open", targetPath)
 	} else {
