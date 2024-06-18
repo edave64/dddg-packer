@@ -246,7 +246,10 @@ func (a *App) GetRepoJson() (*MultiRepoJson, error) {
 	localRepoPath := filepath.Join(a.DddgPath, "localRepo")
 	entries, err := os.ReadDir(localRepoPath)
 	if err != nil {
-		return nil, err
+		return &MultiRepoJson{
+			Packs:   make([]TruePack, 0),
+			Authors: make(map[string]Author),
+		}, nil
 	}
 
 	var ret MultiRepoJson
