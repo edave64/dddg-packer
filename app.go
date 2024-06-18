@@ -142,7 +142,8 @@ func (a *App) Alert(text string, title string) {
 
 func (a *App) CreatePack(id string, repoBody string, indexBody string) error {
 	basePath := filepath.Join(a.DddgPath, "localRepo", id)
-	if err := os.Mkdir(basePath, os.ModePerm); err != nil {
+	// On a fresh install, the localRepo folder might not exist yet
+	if err := os.MkdirAll(basePath, os.ModePerm); err != nil {
 		return err
 	}
 
@@ -184,9 +185,10 @@ func (a *App) GetPacks() ([]Pack, error) {
 	if a.DddgPath == "" {
 		return nil, errors.New("no pack installed")
 	}
-	entries, err := os.ReadDir(a.DddgPath + "/localRepo")
+	entries, err := os.ReadDir(filepath.Join(a.DddgPath, "localRepo"))
 	if err != nil {
-		return nil, err
+		// Folder doesn't exist
+		return make([]Pack, 0), nil
 	}
 
 	var ret []Pack
