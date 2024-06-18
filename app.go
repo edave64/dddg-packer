@@ -39,7 +39,7 @@ func (a *App) startup(ctx context.Context) {
 func seekDddgPath() string {
 	configDir, err := os.UserConfigDir()
 	if err == nil {
-		path := configDir + "/dddg-desktop-version"
+		path := filepath.Join(configDir, "dddg-desktop-version")
 		stat, err := os.Stat(path)
 
 		if err == nil && stat.IsDir() {

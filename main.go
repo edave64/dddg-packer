@@ -7,7 +7,6 @@ import (
 	"io"
 	"net/http"
 	"os"
-	"path"
 	"path/filepath"
 	"strings"
 
@@ -76,7 +75,7 @@ func (handler *DynamicAssetHandler) ServeMountedGet(rw http.ResponseWriter, r *h
 	rw.Header().Add("Cache-Control", "no-cache")
 	dirPath, isDirPath := strings.CutSuffix(mountedPath, "/*.json")
 	if isDirPath {
-		path := path.Join(handler.app.DddgPath, "localRepo", handler.app.MountedPackPath, dirPath)
+		path := filepath.Join(handler.app.DddgPath, "localRepo", handler.app.MountedPackPath, dirPath)
 		fileInfo, err := buildFileInfo(path)
 		if err != nil {
 			http.Error(rw, err.Error(), http.StatusInternalServerError)
@@ -97,7 +96,7 @@ func (handler *DynamicAssetHandler) ServeMountedGet(rw http.ResponseWriter, r *h
 		return
 	}
 
-	path := path.Join(handler.app.DddgPath, "localRepo", handler.app.MountedPackPath, mountedPath)
+	path := filepath.Join(handler.app.DddgPath, "localRepo", handler.app.MountedPackPath, mountedPath)
 	fi, err := os.Open(path)
 	if err != nil {
 		http.Error(rw, err.Error(), http.StatusNotFound)
@@ -125,7 +124,7 @@ func (handler *DynamicAssetHandler) ServeMountedPut(rw http.ResponseWriter, r *h
 		http.Error(rw, err.Error(), http.StatusBadRequest)
 		return
 	}
-	fi, err := os.Create(path.Join(handler.app.DddgPath, "localRepo", handler.app.MountedPackPath, mountedPath))
+	fi, err := os.Create(filepath.Join(handler.app.DddgPath, "localRepo", handler.app.MountedPackPath, mountedPath))
 	if err != nil {
 		http.Error(rw, err.Error(), http.StatusInternalServerError)
 		return
