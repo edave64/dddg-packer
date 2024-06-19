@@ -223,18 +223,19 @@ func (a *App) GetRepoJson() (*MultiRepoJson, error) {
 		}
 
 		// read bytes from file
-		bytes, err := os.ReadFile(filepath.Join(localRepoPath, file.Name(), "repo.json"))
+		path := filepath.Join(localRepoPath, file.Name(), "repo.json")
+		bytes, err := os.ReadFile(path)
 		if err != nil {
-			println("Error reading repo.json", err)
+			wails_runtime.LogError(a.ctx, fmt.Sprintf("Error reading %s - %s", path, err.Error()))
 			continue
 		}
-		pack := TruePack{}
+		pack := SingleRepoJson{}
 		err = json.Unmarshal(bytes, &pack)
 		if err != nil {
-			println("Error unmarshalling repo.json", err)
+			wails_runtime.LogError(a.ctx, fmt.Sprintf("Error unmarshalling %s - %s", path, err.Error()))
 			continue
 		}
-		ret.Packs = append(ret.Packs, pack)
+		ret.Packs = append(ret.Packs, pack.Pack)
 	}
 
 	return &ret, nil
