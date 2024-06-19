@@ -28,7 +28,7 @@ export namespace main {
 	        this.discord = source["discord"];
 	    }
 	}
-	export class TruePack {
+	export class Pack {
 	    id: string;
 	    name: string;
 	    source: string;
@@ -41,7 +41,7 @@ export namespace main {
 	    kind: string[];
 	
 	    static createFrom(source: any = {}) {
-	        return new TruePack(source);
+	        return new Pack(source);
 	    }
 	
 	    constructor(source: any = {}) {
@@ -59,7 +59,7 @@ export namespace main {
 	    }
 	}
 	export class MultiRepoJson {
-	    packs: TruePack[];
+	    packs: Pack[];
 	    authors: {[key: string]: Author};
 	
 	    static createFrom(source: any = {}) {
@@ -68,7 +68,7 @@ export namespace main {
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.packs = this.convertValues(source["packs"], TruePack);
+	        this.packs = this.convertValues(source["packs"], Pack);
 	        this.authors = this.convertValues(source["authors"], Author, true);
 	    }
 	

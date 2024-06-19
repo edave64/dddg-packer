@@ -1,6 +1,6 @@
 package main
 
-type TruePack struct {
+type Pack struct {
 	Id          string   `json:"id"`
 	Name        string   `json:"name"`
 	Source      string   `json:"source"`
@@ -26,11 +26,11 @@ type Author struct {
 }
 
 type SingleRepoJson struct {
-	Pack    TruePack          `json:"pack"`
+	Pack    Pack              `json:"pack"`
 	Authors map[string]Author `json:"authors"`
 }
 
 type MultiRepoJson struct {
-	Packs   []TruePack        `json:"packs"`
+	Packs   []Pack            `json:"packs"`
 	Authors map[string]Author `json:"authors"`
 }

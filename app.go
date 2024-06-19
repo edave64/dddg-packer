@@ -207,14 +207,14 @@ func (a *App) GetRepoJson() (*MultiRepoJson, error) {
 	entries, err := os.ReadDir(localRepoPath)
 	if err != nil {
 		return &MultiRepoJson{
-			Packs:   make([]TruePack, 0),
+			Packs:   make([]Pack, 0),
 			Authors: make(map[string]Author),
 		}, nil
 	}
 
 	var ret MultiRepoJson
 
-	ret.Packs = make([]TruePack, 0)
+	ret.Packs = make([]Pack, 0)
 
 	for _, file := range entries {
 		if !file.IsDir() {
