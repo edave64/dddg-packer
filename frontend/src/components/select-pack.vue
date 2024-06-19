@@ -13,7 +13,7 @@ import {
 import type { main } from "../../wailsjs/go/models";
 import type { CoreState } from "../core-state";
 import PInput from "./shared/p-input.vue";
-const packs = ref(null as null | main.Pack[]);
+const packs = ref(null as null | string[]);
 const props = defineProps({
 	coreState: {
 		required: true,
@@ -86,6 +86,7 @@ async function createPack() {
 			description: "",
 			id: packId.value,
 			name: name.value || "New pack",
+			kind: [],
 			preview: [],
 			source: "",
 			dddg2Path: "./index.json",
@@ -133,11 +134,11 @@ async function createPack() {
 		<p v-if="packs === null">Loading list...</p>
 		<p v-else-if="packs.length === 0">No packs</p>
 		<ul v-else>
-			<li v-for="pack in packs" :key="pack.id">
-				<a href="#" @click="openPack(pack.id)">{{ pack.id }}</a>
+			<li v-for="pack in packs" :key="pack">
+				<a href="#" @click="openPack(pack)">{{ pack }}</a>
 				<a
 					href="#"
-					@click="state = { t: 'create-pack', basedOn: pack.id }"
+					@click="state = { t: 'create-pack', basedOn: pack }"
 					style="padding-left: 8px"
 					>[Clone]</a
 				>

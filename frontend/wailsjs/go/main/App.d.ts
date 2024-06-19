@@ -10,7 +10,7 @@ export function CreatePack(arg1:string,arg2:string,arg3:string):Promise<void>;
 
 export function GetDddgPath():Promise<string>;
 
-export function GetPacks():Promise<Array<main.Pack>>;
+export function GetPacks():Promise<Array<string>>;
 
 export function GetRepoJson():Promise<main.MultiRepoJson>;
 

@@ -177,24 +177,23 @@ func (a *App) CreatePack(id string, repoBody string, indexBody string) error {
 	return nil
 }
 
-func (a *App) GetPacks() ([]Pack, error) {
+func (a *App) GetPacks() ([]string, error) {
 	if a.DddgPath == "" {
 		return nil, errors.New("no pack installed")
 	}
 	entries, err := os.ReadDir(filepath.Join(a.DddgPath, "localRepo"))
+
 	if err != nil {
 		// Folder doesn't exist
-		return make([]Pack, 0), nil
+		return nil, err
 	}
 
-	var ret []Pack
+	var ret []string
 	for _, file := range entries {
 		if !file.IsDir() {
 			continue
 		}
-		ret = append(ret, Pack{
-			Id: file.Name(),
-		})
+		ret = append(ret, file.Name())
 	}
 	fmt.Printf("%+v\n", ret)
 	return ret, nil

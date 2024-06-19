@@ -1,9 +1,5 @@
 package main
 
-type Pack struct {
-	Id string `json:"id"`
-}
-
 type TruePack struct {
 	Id          string   `json:"id"`
 	Name        string   `json:"name"`
