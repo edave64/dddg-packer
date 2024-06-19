@@ -38,7 +38,7 @@ export namespace main {
 	    preview: string[];
 	    characters: string[];
 	    authors: string[];
-	    kind: string;
+	    kind: string[];
 	
 	    static createFrom(source: any = {}) {
 	        return new TruePack(source);
@@ -89,18 +89,6 @@ export namespace main {
 		    }
 		    return a;
 		}
-	}
-	export class Pack {
-	    id: string;
-	
-	    static createFrom(source: any = {}) {
-	        return new Pack(source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.id = source["id"];
-	    }
 	}
 
 }
