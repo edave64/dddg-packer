@@ -5,7 +5,7 @@ import Button from "primevue/button";
 import { computed, type PropType } from "vue";
 import { joinNormalize } from "../../path-tools";
 import Code from "../shared/code.vue";
-import PInput from "../shared/p-input.vue";
+import IdLabelPair from "../shared/id-label-pair.vue";
 import ImageCollection from "./image-collection.vue";
 import Variations from "./variations.vue";
 
@@ -48,8 +48,7 @@ async function deleteThis() {
 		<fast-tree-item @click="$emit('leave')">Back to pack</fast-tree-item>
 	</teleport>
 	<h2>Sprite</h2>
-	<PInput label="ID" v-model="sprite.id" type="id" />
-	<PInput label="Label" v-model="sprite.label" />
+	<IdLabelPair v-model:id="sprite.id" v-model:label="sprite.label" />
 	<ImageCollection
 		v-if="sprite.variants?.length === 1"
 		:imageCollection="sprite.variants[0]"

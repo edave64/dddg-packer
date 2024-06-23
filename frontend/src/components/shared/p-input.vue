@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import InputText from "primevue/inputtext";
-import { getCurrentInstance, ref, watch, type PropType } from "vue";
+import { computed, getCurrentInstance, ref, watch, type PropType } from "vue";
 
 const props = defineProps({
 	label: {
@@ -37,7 +37,7 @@ const temp_val = ref(props.modelValue);
 watch(
 	() => props.modelValue,
 	(newValue) => {
-		temp_val.value = newValue;
+		updateValue(props.modelValue);
 	},
 	{ immediate: true },
 );

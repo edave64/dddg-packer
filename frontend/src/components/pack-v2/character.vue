@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { seekFreeIds } from "@/array-tools";
-import { normalizeId } from "@/id-tools";
 import type {
 	JSONCharacter,
 	JSONHeadCollection,
@@ -8,10 +7,10 @@ import type {
 } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
 import { Confirm } from "@wails/go/main/App";
 import Button from "primevue/button";
-import { computed, ref, watch, type PropType } from "vue";
+import { computed, ref, type PropType } from "vue";
 import { joinNormalize } from "../../path-tools";
 import Code from "../shared/code.vue";
-import PInput from "../shared/p-input.vue";
+import IdLabelPair from "../shared/id-label-pair.vue";
 import Chibi from "./chibi.vue";
 import HeadGroup from "./head-group.vue";
 import StyleGroup from "./style-group.vue";
@@ -150,16 +149,6 @@ function deleteObj() {
 	}
 }
 
-watch(
-	() => props.char.label,
-	(newLabel, oldLabel) => {
-		if (newLabel === oldLabel) return;
-		if (newLabel && (!oldLabel || props.char.id === normalizeId(oldLabel))) {
-			props.char.id = normalizeId(newLabel);
-		}
-	},
-);
-
 const label = computed({
 	get() {
 		return props.char.label ? props.char.label : props.char.id;
@@ -236,8 +225,7 @@ const label = computed({
 			</fast-tree-item>
 		</teleport>
 		<h2>Character</h2>
-		<PInput label="Label" v-model="label" />
-		<PInput label="ID" v-model="char.id" type="id" />
+		<IdLabelPair v-model:id="char.id" v-model:label="char.label" />
 		<Chibi v-model="char.chibi" :folder="folder" />
 		<Button @click="deleteThis">Delete character</Button>
 		<Code :obj="char" />

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { seekFreeIds } from "@/array-tools";
-import { normalizeId } from "@/id-tools";
 import type {
 	JSONCharacter,
 	JSONPoseMeta,
@@ -8,9 +7,9 @@ import type {
 } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v1/jsonFormat";
 import { Confirm } from "@wails/go/main/App";
 import Button from "primevue/button";
-import { computed, ref, watch, type PropType } from "vue";
+import { computed, ref, type PropType } from "vue";
 import Code from "../shared/code.vue";
-import PInput from "../shared/p-input.vue";
+import IdLabelPair from "../shared/id-label-pair.vue";
 import type { HeadDummy } from "./headDummy";
 import Pose from "./pose.vue";
 
@@ -110,17 +109,6 @@ function createPose() {
 		obj,
 	};
 }
-
-watch(
-	() => props.styleObj.label,
-	(newLabel, oldLabel) => {
-		console.log(newLabel, oldLabel);
-		if (newLabel === oldLabel) return;
-		if (newLabel && (!oldLabel || id.value === normalizeId(oldLabel))) {
-			id.value = normalizeId(newLabel);
-		}
-	},
-);
 </script>
 <template>
 	<teleport to="#breadcrumb">
@@ -147,8 +135,7 @@ watch(
 			</fast-tree-item>
 		</teleport>
 		<h2>Style</h2>
-		<PInput label="Label" v-model="styleObj.label" />
-		<PInput label="Id" v-model="id" />
+		<IdLabelPair v-model:id="id" v-model:label="styleObj.label" />
 		<Button @click="deleteThis">Delete Style</Button>
 		<Code :obj="styleObj" />
 	</template>

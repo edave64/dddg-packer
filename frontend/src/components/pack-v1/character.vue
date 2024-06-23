@@ -11,8 +11,8 @@ import type { NsfwAbleImg } from "@edave64/doki-doki-dialog-generator-pack-forma
 import { computed, ref, type PropType } from "vue";
 import { joinNormalize } from "../../path-tools";
 import Code from "../shared/code.vue";
+import IdLabelPair from "../shared/id-label-pair.vue";
 import ImageInput from "../shared/image-input.vue";
-import PInput from "../shared/p-input.vue";
 import HeadGroup from "./head-group.vue";
 import type { HeadDummy } from "./headDummy";
 import Style from "./style.vue";
@@ -193,8 +193,7 @@ function createStyle() {
 			>
 		</teleport>
 		<h2>Character</h2>
-		<PInput label="ID" v-model="char.id" />
-		<PInput label="Label" v-model="char.name" />
+		<IdLabelPair v-model:id="char.id" v-model:label="char.name" />
 		<p>
 			<ImageInput label="Chibi" v-model="char.chibi" />
 			<br />
