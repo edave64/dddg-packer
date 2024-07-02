@@ -54,6 +54,11 @@ function updateValue(value: string | undefined) {
 	}
 	temp_val.value = value;
 	if (props.type === "id") {
+		if (value === "") {
+			invalid.value = false;
+			error.value = "";
+			return;
+		}
 		if (!value.match(/^[a-z]/)) {
 			invalid.value = true;
 			error.value = "IDs must start with a letter";
