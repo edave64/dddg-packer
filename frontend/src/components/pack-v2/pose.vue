@@ -1,5 +1,9 @@
 <script setup lang="ts">
 import { aryMove } from "@/array-tools";
+import type {
+	INormalizedCharacter,
+	INormalizedPose,
+} from "@/normalized-dependencies";
 import { renameKey } from "@/obj-tools";
 import type {
 	JSONHeadCollections,
@@ -28,6 +32,12 @@ const props = defineProps({
 	folder: {
 		type: String,
 		required: true,
+	},
+	depChar: {
+		type: Object as PropType<INormalizedCharacter>,
+	},
+	depPose: {
+		type: Object as PropType<INormalizedPose>,
 	},
 });
 
@@ -153,6 +163,10 @@ const selectedHeadGroups = computed({
 		}
 	},
 });
+
+const isExtension = computed(() => {
+	return !!props.depPose;
+});
 </script>
 <template>
 	<teleport to="#breadcrumb">
@@ -161,9 +175,9 @@ const selectedHeadGroups = computed({
 	<teleport to="#tree">
 		<fast-tree-item @click="$emit('leave')">Back to style</fast-tree-item>
 	</teleport>
-	<h2>Pose</h2>
-	<PInput label="ID" v-model="pose.id" type="id" />
-	<details>
+	<h2>Pose {{ isExtension ? "extension" : "" }}</h2>
+	<PInput label="ID" v-model="pose.id" type="id" :disabled="isExtension" />
+	<details v-if="!isExtension">
 		<summary>Render commands</summary>
 		<template v-if="pose.renderCommands">
 			<table>
@@ -218,9 +232,10 @@ const selectedHeadGroups = computed({
 	</details>
 	<details
 		v-if="
-			(pose.compatibleHeads && pose.compatibleHeads.length > 0) ||
-			pose.renderCommands?.find((x) => x.type === 'head') ||
-			!pose.renderCommands
+			!isExtension &&
+			((pose.compatibleHeads && pose.compatibleHeads.length > 0) ||
+				pose.renderCommands?.find((x) => x.type === 'head') ||
+				!pose.renderCommands)
 		"
 	>
 		<summary>Head groups</summary>
@@ -240,38 +255,32 @@ const selectedHeadGroups = computed({
 		:label-editable="!!pose.renderCommands"
 		@update:label="renamePosition(k as string, $event)"
 	/>
-	<template v-if="!pose.renderCommands">
-		<p v-if="!pose.positions?.['Left']">
+	<template v-if="depPose">
+		<p v-for="k in depPose.positions" v-if="!pose.positions?.[k]">
 			<Button
 				@click="
 					if (!pose.positions) {
 						pose.positions = {};
 					}
-					pose.positions!.Left = [];
+					pose.positions[k] = [];
 				"
-				>Create left pose position</Button
+				>Create {{ k }} pose position</Button
 			>
 		</p>
-		<p v-if="!pose.positions?.['Right']">
+	</template>
+	<template v-else-if="!pose.renderCommands">
+		<p
+			v-for="position in ['Left', 'Right', 'Variant']"
+			v-if="!pose.positions?.[position]"
+		>
 			<Button
 				@click="
 					if (!pose.positions) {
 						pose.positions = {};
 					}
-					pose.positions!.Right = [];
+					pose.positions[position] = [];
 				"
-				>Create right pose position</Button
-			>
-		</p>
-		<p v-if="!pose.positions?.['Variant']">
-			<Button
-				@click="
-					if (!pose.positions) {
-						pose.positions = {};
-					}
-					pose.positions!.Variant = [];
-				"
-				>Create variant pose position</Button
+				>Create {{ position }} pose position</Button
 			>
 		</p>
 	</template>

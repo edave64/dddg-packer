@@ -1,4 +1,9 @@
 <script setup lang="ts">
+import {
+	getStyleId,
+	type INormalizedCharacter,
+	type INormalizedStyle,
+} from "@/normalized-dependencies";
 import type {
 	JSONHeadCollections,
 	JSONStyle,
@@ -20,6 +25,9 @@ const props = defineProps({
 	headGroups: {
 		required: true,
 		type: Object as PropType<JSONHeadCollections>,
+	},
+	depChar: {
+		type: Object as PropType<INormalizedCharacter>,
 	},
 	folder: {
 		type: String,
@@ -43,6 +51,24 @@ const f = computed(() => {
 	return joinNormalize(props.folder, props.styleGroup.folder);
 });
 
+const depStyleGroup = computed(() => {
+	if (!props.depChar) return null;
+	return props.depChar.styleGroups.find((x) => x.id === props.styleGroup.id);
+});
+
+const isExtension = computed(() => {
+	return !!depStyleGroup.value;
+});
+
+const availableStylesExts = computed(() => {
+	const styles = depStyleGroup.value?.styles;
+	if (!styles) return [];
+	const allStyles = props.styleGroup.styles.map((x) =>
+		getStyleId(x.components),
+	);
+	return styles.filter((x) => !allStyles.includes(x.id));
+});
+
 async function deleteThis() {
 	if (
 		await Confirm(
@@ -52,6 +78,21 @@ async function deleteThis() {
 	) {
 		emit("delete");
 	}
+}
+
+function extendStyle(style: INormalizedStyle) {
+	if (!props.styleGroup.styles) {
+		props.styleGroup.styles = [];
+	}
+	const obj: JSONStyle = {
+		components: Object.keys(style.parts).length > 0 ? style.parts : undefined,
+		poses: [],
+	};
+	props.styleGroup.styles.push(obj);
+	state.value = {
+		t: "style",
+		obj,
+	};
 }
 </script>
 <template>
@@ -73,19 +114,45 @@ async function deleteThis() {
 				>
 					{{ s.components ? JSON.stringify(s.components) : "default" }}
 				</fast-tree-item>
+				<fast-tree-item
+					v-for="s of availableStylesExts"
+					:key="'sg:' + styleGroup.id + 's:' + JSON.stringify(s.parts)"
+					expanded
+					@click="extendStyle(s)"
+				>
+					Extend
+					{{
+						s.parts && Object.keys(s.parts).length > 0
+							? JSON.stringify(s.parts)
+							: "default"
+					}}
+				</fast-tree-item>
 			</fast-tree-item>
 		</teleport>
-		<h2>Style group</h2>
+		<h2>Style group {{ isExtension ? "extension" : "" }}</h2>
 		<p>
-			<PInput label="ID" v-model="styleGroup.id" type="id" />
+			<PInput
+				label="ID"
+				v-model="styleGroup.id"
+				type="id"
+				:disabled="isExtension"
+			/>
 		</p>
-		<Button @click="deleteThis">Delete style group</Button>
+		<Button @click="deleteThis"
+			>Delete style group {{ isExtension ? "extension" : "" }}</Button
+		>
 		<Code :obj="styleGroup" />
 	</template>
 	<Style
 		:style-obj="state.obj"
 		:folder="folder"
 		:head-groups="headGroups"
+		:depChar="depChar"
+		:depStyle="
+			depStyleGroup?.styles.find(
+				(x) => x.id === getStyleId(state!.obj.components),
+			)
+		"
 		@leave="state = null"
 		v-else-if="state.t === 'style'"
 	/>

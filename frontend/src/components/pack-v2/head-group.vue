@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { INormalizedCharacter } from "@/normalized-dependencies";
 import type { JSONHeadCollections } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
 import { Confirm } from "@wails/go/main/App";
 import Button from "primevue/button";
@@ -20,6 +21,9 @@ const props = defineProps({
 	folder: {
 		type: String,
 		required: true,
+	},
+	depChar: {
+		type: Object as PropType<INormalizedCharacter>,
 	},
 });
 const emit = defineEmits<{
@@ -47,6 +51,11 @@ async function deleteThis() {
 		emit("delete");
 	}
 }
+
+const isExtension = computed(() => {
+	if (!props.depChar) return false;
+	return !!props.depChar.headGroups.find((x) => x.id === props.id);
+});
 </script>
 <template>
 	<teleport to="#tree">
@@ -61,6 +70,7 @@ async function deleteThis() {
 			label="ID"
 			type="id"
 			:modelValue="id"
+			:disabled="isExtension"
 			@update:modelValue="$emit('updateKey', $event)"
 		/>
 	</p>
@@ -71,6 +81,6 @@ async function deleteThis() {
 		label="Variants"
 		:folder="f"
 	/>
-	<Button @click="deleteThis">Delete character</Button>
+	<Button @click="deleteThis">Delete head group</Button>
 	<Code :obj="headGroup" />
 </template>

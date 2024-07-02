@@ -3,14 +3,13 @@ import { normalizeId } from "@/id-tools";
 import type { ISupportedRepo } from "@/repo";
 import type { JSONContentPack } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
 import Button from "primevue/button";
-import { ref, watch, type PropType } from "vue";
+import { computed, ref, watch, type PropType } from "vue";
 import {
 	CreatePack,
 	GetPacks,
 	MountPack,
 	UpdateDddgPath,
 } from "../../wailsjs/go/main/App";
-import type { main } from "../../wailsjs/go/models";
 import type { CoreState } from "../core-state";
 import PInput from "./shared/p-input.vue";
 const packs = ref(null as null | string[]);
@@ -51,29 +50,30 @@ const packIdCustomized = ref(false);
 
 const packId = ref("");
 
-watch(
-	() => [packIdCustomized.value, name.value, user.value, artist.value],
-	() => {
-		if (packIdCustomized.value) return;
+const autoId = computed(() => {
+	const nname = normalizeId(name.value);
+	const nuser = normalizeId(user.value);
+	const nartist = normalizeId(artist.value);
 
-		const nname = normalizeId(name.value);
-		const nuser = normalizeId(user.value);
-		const nartist = normalizeId(artist.value);
-
-		let ret = nname;
-		if (nuser && nuser === nartist) {
-			ret += `.${nuser}`;
-		} else {
-			if (nartist) {
-				ret += `.${nartist}`;
-			}
-			if (nuser) {
-				ret += `.${nuser}`;
-			}
+	let ret = nname;
+	if (nuser && nuser === nartist) {
+		ret += `.${nuser}`;
+	} else {
+		if (nartist) {
+			ret += `.${nartist}`;
 		}
-		packId.value = ret;
-	},
-);
+		if (nuser) {
+			ret += `.${nuser}`;
+		}
+	}
+	return ret;
+});
+
+watch(autoId, (newAuto, oldAuto) => {
+	if (newAuto !== oldAuto && packId.value === oldAuto) {
+		packId.value = newAuto;
+	}
+});
 
 async function createPack() {
 	const repo: ISupportedRepo = {
@@ -155,8 +155,8 @@ async function createPack() {
 		<h1>Create a new pack:</h1>
 		<p v-if="state.basedOn">Cloned from {{ state.basedOn }}</p>
 		<PInput label="Name" v-model="name" />
-		<PInput label="Pack Creator Name (You)" v-model="user" />
-		<PInput label="Artist" v-model="artist" />
+		<PInput label="Pack Creator Name (You)" type="id" v-model="user" />
+		<PInput label="Artist" type="id" v-model="artist" />
 		<PInput
 			label="Pack id"
 			v-model="packId"

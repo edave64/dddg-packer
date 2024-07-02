@@ -2,6 +2,13 @@
 import { normalizeId } from "@/id-tools";
 import PInput from "./p-input.vue";
 
+const props = defineProps({
+	disabled: {
+		type: Boolean,
+		default: false,
+	},
+});
+
 const id = defineModel<string>("id", {
 	default: "",
 });
@@ -23,8 +30,9 @@ function updateLabel(value: string) {
 		label="Label"
 		:model-value="label"
 		@update:model-value="updateLabel"
+		:disabled
 	/>
-	<PInput label="ID" type="id" v-model="id" />
+	<PInput label="ID" type="id" v-model="id" :disabled />
 </template>
 <style scoped>
 .code {

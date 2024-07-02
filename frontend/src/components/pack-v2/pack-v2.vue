@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import { aryFindRemove, aryRemove, seekFreeIds } from "@/array-tools";
-import { normalizeId } from "@/id-tools";
+import {
+	generateEmptyPack,
+	loadPack,
+	mergePacks,
+	normalizePack,
+	type INormalizedPack,
+} from "@/normalized-dependencies";
 import type { IPack, ISupportedRepo } from "@/repo";
 import type {
 	JSONBackground,
@@ -9,6 +15,7 @@ import type {
 	JSONSprite,
 	JSONContentPack as V2Json,
 } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
+import { computedAsync } from "@vueuse/core";
 import Button from "primevue/button";
 import { computed, ref, type PropType } from "vue";
 import { MountPack, OpenFolder } from "../../../wailsjs/go/main/App";
@@ -16,10 +23,12 @@ import { joinNormalize } from "../../path-tools";
 import Code from "../shared/code.vue";
 import PInput from "../shared/p-input.vue";
 import Background from "./background.vue";
+import CharacterExtension from "./character-extension.vue";
 import Character from "./character.vue";
 import Dependencies from "./dependencies.vue";
 import ImageCollection from "./image-collection.vue";
 import Sprites from "./sprites.vue";
+import Characters from "./tree/characters.vue";
 
 const props = defineProps({
 	json: {
@@ -129,33 +138,6 @@ function createBackground() {
 	addKind("Backgrounds");
 	state.value = {
 		t: "background",
-		obj,
-	};
-}
-
-function createCharacter() {
-	if (!props.json.characters) {
-		props.json.characters = [];
-	}
-	const label =
-		props.json.characters.length === 0 ? props.repo.pack.name : "Character";
-	let id = normalizeId(label);
-	if (props.json.characters.some((x) => x.id === id)) {
-		id = seekFreeIds(
-			"character",
-			props.json.characters?.map((x) => x.id),
-		);
-	}
-	const obj: JSONCharacter = {
-		id,
-		label,
-	};
-	props.json.characters.push(obj);
-	props.repo.pack.characters.push(obj.label as string);
-	addKind("Characters");
-
-	state.value = {
-		t: "char",
 		obj,
 	};
 }
@@ -310,7 +292,17 @@ function updateCharName({
 	}
 }
 
-function addDependency() {}
+const normalizedDependecyTree = computedAsync<INormalizedPack>(async () => {
+	const deps = dependencies.value;
+	const packs = await Promise.all(deps.map((x) => loadPack(x)));
+	return packs.reduce((acc, pack) => {
+		const normalized = normalizePack(pack);
+		if (!normalized) return acc;
+		return mergePacks(acc, normalized);
+	}, generateEmptyPack());
+}, generateEmptyPack());
+
+window.normalizedDependecyTree = normalizedDependecyTree;
 </script>
 <template>
 	<teleport to="#breadcrumb">
@@ -322,24 +314,13 @@ function addDependency() {}
 		<template v-if="state === null">
 			<teleport to="#tree">
 				<fast-tree-item @click="MountPack('')">Back to packs</fast-tree-item>
-				<fast-tree-item
-					@click="createCharacter"
-					v-if="!json.characters || json.characters.length === 0"
-					>Add character</fast-tree-item
-				>
-				<fast-tree-item expanded v-else>
-					Characters
-					<fast-tree-item
-						v-for="char in json.characters!"
-						:key="'char:' + char.id"
-						@click="state = { t: 'char', obj: char }"
-					>
-						{{ char.label ? `${char.label} [${char.id}]` : char.id }}
-					</fast-tree-item>
-					<fast-tree-item @click="createCharacter"
-						>Add character</fast-tree-item
-					>
-				</fast-tree-item>
+				<Characters
+					:json="json"
+					:repo="repo"
+					:depTree="normalizedDependecyTree"
+					@updateState="state = $event"
+					@addKind="addKind"
+				/>
 				<fast-tree-item
 					@click="createSprite"
 					v-if="!json.sprites || json.sprites.length === 0"
@@ -400,14 +381,29 @@ function addDependency() {}
 			@delete="deleteObj"
 			v-else-if="state.t === 'sprite'"
 		/>
-		<Character
-			:char="state.obj"
-			:folder="folder"
-			@leave="reset"
-			@delete="deleteObj"
-			@updateCharName="updateCharName"
-			v-else-if="state.t === 'char'"
-		/>
+		<template v-else-if="state.t === 'char'">
+			<Character
+				:char="state.obj"
+				:folder="folder"
+				@leave="reset"
+				@delete="deleteObj"
+				@updateCharName="updateCharName"
+				v-if="!state.obj.id.includes(':')"
+			/>
+			<CharacterExtension
+				:char="state.obj"
+				:dep-char="
+					normalizedDependecyTree.characters.find(
+						(x) => x.id === state!.obj.id,
+					)!
+				"
+				:folder="folder"
+				@leave="reset"
+				@delete="deleteObj"
+				@updateCharName="updateCharName"
+				v-else
+			/>
+		</template>
 		<Background
 			:background="state.obj"
 			:folder="folder"

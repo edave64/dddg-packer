@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import InputText from "primevue/inputtext";
-import { computed, getCurrentInstance, ref, watch, type PropType } from "vue";
+import { getCurrentInstance, ref, watch, type PropType } from "vue";
 
 const props = defineProps({
 	label: {
@@ -17,6 +17,10 @@ const props = defineProps({
 	modelValue: {
 		type: String,
 		default: "",
+	},
+	disabled: {
+		type: Boolean,
+		default: false,
 	},
 });
 
@@ -43,6 +47,7 @@ watch(
 );
 
 function updateValue(value: string | undefined) {
+	if (props.disabled) return;
 	if (value == null) {
 		invalid.value = true;
 		return;
@@ -74,12 +79,15 @@ function updateValue(value: string | undefined) {
 		<InputText
 			style="flex-grow: 1"
 			type="text"
+			:autocomplete="type === 'id' ? 'off' : undefined"
+			:aria-autocomplete="type === 'id' ? 'none' : undefined"
 			:value="temp_val"
 			@update:modelValue="updateValue($event)"
 			variant="filled"
 			:id
 			:invalid
 			:placeholder
+			:disabled
 		/>
 	</div>
 	<p v-if="invalid" style="color: red">{{ error }}</p>

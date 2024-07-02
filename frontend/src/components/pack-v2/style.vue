@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import { seekFreeIds } from "@/array-tools";
 import type {
+	INormalizedCharacter,
+	INormalizedPose,
+	INormalizedStyle,
+} from "@/normalized-dependencies";
+import type {
 	JSONHeadCollections,
 	JSONPose,
 	JSONStyle,
@@ -23,6 +28,12 @@ const props = defineProps({
 		type: String,
 		required: true,
 	},
+	depChar: {
+		type: Object as PropType<INormalizedCharacter>,
+	},
+	depStyle: {
+		type: Object as PropType<INormalizedStyle>,
+	},
 });
 
 const emit = defineEmits<{
@@ -39,6 +50,10 @@ type State = null | {
 	t: "pose";
 	obj: JSONPose;
 };
+
+const isExtension = computed(() => {
+	return !!props.depStyle;
+});
 
 function createPose() {
 	const id = seekFreeIds(
@@ -71,6 +86,27 @@ function deleteObj() {
 		}
 	}
 }
+
+const availablePoses = computed(() => {
+	const poses = props.depStyle?.poses ?? [];
+	return poses.filter(
+		(x) => !props.styleObj.poses.map((y) => y.id).includes(x.id),
+	);
+});
+
+function extendPose(pose: INormalizedPose) {
+	if (!props.styleObj.poses) {
+		props.styleObj.poses = [];
+	}
+	const obj: JSONPose = {
+		id: pose.id,
+	};
+	props.styleObj.poses.push(obj);
+	state.value = {
+		t: "pose",
+		obj,
+	};
+}
 </script>
 <template>
 	<teleport to="#breadcrumb">
@@ -94,15 +130,26 @@ function deleteObj() {
 					{{ pose.id }}
 				</fast-tree-item>
 				<fast-tree-item @click="createPose">Create pose</fast-tree-item>
+				<fast-tree-item
+					v-for="pose of availablePoses"
+					:key="'p:' + pose.id"
+					expanded
+					@click="extendPose(pose)"
+				>
+					Extend
+					{{ pose.label }}
+				</fast-tree-item>
 			</fast-tree-item>
 		</teleport>
-		<h2>Style</h2>
+		<h2>Style {{ isExtension ? "extension" : "" }}</h2>
 		<Code :obj="styleObj" />
 	</template>
 	<Pose
 		:pose="state.obj"
 		:folder="folder"
 		:head-groups="headGroups"
+		:depChar="depChar"
+		:depPose="depStyle?.poses.find((x) => x.id === state!.obj.id)"
 		@leave="state = null"
 		@delete="deleteObj"
 		v-else-if="state.t === 'pose'"
