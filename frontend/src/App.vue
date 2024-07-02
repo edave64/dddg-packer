@@ -43,5 +43,10 @@ TriggerCoreStateUpdate();
 	width: 100%;
 	display: flex;
 	flex-direction: column;
+	padding: 8px;
+}
+
+header {
+	flex-shrink: 0;
 }
 </style>

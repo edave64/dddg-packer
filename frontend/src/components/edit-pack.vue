@@ -198,19 +198,12 @@ main {
 	}
 }
 
-header {
-	height: 32px;
-	padding-inline-start: 8px;
-	flex-shrink: 0;
-}
-
 main {
 	flex-grow: 1;
 }
 
 footer {
 	height: 32px;
-	padding-inline-start: 8px;
 	flex-shrink: 0;
 }
 </style>
