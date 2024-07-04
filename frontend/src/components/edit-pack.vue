@@ -2,33 +2,27 @@
 import type { IPack, ISupportedRepo } from "@/repo";
 import type { JSONCharacter as V1Json } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v1/jsonFormat";
 import type { JSONContentPack as V2Json } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
-import { ref, watch, type PropType } from "vue";
-import { Confirm, MountPack } from "../../wailsjs/go/main/App";
-import { saveFile, type CoreState } from "../core-state";
+import { ref, watch } from "vue";
+import { Confirm } from "../../wailsjs/go/main/App";
+import { coreState, saveFile } from "../core-state";
 import type { HeadDummy } from "./pack-v1/headDummy";
 import PackV1 from "./pack-v1/pack-v1.vue";
 import PackV2 from "./pack-v2/pack-v2.vue";
-const props = defineProps({
-	coreState: {
-		required: true,
-		type: Object as PropType<CoreState>,
-	},
-});
 
 const repo = ref(null as null | ISupportedRepo);
 const pack = ref(null as null | V1Json<HeadDummy> | V2Json);
 
 watch(
-	() => props.coreState.mountedPackPath,
-	async (packId) => {
-		if (packId === "") {
+	coreState,
+	async (core) => {
+		if (!core?.mountedPackPath) {
 			repo.value = null;
 			return;
 		}
 		try {
-			const repoJSON = await (await fetch("/mountedPack/repo.json")).json();
-			// mountedPackPath changed
-			if (props.coreState.mountedPackPath !== packId) return;
+			const repoJSON = await (
+				await fetch(`/packs/${core.mountedPackPath}/repo.json`)
+			).json();
 			repo.value = repoJSON;
 			repoChanges.value = false;
 			repoUpdated = true;
@@ -48,9 +42,13 @@ watch(
 				pack.value = null;
 				return;
 			}
+			const core = coreState.value;
+			if (!core) return;
 
 			const packJson = await (
-				await fetch(`/mountedPack/${getPackJsonPath(repoJSON)}`)
+				await fetch(
+					`/packs/${core.mountedPackPath}/${getPackJsonPath(repoJSON)}`,
+				)
 			).json();
 
 			// mountedPackPath changed
@@ -90,8 +88,10 @@ watch(
 );
 
 function normalizeRepoPath(path: string): string {
+	const core = coreState.value;
+	if (!core) return path;
 	if (path.startsWith("http://") || path.startsWith("https://")) {
-		const packId = props.coreState.mountedPackPath;
+		const packId = core.mountedPackPath;
 		return path.substring(path.indexOf(packId) + packId.length + 1);
 	}
 	return path;
@@ -146,7 +146,9 @@ async function GoToPackList() {
 		)
 			return;
 	}
-	MountPack("");
+	if (coreState.value) {
+		coreState.value.mountedPackPath = "";
+	}
 }
 </script>
 <template>
@@ -169,9 +171,9 @@ async function GoToPackList() {
 			v-else-if="'version' in pack"
 			:repo="repo"
 			:json="pack"
-			:id="coreState.mountedPackPath"
+			:id="coreState!.mountedPackPath"
 		/>
-		<PackV1 v-else :repo="repo" :json="pack" :id="coreState.mountedPackPath" />
+		<PackV1 v-else :repo="repo" :json="pack" :id="coreState!.mountedPackPath" />
 	</main>
 	<footer>
 		<a v-if="repoChanges || packChanges" href="#" @click="save()"

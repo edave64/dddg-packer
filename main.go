@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -50,24 +51,19 @@ type DynamicAssetHandler struct {
 }
 
 func (handler *DynamicAssetHandler) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
-	println(r.RequestURI)
-	mountedPath, isMountedPath := strings.CutPrefix(r.URL.Path, "/mountedPack")
+	log.Println(r.RequestURI)
+	mountedPath, isMountedPath := strings.CutPrefix(r.URL.Path, "/packs")
 	if isMountedPath {
 		handler.ServeMounted(rw, r, mountedPath)
 	}
 }
 
 func (handler *DynamicAssetHandler) ServeMounted(rw http.ResponseWriter, r *http.Request, mountedPath string) {
-	if handler.app.MountedPackPath != "" {
-		if r.Method == "GET" {
-			handler.ServeMountedGet(rw, r, mountedPath)
-		}
-		if r.Method == "PUT" {
-			handler.ServeMountedPut(rw, r, mountedPath)
-		}
-	} else {
-		fmt.Printf("Cannot load %+v since no pack is mounted\n", r.RequestURI)
-		rw.WriteHeader(http.StatusExpectationFailed)
+	if r.Method == "GET" {
+		handler.ServeMountedGet(rw, r, mountedPath)
+	}
+	if r.Method == "PUT" {
+		handler.ServeMountedPut(rw, r, mountedPath)
 	}
 }
 
@@ -75,7 +71,7 @@ func (handler *DynamicAssetHandler) ServeMountedGet(rw http.ResponseWriter, r *h
 	rw.Header().Add("Cache-Control", "no-cache")
 	dirPath, isDirPath := strings.CutSuffix(mountedPath, "/*.json")
 	if isDirPath {
-		path := filepath.Join(handler.app.DddgPath, "localRepo", handler.app.MountedPackPath, dirPath)
+		path := filepath.Join(handler.app.DddgPath, "localRepo", dirPath)
 		fileInfo, err := buildFileInfo(path)
 		if err != nil {
 			http.Error(rw, err.Error(), http.StatusInternalServerError)
@@ -96,7 +92,7 @@ func (handler *DynamicAssetHandler) ServeMountedGet(rw http.ResponseWriter, r *h
 		return
 	}
 
-	path := filepath.Join(handler.app.DddgPath, "localRepo", handler.app.MountedPackPath, mountedPath)
+	path := filepath.Join(handler.app.DddgPath, "localRepo", mountedPath)
 	fi, err := os.Open(path)
 	if err != nil {
 		http.Error(rw, err.Error(), http.StatusNotFound)
@@ -124,7 +120,7 @@ func (handler *DynamicAssetHandler) ServeMountedPut(rw http.ResponseWriter, r *h
 		http.Error(rw, err.Error(), http.StatusBadRequest)
 		return
 	}
-	fi, err := os.Create(filepath.Join(handler.app.DddgPath, "localRepo", handler.app.MountedPackPath, mountedPath))
+	fi, err := os.Create(filepath.Join(handler.app.DddgPath, "localRepo", mountedPath))
 	if err != nil {
 		http.Error(rw, err.Error(), http.StatusInternalServerError)
 		return

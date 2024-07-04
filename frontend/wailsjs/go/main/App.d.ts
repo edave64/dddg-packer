@@ -14,9 +14,7 @@ export function GetPacks():Promise<Array<string>>;
 
 export function GetRepoJson():Promise<main.MultiRepoJson>;
 
-export function MountPack(arg1:string):Promise<void>;
-
-export function OpenFolder():Promise<void>;
+export function OpenFolder(arg1:string):Promise<void>;
 
 export function TriggerCoreStateUpdate():Promise<void>;
 

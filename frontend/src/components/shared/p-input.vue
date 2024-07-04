@@ -59,15 +59,15 @@ function updateValue(value: string | undefined) {
 			error.value = "";
 			return;
 		}
-		if (!value.match(/^[a-z]/)) {
-			invalid.value = true;
-			error.value = "IDs must start with a letter";
-			return;
-		}
 		if (!value.match(/^[a-z0-9_\-\.]+$/)) {
 			invalid.value = true;
 			error.value =
 				"IDs can only contain lowercase letters, numbers, underscores, dots and dashes";
+			return;
+		}
+		if (!value.match(/^[a-z]/)) {
+			invalid.value = true;
+			error.value = "IDs must start with a letter";
 			return;
 		}
 		invalid.value = false;

@@ -26,12 +26,8 @@ export function GetRepoJson() {
   return window['go']['main']['App']['GetRepoJson']();
 }
 
-export function MountPack(arg1) {
-  return window['go']['main']['App']['MountPack'](arg1);
-}
-
-export function OpenFolder() {
-  return window['go']['main']['App']['OpenFolder']();
+export function OpenFolder(arg1) {
+  return window['go']['main']['App']['OpenFolder'](arg1);
 }
 
 export function TriggerCoreStateUpdate() {

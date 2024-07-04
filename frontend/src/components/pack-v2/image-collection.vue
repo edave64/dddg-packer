@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { coreState } from "@/core-state";
 import Button from "primevue/button";
 import Listbox from "primevue/listbox";
 import { computed, ref, watch, type CSSProperties, type PropType } from "vue";
@@ -44,9 +43,7 @@ const previewStyle = computed((): CSSProperties => {
 			background += ", ";
 		}
 
-		background += `no-repeat url(${joinNormalize(props.folder, ic)}?cache=${
-			coreState.value?.mountedPackPath
-		}) center / contain`;
+		background += `no-repeat url(${joinNormalize(props.folder, ic)}) center / contain`;
 	}
 
 	return {

@@ -3,24 +3,17 @@ import { normalizeId } from "@/id-tools";
 import type { ISupportedRepo } from "@/repo";
 import type { JSONContentPack } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
 import Button from "primevue/button";
-import { computed, ref, watch, type PropType } from "vue";
+import { computed, ref, watch } from "vue";
 import {
 	CreatePack,
 	GetPacks,
-	MountPack,
 	UpdateDddgPath,
 } from "../../wailsjs/go/main/App";
-import type { CoreState } from "../core-state";
+import { coreState } from "../core-state";
 import PInput from "./shared/p-input.vue";
 const packs = ref(null as null | string[]);
-const props = defineProps({
-	coreState: {
-		required: true,
-		type: Object as PropType<CoreState>,
-	},
-});
 
-watch(() => props.coreState, updatePacks, { immediate: true });
+watch(() => coreState, updatePacks, { immediate: true });
 async function updatePacks() {
 	try {
 		const newPacks = await GetPacks();
@@ -32,7 +25,7 @@ async function updatePacks() {
 }
 
 function openPack(id: string) {
-	MountPack(id);
+	coreState.value.mountedPackPath = id;
 }
 
 type State = null | {
@@ -111,7 +104,7 @@ async function createPack() {
 		JSON.stringify(pack, undefined, "\t"),
 	);
 
-	MountPack(packId.value);
+	openPack(packId.value);
 }
 </script>
 <template>
@@ -120,7 +113,7 @@ async function createPack() {
 			<fast-breadcrumb-item>Packs</fast-breadcrumb-item>
 		</teleport>
 		<p>
-			DDDG location: {{ coreState.dddgPath }}
+			DDDG location: {{ coreState!.dddgPath }}
 			<a href="#" @click="UpdateDddgPath()">[change]</a>
 		</p>
 		<h1>Create a new pack:</h1>
@@ -128,7 +121,6 @@ async function createPack() {
 			<li>
 				<a href="#" @click="state = { t: 'create-pack' }">Create empty pack</a>
 			</li>
-			<li>Create from image folder</li>
 		</ul>
 		<h1>Select pack to edit:</h1>
 		<p v-if="packs === null">Loading list...</p>
@@ -136,12 +128,6 @@ async function createPack() {
 		<ul v-else>
 			<li v-for="pack in packs" :key="pack">
 				<a href="#" @click="openPack(pack)">{{ pack }}</a>
-				<a
-					href="#"
-					@click="state = { t: 'create-pack', basedOn: pack }"
-					style="padding-left: 8px"
-					>[Clone]</a
-				>
 			</li>
 		</ul>
 	</template>

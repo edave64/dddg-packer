@@ -21,6 +21,7 @@ watch(
 			stage.value = "selectDDDG";
 		}
 	},
+	{ deep: true },
 );
 
 TriggerCoreStateUpdate();
@@ -31,9 +32,9 @@ TriggerCoreStateUpdate();
 		<fast-breadcrumb id="breadcrumb" separator=">"></fast-breadcrumb>
 	</header>
 	<StartUp v-if="stage === 'startup'" />
-	<SelectDDDG v-else-if="stage === 'selectDDDG'" :core-state="coreState!" />
-	<SelectPack v-else-if="stage === 'selectPack'" :core-state="coreState!" />
-	<EditPack v-else-if="stage === 'pack'" :core-state="coreState!" />
+	<SelectDDDG v-else-if="stage === 'selectDDDG'" />
+	<SelectPack v-else-if="stage === 'selectPack'" />
+	<EditPack v-else-if="stage === 'pack'" />
 	<div id="modalSlot"></div>
 </template>
 

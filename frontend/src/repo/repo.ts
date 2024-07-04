@@ -19,7 +19,7 @@ export const Repo = {
 			kind: ["Characters"],
 		},
 		{
-			id: "dddg.buildin.base.sayori",
+			id: "dddg.buildin.sayori",
 			name: "Sayori",
 			description: "Sayori",
 			authors: [],
@@ -43,7 +43,7 @@ export const Repo = {
 			kind: ["Characters"],
 		},
 		{
-			id: "dddg.buildin.base.yuri",
+			id: "dddg.buildin.yuri",
 			name: "Yuri",
 			description: "Yuri",
 			authors: [],

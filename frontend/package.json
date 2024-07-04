@@ -16,14 +16,15 @@
 		"@microsoft/fast-foundation": "^2.49.6",
 		"@vueuse/core": "^10.11.0",
 		"primevue": "^3.52.0",
-		"vue": "^3.2.37",
-		"vue-router": "^4.3.2"
+		"vue": "^3.4.31",
+		"vue-router": "^4.4.0"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^1.7.3",
 		"@vitejs/plugin-vue": "^3.0.3",
 		"@volar/vue-typescript": "^1.6.5",
 		"prettier-plugin-organize-imports": "^3.2.4",
-		"vite": "^3.0.7"
+		"vite": "^3.0.7",
+		"@vue/tsconfig": "^0.5.1"
 	}
 }

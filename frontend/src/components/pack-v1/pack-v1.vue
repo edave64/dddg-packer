@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import { coreState } from "@/core-state";
 import type { ISupportedRepo } from "@/repo";
 import type { JSONCharacter as V1Json } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v1/jsonFormat";
 import Button from "primevue/button";
 import { computed, ref, type PropType } from "vue";
-import { MountPack, OpenFolder } from "../../../wailsjs/go/main/App";
+import { OpenFolder } from "../../../wailsjs/go/main/App";
 import { joinNormalize } from "../../path-tools";
 import ImageCollection from "../pack-v2/image-collection.vue";
 import Code from "../shared/code.vue";
@@ -90,6 +91,11 @@ const hasImplicitDependencies = computed(() => {
 	);
 });
 
+function toPacks() {
+	if (!coreState.value) return;
+	coreState.value.mountedPackPath = "";
+}
+
 function addDependency() {}
 </script>
 <template>
@@ -101,7 +107,7 @@ function addDependency() {}
 	<div class="pack_wrapper">
 		<template v-if="state === null">
 			<teleport to="#tree">
-				<fast-tree-item @click="MountPack('')">Back to packs</fast-tree-item>
+				<fast-tree-item @click="toPacks()">Back to packs</fast-tree-item>
 				<fast-tree-item expanded>
 					Character
 					<fast-tree-item @click="state = { t: 'char', obj: json }">
@@ -114,7 +120,9 @@ function addDependency() {}
 				WARNING: This pack is an old style character extension. These are not
 				yet supported by this tool. Saving this pack might break it.
 			</p>
-			<Button @click="OpenFolder()">Open folder in explorer</Button>
+			<Button @click="OpenFolder(coreState?.mountedPackPath ?? '')"
+				>Open folder in explorer</Button
+			>
 			<PInput label="ID" v-model="repo.pack.id" />
 			<PInput label="Name" v-model="repo.pack.name" />
 			<PInput label="Source" v-model="repo.pack.source" />

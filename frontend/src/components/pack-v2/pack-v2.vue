@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { aryFindRemove, aryRemove, seekFreeIds } from "@/array-tools";
+import { coreState } from "@/core-state";
 import {
 	generateEmptyPack,
 	loadPack,
@@ -18,7 +19,7 @@ import type {
 import { computedAsync } from "@vueuse/core";
 import Button from "primevue/button";
 import { computed, ref, type PropType } from "vue";
-import { MountPack, OpenFolder } from "../../../wailsjs/go/main/App";
+import { OpenFolder } from "../../../wailsjs/go/main/App";
 import { joinNormalize } from "../../path-tools";
 import Code from "../shared/code.vue";
 import PInput from "../shared/p-input.vue";
@@ -302,6 +303,11 @@ const normalizedDependecyTree = computedAsync<INormalizedPack>(async () => {
 	}, generateEmptyPack());
 }, generateEmptyPack());
 
+function toPacks() {
+	if (!coreState.value) return;
+	coreState.value.mountedPackPath = "";
+}
+
 window.normalizedDependecyTree = normalizedDependecyTree;
 </script>
 <template>
@@ -313,7 +319,7 @@ window.normalizedDependecyTree = normalizedDependecyTree;
 	<div class="pack_wrapper">
 		<template v-if="state === null">
 			<teleport to="#tree">
-				<fast-tree-item @click="MountPack('')">Back to packs</fast-tree-item>
+				<fast-tree-item @click="toPacks()">Back to packs</fast-tree-item>
 				<Characters
 					:json="json"
 					:repo="repo"
@@ -361,7 +367,9 @@ window.normalizedDependecyTree = normalizedDependecyTree;
 				</fast-tree-item>
 			</teleport>
 			<h2>Pack</h2>
-			<Button @click="OpenFolder()">Open folder in explorer</Button>
+			<Button @click="OpenFolder(coreState?.mountedPackPath ?? '')"
+				>Open folder in explorer</Button
+			>
 			<PInput label="ID" v-model="repo.pack.id" />
 			<PInput label="Name" v-model="repo.pack.name" />
 			<PInput label="Source" v-model="repo.pack.source" />

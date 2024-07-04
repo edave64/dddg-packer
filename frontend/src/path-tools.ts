@@ -1,3 +1,5 @@
+import { coreState } from "./core-state";
+
 export function isWebUrl(path: string) {
 	return (
 		path.startsWith("blob:") ||
@@ -10,7 +12,7 @@ export function isWebUrl(path: string) {
 export function joinNormalize(base: string, sub?: string) {
 	if (!sub) return base;
 	if (sub.startsWith("./")) {
-		return `/mountedPack/${sub.slice(2)}`;
+		return `/packs/${coreState.value.mountedPackPath}/${sub.slice(2)}`;
 	}
 	if (sub.startsWith("/")) {
 		return `https://edave64.github.io/dddg-assets/v2/${sub.slice(1)}`;

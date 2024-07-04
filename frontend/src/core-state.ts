@@ -9,7 +9,10 @@ export interface CoreState {
 	mountedPackPath: string;
 }
 
-export const coreState = ref(null as null | CoreState);
+export const coreState = ref({
+	dddgPath: "",
+	mountedPackPath: "",
+} as CoreState);
 
 EventsOn("coreStateChanged", (newState: CoreState) => {
 	coreState.value = newState;
@@ -28,5 +31,8 @@ export async function saveFile(path: string, data: Blob | Uint8Array | string) {
 	} else {
 		normalizedData = data;
 	}
-	UploadFile(path, Array.from(normalizedData));
+	UploadFile(
+		`/${coreState.value.mountedPackPath}/${path}`,
+		Array.from(normalizedData),
+	);
 }

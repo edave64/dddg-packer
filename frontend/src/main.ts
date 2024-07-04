@@ -3,7 +3,6 @@ import App from "./app.vue";
 import PrimeVue from "primevue/config";
 import "./style.css";
 import "primevue/resources/themes/aura-dark-pink/theme.css";
-
 import {
 	provideFASTDesignSystem,
 	fastBreadcrumb,

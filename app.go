@@ -15,9 +15,8 @@ import (
 
 // App struct
 type App struct {
-	ctx             context.Context
-	DddgPath        string `json:"dddgPath"`
-	MountedPackPath string `json:"mountedPackPath"`
+	ctx      context.Context
+	DddgPath string `json:"dddgPath"`
 }
 
 // NewApp creates a new App application struct
@@ -72,14 +71,9 @@ func (a *App) TriggerCoreStateUpdate() {
 	wails_runtime.EventsEmit(a.ctx, "coreStateChanged", a)
 }
 
-func (a *App) MountPack(id string) {
-	a.MountedPackPath = id
-	a.TriggerCoreStateUpdate()
-}
-
 // This is temporary until I get the PUT handler to work
 func (a *App) UploadFile(mountedPath string, contents []byte) {
-	fi, err := os.Create(filepath.Join(a.DddgPath, "localRepo", a.MountedPackPath, mountedPath))
+	fi, err := os.Create(filepath.Join(a.DddgPath, "localRepo", mountedPath))
 	if err == nil {
 		// close fi on exit and check for its returned error
 		defer func() {
@@ -240,14 +234,11 @@ func (a *App) GetRepoJson() (*MultiRepoJson, error) {
 	return &ret, nil
 }
 
-func (a *App) OpenFolder() error {
+func (a *App) OpenFolder(path string) error {
 	if a.DddgPath == "" {
 		return errors.New("no DDDG path set")
 	}
-	if a.MountedPackPath == "" {
-		return errors.New("no pack path set")
-	}
-	targetPath := filepath.Join(a.DddgPath, "localRepo", a.MountedPackPath)
+	targetPath := filepath.Join(a.DddgPath, "localRepo", path)
 	var cmd *exec.Cmd
 	if runtime.GOOS == "windows" {
 		cmd = exec.Command("explorer", targetPath)

@@ -13,7 +13,7 @@ import type {
 import { Confirm } from "@wails/go/main/App";
 import Button from "primevue/button";
 import Listbox from "primevue/listbox";
-import { computed, type PropType } from "vue";
+import { computed, ref, type PropType } from "vue";
 import { joinNormalize } from "../../path-tools";
 import Code from "../shared/code.vue";
 import PInput from "../shared/p-input.vue";
@@ -167,6 +167,15 @@ const selectedHeadGroups = computed({
 const isExtension = computed(() => {
 	return !!props.depPose;
 });
+
+const customPosName = ref("");
+
+function addPosePosition(part: string) {
+	if (!props.pose.positions) {
+		props.pose.positions = {};
+	}
+	props.pose.positions[part] = [];
+}
 </script>
 <template>
 	<teleport to="#breadcrumb">
@@ -269,18 +278,25 @@ const isExtension = computed(() => {
 		</p>
 	</template>
 	<template v-else-if="!pose.renderCommands">
-		<p
-			v-for="position in ['Left', 'Right', 'Variant']"
-			v-if="!pose.positions?.[position]"
+		<template v-for="position in ['Left', 'Right', 'Variant']">
+			<p v-if="!pose.positions?.[position]">
+				<Button
+					@click="
+						if (!pose.positions) {
+							pose.positions = {};
+						}
+						pose.positions[position] = [];
+					"
+					>Create {{ position }} pose position</Button
+				>
+			</p></template
 		>
-			<Button
-				@click="
-					if (!pose.positions) {
-						pose.positions = {};
-					}
-					pose.positions[position] = [];
-				"
-				>Create {{ position }} pose position</Button
+	</template>
+	<template v-else>
+		<p>
+			<PInput label="Pose position" v-model="customPosName" />
+			<Button @click="addPosePosition(customPosName)"
+				>Create {{ customPosName }} pose position</Button
 			>
 		</p>
 	</template>

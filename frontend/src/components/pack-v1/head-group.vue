@@ -59,8 +59,9 @@ async function deleteThis() {
 	<p>
 		<PInput
 			label="ID"
-			:value="id"
-			@input="$emit('updateKey', ($event.target as HTMLInputElement).value)"
+			type="id"
+			:model-value="id"
+			@update:model-value="$emit('updateKey', $event)"
 		/>
 	</p>
 	<Variations
