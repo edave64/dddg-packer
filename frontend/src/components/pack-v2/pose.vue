@@ -144,9 +144,12 @@ async function deleteThis() {
 }
 
 const headGroupOptions = computed((): Array<{ value: string }> => {
-	return Object.entries(props.headGroups).map(([k, v]) => ({
-		value: k,
-	}));
+	return [
+		...Object.entries(props.headGroups).map(([k, v]) => ({
+			value: k,
+		})),
+		...(props.depChar?.headGroups ?? []).map((x) => ({ value: x.id })),
+	];
 });
 
 const selectedHeadGroups = computed({
