@@ -92,6 +92,7 @@ function extendChar(char: INormalizedPack["characters"][0]) {
 	if (!props.json.characters) {
 		props.json.characters = [];
 	}
+	props.repo.pack.characters.push(char.label);
 	const obj: JSONCharacter = {
 		id: char.id,
 	};

@@ -406,6 +406,7 @@ window.normalizedDependecyTree = normalizedDependecyTree;
 					)!
 				"
 				:folder="folder"
+				@addKind="addKind"
 				@leave="reset"
 				@delete="deleteObj"
 				@updateCharName="updateCharName"

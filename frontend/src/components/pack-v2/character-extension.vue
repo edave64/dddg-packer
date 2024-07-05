@@ -4,6 +4,7 @@ import type {
 	INormalizedCharacter,
 	INormalizedObject,
 } from "@/normalized-dependencies";
+import type { IPack } from "@/repo";
 import type {
 	JSONCharacter,
 	JSONHeadCollection,
@@ -36,6 +37,7 @@ const props = defineProps({
 const emit = defineEmits<{
 	leave: [];
 	delete: [];
+	addKind: [kind: IPack["kind"][0]];
 	updateCharName: [{ oldName: string; newName: string }];
 }>();
 
@@ -104,6 +106,7 @@ function extendHeadGroup(head: INormalizedObject) {
 		variants: [],
 	};
 	props.char.heads[head.id] = obj;
+	emit("addKind", "Expressions");
 	state.value = {
 		t: "head-group",
 		obj,
@@ -129,6 +132,7 @@ function createStyleGroup() {
 		],
 	};
 	props.char.styleGroups.push(obj);
+	emit("addKind", "Styles");
 	state.value = {
 		t: "style-group",
 		obj,
@@ -144,6 +148,7 @@ function extentStyleGroup(styleGroup: INormalizedObject) {
 		styles: [],
 	};
 	props.char.styleGroups.push(obj);
+	emit("addKind", "Poses");
 	state.value = {
 		t: "style-group",
 		obj,
