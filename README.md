@@ -1,19 +1,15 @@
-# README
+# DDDG Packer
 
-## About
+DDDG packer is a companion application for the [Doki Doki Dialog Generator](https://github.com/edave64/doki-doki-dialog-generator). It allows you to more easily create and edit DDDG Content Packs, without needing to learn the JSON format.
 
-This is the official Wails Vue template.
+## Installation
 
-You can configure the project by editing `wails.json`. More information about the project settings can be found
-here: https://wails.io/docs/reference/project-config
+Go to the [releases page](https://github.com/edave64/dddg-Packer/releases) and download the latest version for your operating system.
 
-## Live Development
+## Development
 
-To run in live development mode, run `wails dev` in the project directory. This will run a Vite development
-server that will provide very fast hot reload of your frontend changes. If you want to develop in a browser
-and have access to your Go methods, there is also a dev server that runs on http://localhost:34115. Connect
-to this in your browser, and you can call your Go code from devtools.
+This project uses wails (go) for the native system functionality, and vue3 with typescript for the UI.
 
-## Building
+## Starting the app
 
-To build a redistributable, production mode package, use `wails build`.
+To start the app, run `wails dev` in the root directory of the project.
