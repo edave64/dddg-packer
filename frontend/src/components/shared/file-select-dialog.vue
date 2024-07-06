@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { coreState } from "@/core-state";
 import Button from "primevue/button";
 import Dialog from "primevue/dialog";
 import { computed, ref } from "vue";
@@ -27,7 +28,10 @@ const emit = defineEmits<{
 }>();
 
 const selected = ref(undefined as undefined | string[]);
-const root = new URL("/mountedPack/", location.origin);
+const root = new URL(
+	"/packs/" + coreState.value.mountedPackPath + "/",
+	location.origin,
+);
 
 (async () => {
 	const tree = await (
