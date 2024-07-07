@@ -6,6 +6,7 @@ import Listbox from "primevue/listbox";
 import { computed, type PropType } from "vue";
 import { joinNormalize } from "../../path-tools";
 import Code from "../shared/code.vue";
+import { deletableField } from "../shared/deletable-field";
 import PInput from "../shared/p-input.vue";
 import ToggleBox from "../shared/toggle-box.vue";
 import type { HeadDummy } from "./headDummy";
@@ -36,23 +37,16 @@ const f = computed(() => {
 	return joinNormalize(props.folder, props.pose.folder);
 });
 
-const headInForeground = computed({
-	get(): boolean {
-		return props.pose.headInForeground ?? false;
-	},
-	set(val: boolean) {
-		if (
-			val === props.pose.headInForeground ||
-			(!val && !props.pose.headInForeground)
-		)
-			return;
-		if (val) {
-			props.pose.headInForeground = true;
-		} else {
-			delete props.pose.headInForeground;
-		}
-	},
-});
+const headInForeground = deletableField(
+	() => props.pose,
+	"headInForeground",
+	false,
+);
+const selectedHeadGroups = deletableField(
+	() => props.pose,
+	"compatibleHeads",
+	[],
+);
 
 async function deleteThis() {
 	if (
@@ -64,21 +58,6 @@ async function deleteThis() {
 		emit("delete");
 	}
 }
-
-const selectedHeadGroups = computed({
-	get() {
-		return props.pose.compatibleHeads ?? [];
-	},
-	set(value: string[]) {
-		if (value.length === 0) {
-			if (props.pose.compatibleHeads) {
-				delete props.pose.compatibleHeads;
-			}
-		} else {
-			props.pose.compatibleHeads = value;
-		}
-	},
-});
 </script>
 <template>
 	<teleport to="#breadcrumb">

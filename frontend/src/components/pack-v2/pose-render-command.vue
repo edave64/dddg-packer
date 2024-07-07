@@ -4,6 +4,7 @@ import Button from "primevue/button";
 import { computed, type PropType } from "vue";
 import { joinNormalize } from "../../path-tools";
 import Combo from "../shared/combo.vue";
+import { deletableField } from "../shared/deletable-field";
 import NumberInput from "../shared/number-input.vue";
 
 const props = defineProps({
@@ -85,20 +86,11 @@ type CompositeType = Exclude<
 	undefined
 >;
 
-const composite = computed({
-	get(): CompositeType {
-		return props.command.composite ?? "source-over";
-	},
-	set(val: CompositeType) {
-		if (val === "source-over" && props.command.composite === undefined) return;
-		if (props.command.composite === val) return;
-		if (val === "source-over") {
-			delete props.command.composite;
-			return;
-		}
-		props.command.composite = val;
-	},
-});
+const composite = deletableField(
+	() => props.command,
+	"composite",
+	"source-over",
+);
 
 const compositeOptions = [
 	{
