@@ -87,7 +87,7 @@ type CompositeType = Exclude<
 >;
 
 const composite = deletableField(
-	() => props.command,
+	() => props.command as JSONPoseCommand | { composite: "source-over" },
 	"composite",
 	"source-over",
 );

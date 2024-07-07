@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { seekFreeIds } from "@/array-tools";
+import { seekById } from "@/id-tools";
 import type {
 	INormalizedCharacter,
 	INormalizedPose,
@@ -149,7 +150,7 @@ function extendPose(pose: INormalizedPose) {
 		:folder="folder"
 		:head-groups="headGroups"
 		:depChar="depChar"
-		:depPose="depStyle?.poses.find((x) => x.id === state!.obj.id)"
+		:depPose="seekById(state!.obj.id, depStyle?.poses)"
 		@leave="state = null"
 		@delete="deleteObj"
 		v-else-if="state.t === 'pose'"

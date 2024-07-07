@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { aryFindRemove, aryRemove, seekFreeIds } from "@/array-tools";
 import { coreState } from "@/core-state";
+import { seekById } from "@/id-tools";
 import {
 	generateEmptyPack,
 	loadPack,
@@ -53,8 +54,6 @@ const folder = computed(() => {
 
 const state = ref(null as State);
 
-window.j = props.json;
-
 if (!props.json.dependencies) {
 	const deps = new Set<string>();
 	for (const char of props.json.characters ?? []) {
@@ -95,7 +94,6 @@ if (!props.json.dependencies) {
 		deps.add(background.id.split(":")[0]);
 	}
 
-	// TODO: Typing of dependencies is messed up
 	props.json.dependencies = Array.from(deps) as [];
 }
 
@@ -307,8 +305,6 @@ function toPacks() {
 	if (!coreState.value) return;
 	coreState.value.mountedPackPath = "";
 }
-
-window.normalizedDependecyTree = normalizedDependecyTree;
 </script>
 <template>
 	<teleport to="#breadcrumb">
@@ -400,11 +396,7 @@ window.normalizedDependecyTree = normalizedDependecyTree;
 			/>
 			<CharacterExtension
 				:char="state.obj"
-				:dep-char="
-					normalizedDependecyTree.characters.find(
-						(x) => x.id === state!.obj.id,
-					)!
-				"
+				:dep-char="seekById(state!.obj.id, normalizedDependecyTree.characters)!"
 				:folder="folder"
 				@addKind="addKind"
 				@leave="reset"

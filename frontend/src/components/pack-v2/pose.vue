@@ -267,8 +267,8 @@ function addPosePosition(part: string) {
 		:label-editable="!!pose.renderCommands"
 		@update:label="renamePosition(k as string, $event)"
 	/>
-	<template v-if="depPose">
-		<p v-for="k in depPose.positions" v-if="!pose.positions?.[k]">
+	<template v-if="depPose" v-for="k in depPose.positions" :key="k">
+		<p v-if="!Object.prototype.hasOwnProperty.call(pose.positions, k)">
 			<Button
 				@click="
 					if (!pose.positions) {
