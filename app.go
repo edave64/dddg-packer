@@ -9,6 +9,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"strings"
 
 	wails_runtime "github.com/wailsapp/wails/v2/pkg/runtime"
 )
@@ -224,6 +225,12 @@ func (a *App) GetRepoJson() (*MultiRepoJson, error) {
 		}
 		pack := SingleRepoJson{}
 		err = json.Unmarshal(bytes, &pack)
+		if strings.HasPrefix(pack.Pack.DDDG1Path, "./") {
+			pack.Pack.DDDG1Path = "packs/" + file.Name() + "/" + pack.Pack.DDDG1Path[2:]
+		}
+		if strings.HasPrefix(pack.Pack.DDDG2Path, "./") {
+			pack.Pack.DDDG2Path = "packs/" + file.Name() + "/" + pack.Pack.DDDG2Path[2:]
+		}
 		if err != nil {
 			wails_runtime.LogError(a.ctx, fmt.Sprintf("Error unmarshalling %s - %s", path, err.Error()))
 			continue

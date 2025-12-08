@@ -186,11 +186,9 @@ function createStyle() {
 				>
 					{{ style.label }}
 				</fast-tree-item>
-				<fast-tree-item @click="createStyle">Add style group</fast-tree-item>
+				<fast-tree-item @click="createStyle">Add style</fast-tree-item>
 			</fast-tree-item>
-			<fast-tree-item v-else @click="createStyle"
-				>Add style group</fast-tree-item
-			>
+			<fast-tree-item v-else @click="createStyle">Add style</fast-tree-item>
 		</teleport>
 		<h2>Character</h2>
 		<IdLabelPair v-model:id="char.id" v-model:label="char.name" />
