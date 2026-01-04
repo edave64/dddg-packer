@@ -1,8 +1,8 @@
-import type * as V2 from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
-import { Repo } from "./repo/repo";
 import type * as V1 from "@edave64/doki-doki-dialog-generator-pack-format/dist/v1/jsonFormat";
+import { expandOrTranslateId } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/convertV1";
+import type * as V2 from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
 import type { HeadDummy } from "./components/pack-v1/headDummy";
-import type { Style } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v1/model";
+import { Repo } from "./repo/repo";
 
 export type V1Pack = V1.JSONCharacter<HeadDummy>;
 export type V2Pack = V2.JSONContentPack;
@@ -223,6 +223,12 @@ export function getStyleId(parts: Record<string, string> | undefined): string {
 
 function normalizePackV1(pack: V1Pack): INormalizedPack {
 	const packId = pack.packId ?? "";
+	const ctx = {
+		characterId: pack.id,
+		packId: pack.packId!,
+		paths: {},
+	};
+
 	return {
 		characters: [normalizeCharacter(pack)],
 		backgrounds: [],
@@ -231,10 +237,10 @@ function normalizePackV1(pack: V1Pack): INormalizedPack {
 
 	function normalizeCharacter(character: V1Pack): INormalizedCharacter {
 		return {
-			id: namespaceId(packId, character.id),
+			id: expandOrTranslateId("character", character.id, ctx),
 			label: character.name ?? character.id,
 			headGroups: Object.keys(character.heads ?? {}).map((x) => ({
-				id: namespaceId(packId, x),
+				id: expandOrTranslateId("heads", x, ctx),
 				label: x,
 			})),
 			styleGroups: character.styles?.map(normalizeStyleGroup) ?? [],
@@ -243,7 +249,7 @@ function normalizePackV1(pack: V1Pack): INormalizedPack {
 
 	function normalizeStyleGroup(value: V1.JSONStyle): INormalizedStyleGroup {
 		return {
-			id: namespaceId(packId, value.name),
+			id: expandOrTranslateId("styleGroups", value.name, ctx),
 			label: value.label,
 			parts: [],
 			styles: [
