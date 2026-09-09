@@ -75,7 +75,7 @@ export const Repo = {
 			preview: [],
 			source: "",
 			dddg2Path:
-				"https://edave64.github.io/Doki-Doki-Dialog-Generator/release/packs/buildin.extra.concept_mc.json",
+				"https://edave64.github.io/Doki-Doki-Dialog-Generator/release/packs/buildin.extra.concept_mc_v2.json",
 			kind: ["Characters"],
 		},
 		{
