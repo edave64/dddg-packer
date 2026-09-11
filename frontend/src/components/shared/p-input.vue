@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import InputText from "primevue/inputtext";
-import { getCurrentInstance, ref, watch, type PropType } from "vue";
+import { computed, getCurrentInstance, ref, watch, type PropType } from "vue";
 
 const props = defineProps({
 	label: {
@@ -11,7 +11,7 @@ const props = defineProps({
 		type: String,
 	},
 	type: {
-		type: String as PropType<"any" | "id">,
+		type: String as PropType<"any" | "id" | "foreignid">,
 		default: "any",
 	},
 	modelValue: {
@@ -46,6 +46,19 @@ watch(
 	{ immediate: true },
 );
 
+const realValue = computed<string>({
+	get(): string {
+		return props.modelValue;
+	},
+	set(value: string) {
+		if (props.type === "id") {
+			value = value.replace(/[^a-z0-9_\-\.]/gi, "");
+			value = value.toLowerCase();
+		}
+		emit("update:modelValue", value);
+	},
+});
+
 function updateValue(value: string | undefined) {
 	if (props.disabled) return;
 	if (value == null) {
@@ -77,6 +90,13 @@ function updateValue(value: string | undefined) {
 		emit("update:modelValue", value ?? "");
 	}
 }
+
+const autoComplete = computed(() => {
+	if (props.type === "id" || props.type === "foreignid") {
+		return "off";
+	}
+	return undefined;
+});
 </script>
 <template>
 	<div style="display: flex; width: calc(100% - 8px); align-items: center">
@@ -84,10 +104,9 @@ function updateValue(value: string | undefined) {
 		<InputText
 			style="flex-grow: 1"
 			type="text"
-			:autocomplete="type === 'id' ? 'off' : undefined"
-			:aria-autocomplete="type === 'id' ? 'none' : undefined"
-			:value="temp_val"
-			@update:modelValue="updateValue($event)"
+			:autocomplete="autoComplete"
+			:autocapitalize="autoComplete"
+			v-model="realValue"
 			variant="filled"
 			:id
 			:invalid

@@ -22,6 +22,8 @@ import Button from "primevue/button";
 import { computed, ref, type PropType } from "vue";
 import { OpenFolder } from "../../../wailsjs/go/main/App";
 import { joinNormalize } from "../../path-tools";
+import Author from "../shared/author.vue";
+import AuthorsTree from "../shared/authors-tree.vue";
 import Code from "../shared/code.vue";
 import PInput from "../shared/p-input.vue";
 import Background from "./background.vue";
@@ -114,6 +116,10 @@ type State =
 	| {
 			t: "color";
 			obj: JSONColor;
+	  }
+	| {
+			t: "authors";
+			obj: string;
 	  };
 
 function reset() {
@@ -138,6 +144,15 @@ function createBackground() {
 	state.value = {
 		t: "background",
 		obj,
+	};
+}
+
+function createAuthor() {
+	const id = seekFreeIds("author", Object.keys(props.repo.authors));
+	props.repo.authors[id] = {};
+	state.value = {
+		t: "authors",
+		obj: id,
 	};
 }
 
@@ -175,6 +190,10 @@ function deleteObj() {
 	if (s === null) return;
 	if (s.t === "color") {
 		aryFindRemove(props.json.colors, (x) => x.color === s.obj.color);
+		return;
+	}
+	if (s.t === "authors") {
+		delete props.repo.authors[s.obj];
 		return;
 	}
 	state.value = null;
@@ -305,6 +324,16 @@ function toPacks() {
 	if (!coreState.value) return;
 	coreState.value.mountedPackPath = "";
 }
+
+function updateAuthorKey(newKey: string) {
+	if (state.value?.t !== "authors") return;
+	if (props.repo.authors[newKey]) return;
+
+	const oldKey = state.value.obj;
+	props.repo.authors[newKey] = props.repo.authors[oldKey];
+	state.value.obj = newKey;
+	delete props.repo.authors[oldKey];
+}
 </script>
 <template>
 	<teleport to="#breadcrumb">
@@ -361,6 +390,11 @@ function toPacks() {
 						>Add background</fast-tree-item
 					>
 				</fast-tree-item>
+				<authors-tree
+					:authors="repo.authors"
+					@author-click="state = { t: 'authors', obj: $event }"
+					@create-author="createAuthor"
+				/>
 			</teleport>
 			<h2>Pack</h2>
 			<Button @click="OpenFolder(coreState?.mountedPackPath ?? '')"
@@ -411,6 +445,14 @@ function toPacks() {
 			@leave="reset"
 			@delete="deleteObj"
 			v-else-if="state.t === 'background'"
+		/>
+		<Author
+			v-else-if="state.t === 'authors'"
+			:authors="repo.authors"
+			:id="state.obj"
+			@leave="reset"
+			@delete="deleteObj"
+			@updateKey="updateAuthorKey"
 		/>
 	</div>
 </template>

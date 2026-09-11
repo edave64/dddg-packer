@@ -38,4 +38,9 @@ export interface IPack {
 
 export interface IAuthor {
 	reddit?: string;
+	pixiv?: string;
+	twitter?: string;
+	website?: string;
+	deviantart?: string;
+	discord?: string;
 }
