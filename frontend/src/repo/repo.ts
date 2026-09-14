@@ -1,10 +1,9 @@
-import { ref } from "vue";
-import type { IPack, IRepo } from "../repo";
-import { all } from "@microsoft/fast-foundation";
-import { GetPacks, GetRepoJson } from "@wails/go/main/App";
+import { GetRepoJson } from "@wails/go/main/App";
+import { computed, reactive, ref } from "vue";
+import type { IPack } from "../repo";
 
 export const Repo = {
-	allPacks: ref<IPack[]>([
+	basePacks: ref<IPack[]>([
 		// Packs included with dddg
 		{
 			id: "dddg.buildin.base.monika",
@@ -127,8 +126,78 @@ export const Repo = {
 			kind: ["Characters"],
 		},
 	]),
+	// List of authors
+	baseAuthors: ref<Record<string, IAuthor>>({
+		Satchely: {
+			deviantart: "satchely",
+			pixiv: "1104770",
+			twitter: "_Satchely",
+			tumblr: "satchely",
+			bluesky: "satchely.bsky.social",
+		},
+		Fatelogic: {
+			deviantart: "fatelogic",
+			patreon: "fatelogic",
+			twitter: "Fatelogic",
+			tumblr: "fatelogic",
+		},
+		Hadrosaur838: {
+			deviantart: "hadrosaur838",
+			reddit: "Hadrosaur838",
+		},
+		"Meddy-sin": {
+			reddit: "meddy-sin",
+		},
+		SlightlySimple: {
+			reddit: "SlightlySimple",
+		},
+		StormBlazed76: {
+			discord: "Storm Blaze#7530",
+			reddit: "StormBlazed76",
+		},
+	}),
 
-	async load(url: string) {
+	repoPacks: reactive({} as Record<string, IPack[]>),
+	repoAuthors: reactive({} as Record<string, Record<string, IAuthor>>),
+
+	localPacks: ref<IPack[]>([]),
+	localAuthors: ref<Record<string, IAuthor>>({}),
+
+	allPacks: computed((): IPack[] => {
+		const deduplicated: Record<string, IPack> = {};
+
+		// JS objects preserve insertion order, so this ensures the overall order is
+		// preserved, while also letting the latest pack override any previous ones
+		for (const pack of [
+			...Repo.basePacks.value,
+			...Object.values(Repo.repoPacks).flat(),
+			...Repo.localPacks.value,
+		]) {
+			deduplicated[pack.id] = pack;
+		}
+		return Object.values(deduplicated);
+	}),
+
+	allAuthors: computed((): Record<string, IAuthor> => {
+		const out: Record<string, IAuthor> = {};
+		for (const authorSource of [
+			Repo.baseAuthors.value,
+			...Object.values(Repo.repoAuthors),
+			Repo.localAuthors.value,
+		]) {
+			if (!authorSource) continue;
+			for (const [name, author] of Object.entries(authorSource)) {
+				if (out[name]) {
+					out[name] = { ...out[name], ...author };
+				} else {
+					out[name] = author;
+				}
+			}
+		}
+		return out;
+	}),
+
+	async loadPacks(url: string) {
 		const packs: IPack[] = await (await fetch(url)).json();
 		const root = `${new URL("..", url).toString()}/`;
 		for (const pack of packs) {
@@ -142,18 +211,37 @@ export const Repo = {
 				pack.preview = pack.preview.map((p) => p.replace(/^\.\//, root));
 			}
 		}
-		this.allPacks.value = [...this.allPacks.value, ...packs];
+		this.repoPacks[url] = packs;
+	},
+	async loadAuthors(url: string) {
+		const authors: Record<string, IAuthor> = await (await fetch(url)).json();
+		this.repoAuthors[url] = authors;
 	},
 	async loadAllInstalled() {
-		const packFolders = await GetRepoJson();
-		this.allPacks.value = [
-			...this.allPacks.value,
-			...(packFolders.packs as unknown as IPack[]),
-		];
+		const multipack = await GetRepoJson();
+		this.localPacks.value = multipack.packs as IPack[];
+		this.localAuthors.value = multipack.authors as Record<string, IAuthor>;
 	},
 };
 
-Repo.load(
+Repo.loadPacks(
 	"https://edave64.github.io/Doki-Doki-Dialog-Generator-Packs/repo.json",
 );
+Repo.loadAuthors(
+	"https://edave64.github.io/Doki-Doki-Dialog-Generator-Packs/people.json",
+);
 Repo.loadAllInstalled();
+
+export interface IAuthor {
+	reddit?: string;
+	twitter?: string;
+	github?: string;
+	website?: string;
+	pixiv?: string;
+	deviantart?: string;
+	patreon?: string;
+	facebook?: string;
+	discord?: string;
+	tumblr?: string;
+	bluesky?: string;
+}

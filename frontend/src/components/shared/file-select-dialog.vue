@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { coreState } from "@/core-state";
+import { usePackId } from "@/store/active-pack";
 import Button from "primevue/button";
 import Dialog from "primevue/dialog";
 import { computed, ref } from "vue";
 import type { IFileInfo } from "./file-tree";
 import FileTree from "./file-tree.vue";
+
+const packId = usePackId();
 
 const props = defineProps({
 	folder: {
@@ -20,6 +22,8 @@ const props = defineProps({
 	},
 });
 
+const visible = defineModel<boolean>("visible");
+
 const folderStructure = ref(null as null | IFileInfo);
 
 const emit = defineEmits<{
@@ -28,10 +32,7 @@ const emit = defineEmits<{
 }>();
 
 const selected = ref(undefined as undefined | string[]);
-const root = new URL(
-	"/packs/" + coreState.value.mountedPackPath + "/",
-	location.origin,
-);
+const root = new URL(`/packs/${packId.value}/`, location.origin);
 
 (async () => {
 	const tree = await (
@@ -48,14 +49,10 @@ const fullUrl = computed(() => {
 </script>
 <template>
 	<Dialog
-		visible
+		v-model:visible="visible"
 		style="width: 90vw; height: 90vh"
 		modal
-		@update:visible="
-			if (!$event) {
-				$emit('close');
-			}
-		"
+		header="Select a file"
 	>
 		<div
 			v-if="folderStructure"
@@ -67,7 +64,6 @@ const fullUrl = computed(() => {
 				height: 100%;
 			"
 		>
-			<h2>Select a file</h2>
 			<div style="display: flex; overflow: hidden; width: 100%; height: 100%">
 				<FileTree
 					:folderStructure="folderStructure!"
@@ -91,7 +87,7 @@ const fullUrl = computed(() => {
 				:disabled="selected === undefined"
 				>Confirm</Button
 			>
-			<Button @click="$emit('close')">Close</Button>
+			<Button @click="visible = false">Close</Button>
 		</div>
 	</Dialog>
 </template>

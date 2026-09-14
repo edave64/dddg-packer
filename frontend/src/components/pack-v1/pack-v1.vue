@@ -1,156 +1,97 @@
 <script setup lang="ts">
-import { coreState } from "@/core-state";
-import type { ISupportedRepo } from "@/repo";
-import type { JSONCharacter as V1Json } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v1/jsonFormat";
+import ImageCollection from "@/components/pack-v2/image-collection.vue";
+import Code from "@/components/shared/code.vue";
+import PInput from "@/components/shared/p-input.vue";
+import { joinNormalize } from "@/path-tools";
+import {
+	useActivePack,
+	useActiveRepo,
+	usePackId,
+	type V1Extended,
+} from "@/store/active-pack.js";
+import { OpenFolder } from "@wails/go/main/App";
+import { Listbox } from "primevue";
 import Button from "primevue/button";
-import { computed, ref, type PropType } from "vue";
-import { OpenFolder } from "../../../wailsjs/go/main/App";
-import { joinNormalize } from "../../path-tools";
-import ImageCollection from "../pack-v2/image-collection.vue";
-import Code from "../shared/code.vue";
-import PInput from "../shared/p-input.vue";
-import Character from "./character.vue";
-import type { HeadDummy } from "./headDummy";
+import { computed, watch, type ComputedRef } from "vue";
 
-const props = defineProps({
-	json: {
-		required: true,
-		type: Object as PropType<V1Extended>,
-	},
-	repo: {
-		required: true,
-		type: Object as PropType<ISupportedRepo>,
-	},
-	id: {
-		required: true,
-		type: String,
-	},
-});
+const packId = usePackId();
+
+// Parent should ensure that we are in a v2 pack
+const pack = useActivePack() as ComputedRef<V1Extended | undefined>;
+const repo = useActiveRepo();
 
 const root = joinNormalize("", "./");
-const folder = computed(() => {
-	return joinNormalize(root, props.json.folder);
-});
 
-const state = ref(null as State);
+// Backfill dependencies for packs created outside of the packer
+watch(pack, (pack) => {
+	if (!pack) return;
+	if ("dependencies" in pack) return;
 
-type State = null | {
-	t: "char";
-	obj: V1Json<HeadDummy>;
-};
-
-window.j = props.json;
-
-interface V1Extended extends V1Json<HeadDummy> {
-	dependencies: string[];
-}
-
-if (!props.json.dependencies) {
 	const deps = new Set<string>();
-	if (props.json.id.includes(":")) {
-		deps.add(props.json.id.split(":")[0]);
+	if (pack.id.includes(":")) {
+		deps.add(pack.id.split(":")[0]);
 
-		for (const pose of props.json.poses ?? []) {
+		for (const pose of pack.poses ?? []) {
 			if (!pose.name.includes(":")) continue;
 			deps.add(pose.name.split(":")[0]);
 		}
 
-		for (const head of Object.keys(props.json.heads ?? {})) {
+		for (const head of Object.keys(pack.heads ?? {})) {
 			if (!head.includes(":")) continue;
 			deps.add(head.split(":")[0]);
 		}
 	}
 
-	// TODO: Typing of dependencies is messed up
-	props.json.dependencies = Array.from(deps);
-}
-
-// V1 has a couple of character ids that implicitly extend existing characters
-// Don't know if I should even support this. New packs should just use V2.
-/*const implicitDependencies = computed(() => {
-	const deps = new Set<string>(props.json.dependencies ?? []);
-	switch (props.json.id) {
-		case "ddlc.monika":
-			deps.add("dddg.buildin.base.monika");
-			break;
-	}
-});*/
-
-const hasImplicitDependencies = computed(() => {
-	return (
-		props.json.id === "ddlc.monika" ||
-		props.json.id === "ddlc.sayori" ||
-		props.json.id === "ddlc.natsuki" ||
-		props.json.id === "ddlc.yuri" ||
-		props.json.id === "ddlc.fan.mc1" ||
-		props.json.id === "ddlc.fan.mc2" ||
-		props.json.id === "ddlc.fan.mc_chad" ||
-		props.json.id === "ddlc.fan.femc" ||
-		props.json.id === "ddlc.fan.amy1" ||
-		props.json.id === "ddlc.fan.amy2"
-	);
+	pack.dependencies = Array.from(deps);
 });
 
-function toPacks() {
-	if (!coreState.value) return;
-	coreState.value.mountedPackPath = "";
-}
+const hasImplicitDependencies = computed(() => {
+	const packV = pack.value;
+	if (!packV) return;
+
+	return (
+		packV.id === "ddlc.monika" ||
+		packV.id === "ddlc.sayori" ||
+		packV.id === "ddlc.natsuki" ||
+		packV.id === "ddlc.yuri" ||
+		packV.id === "ddlc.fan.mc1" ||
+		packV.id === "ddlc.fan.mc2" ||
+		packV.id === "ddlc.fan.mc_chad" ||
+		packV.id === "ddlc.fan.femc" ||
+		packV.id === "ddlc.fan.amy1" ||
+		packV.id === "ddlc.fan.amy2"
+	);
+});
 
 function addDependency() {}
 </script>
 <template>
-	<teleport to="#breadcrumb">
-		<fast-breadcrumb-item :href="state ? '#' : ''" @click="state = null">{{
-			id
-		}}</fast-breadcrumb-item>
-	</teleport>
-	<div class="pack_wrapper">
-		<template v-if="state === null">
-			<teleport to="#tree">
-				<fast-tree-item @click="toPacks()">Back to packs</fast-tree-item>
-				<fast-tree-item expanded>
-					Character
-					<fast-tree-item @click="state = { t: 'char', obj: json }">
-						{{ json.name ? `${json.name} [${json.id}]` : json.id }}
-					</fast-tree-item>
-				</fast-tree-item>
-			</teleport>
-			<h2>Pack</h2>
-			<p v-if="hasImplicitDependencies">
-				WARNING: This pack is an old style character extension. These are not
-				yet supported by this tool. Saving this pack might break it.
-			</p>
-			<Button @click="OpenFolder(coreState?.mountedPackPath ?? '')"
-				>Open folder in explorer</Button
-			>
-			<PInput label="ID" v-model="repo.pack.id" />
-			<PInput label="Name" v-model="repo.pack.name" />
-			<PInput label="Source" v-model="repo.pack.source" />
-			<PInput label="Description" v-model="repo.pack.description" />
-			<fieldset v-if="json.dependencies">
-				<legend>Dependencies</legend>
-				<Listbox :options="json.dependencies" />
-				<Button @click="addDependency()">Add dependency</Button>
-			</fieldset>
-			<ImageCollection
-				title="Preview"
-				:imageCollection="repo.pack.preview"
-				folder="./"
-			/>
-			<Code :obj="repo" />
-		</template>
-		<Character
-			:char="state.obj"
-			:folder="folder"
-			@leave="state = null"
-			v-else-if="state.t === 'char'"
+	<template v-if="pack && repo">
+		<h2>Pack</h2>
+		<p v-if="hasImplicitDependencies">
+			WARNING: This pack is an old style character extension. These are not yet
+			supported by this tool. Saving this pack might break it.
+		</p>
+		<Button @click="OpenFolder(packId ?? '')">Open folder in explorer</Button>
+		<PInput id="pack-id" label="ID" v-model="repo.pack.id" />
+		<PInput id="pack-name" label="Name" v-model="repo.pack.name" />
+		<PInput id="pack-source" label="Source" v-model="repo.pack.source" />
+		<PInput
+			id="pack-description"
+			label="Description"
+			v-model="repo.pack.description"
 		/>
-	</div>
+		<fieldset v-if="pack.dependencies">
+			<legend>Dependencies</legend>
+			<Listbox :options="pack.dependencies" />
+			<Button @click="addDependency()">Add dependency</Button>
+		</fieldset>
+		<ImageCollection
+			id="pack-preview"
+			title="Preview"
+			:imageCollection="repo.pack.preview"
+			folder="./"
+		/>
+		<Code :obj="repo.pack" />
+	</template>
 </template>
-<style>
-.pack_wrapper {
-	width: 100%;
-	height: 100%;
-	overflow: auto;
-}
-</style>

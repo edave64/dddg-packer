@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { coreState } from "@/core-state";
+import ImageInput from "@/components/shared/image-input.vue";
+import { joinNormalize } from "@/path-tools";
+import { usePackId } from "@/store/active-pack";
 import type { NsfwAbleImg } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v1/model";
 import { computed, type CSSProperties } from "vue";
-import { joinNormalize } from "../../path-tools";
-import ImageInput from "../shared/image-input.vue";
 
 const props = defineProps({
 	title: {
@@ -16,6 +16,8 @@ const props = defineProps({
 	},
 });
 
+const packId = usePackId();
+
 const model = defineModel<string | NsfwAbleImg>({
 	required: true,
 });
@@ -23,10 +25,12 @@ const model = defineModel<string | NsfwAbleImg>({
 const previewStyle = computed((): CSSProperties => {
 	let background = "";
 
-	background += `no-repeat url(${joinNormalize(
-		props.folder,
-		img.value,
-	)}?cache=${coreState.value?.mountedPackPath}) center / contain`;
+	const base = joinNormalize(packId.value ?? "", "./");
+	const f = joinNormalize(packId.value ?? "", base, props.folder);
+
+	background += `no-repeat url(${encodeURI(
+		`${joinNormalize(packId.value ?? "", f, img.value)}?cache=${packId.value}`,
+	)}) center / contain`;
 
 	return {
 		background,
@@ -80,19 +84,14 @@ const nsfw = computed({
 <template>
 	<div class="img_splitter" v-if="model !== undefined">
 		<div>
-			<label from="sprite_images">{{ title }}:</label>
-			<image-input label="Image path" v-model="img" />
+			<label from="sprite-img">{{ title }}:</label>
+			<image-input id="sprite-img" label="Image path" v-model="img" />
 		</div>
 		<div class="sprite_preview" :style="previewStyle"></div>
 	</div>
 </template>
 
 <style scoped>
-fast-select {
-	width: 256px;
-	display: block;
-}
-
 .img_splitter {
 	display: flex;
 }

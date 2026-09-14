@@ -1,12 +1,12 @@
 <script setup lang="ts">
+import Variations from "@/components/pack-v2/variations.vue";
+import Code from "@/components/shared/code.vue";
+import PInput from "@/components/shared/p-input.vue";
+import { joinNormalize } from "@/path-tools";
 import type { JSONHeadCollections } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v1/jsonFormat";
 import { Confirm } from "@wails/go/main/App";
 import Button from "primevue/button";
 import { computed, type PropType } from "vue";
-import { joinNormalize } from "../../path-tools";
-import Code from "../shared/code.vue";
-import PInput from "../shared/p-input.vue";
-import Variations from "./variations.vue";
 
 const props = defineProps({
 	headGroup: {
@@ -49,15 +49,10 @@ async function deleteThis() {
 }
 </script>
 <template>
-	<teleport to="#tree">
-		<fast-tree-item @click="$emit('leave')">Back to character</fast-tree-item>
-	</teleport>
-	<teleport to="#breadcrumb">
-		<fast-breadcrumb-item>Head group '{{ id }}'</fast-breadcrumb-item>
-	</teleport>
 	<h2>Head group</h2>
 	<p>
 		<PInput
+			id="head-group-id"
 			label="ID"
 			type="id"
 			:model-value="id"

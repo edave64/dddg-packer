@@ -2,8 +2,16 @@
 import { normalizeId } from "@/id-tools";
 import PInput from "./p-input.vue";
 
-const props = defineProps({
+defineProps({
+	htmlId: {
+		type: String,
+		required: true,
+	},
 	disabled: {
+		type: Boolean,
+		default: false,
+	},
+	delayed: {
 		type: Boolean,
 		default: false,
 	},
@@ -27,12 +35,20 @@ function updateLabel(value: string) {
 </script>
 <template>
 	<PInput
+		:id="htmlId + '-label'"
 		label="Label"
 		:model-value="label"
 		@update:model-value="updateLabel"
 		:disabled
 	/>
-	<PInput label="ID" type="id" v-model="id" :disabled />
+	<PInput
+		:id="htmlId + '-id'"
+		label="ID"
+		type="id"
+		v-model="id"
+		:delayed="delayed"
+		:disabled
+	/>
 </template>
 <style scoped>
 .code {

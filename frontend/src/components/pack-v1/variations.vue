@@ -69,7 +69,7 @@ const variantsWithIdx = computed(() =>
 			</div>
 		</div>
 		<file-select-dialog
-			v-if="quickAddOpen"
+			v-model:visible="quickAddOpen"
 			:folder="folder"
 			:filter="/\.png|jpe?g|webp$/i"
 			multiple
@@ -77,17 +77,11 @@ const variantsWithIdx = computed(() =>
 				addVariants($event);
 				quickAddOpen = false;
 			"
-			@close="quickAddOpen = false"
 		/>
 	</fieldset>
 </template>
 
 <style scoped>
-fast-select {
-	width: 256px;
-	display: block;
-}
-
 .grower {
 	flex-grow: 1;
 }

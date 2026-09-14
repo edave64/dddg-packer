@@ -1,8 +1,12 @@
 <script setup lang="ts">
-import Dropdown from "primevue/dropdown";
+import { Select } from "primevue";
 import type { PropType } from "vue";
 
 const props = defineProps({
+	id: {
+		type: String,
+		required: true,
+	},
 	label: {
 		type: String,
 	},
@@ -25,7 +29,8 @@ interface IOptions {
 </script>
 <template>
 	<label v-if="label" style="width: 96px">{{ label }}</label>
-	<Dropdown
+	<Select
+		:id="`${id}-select`"
 		:style
 		v-model="model"
 		:options="data"

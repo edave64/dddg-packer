@@ -7,6 +7,10 @@ import PInput from "../shared/p-input.vue";
 import ImageCollection from "./image-collection.vue";
 
 const props = defineProps({
+	id: {
+		type: String,
+		required: true,
+	},
 	variants: {
 		required: true,
 		type: Array as PropType<string[][]>,
@@ -43,12 +47,13 @@ function addVariants(newVariants: string[]) {
 	<fieldset>
 		<legend>
 			<template v-if="!labelEditable">{{ label }}</template>
-			<PInput v-else v-model="label" label="" />
+			<PInput :id="`${id}-label`" v-else v-model="label" label="" />
 		</legend>
 		<div class="variant_splitter">
 			<div v-if="variants">
-				<label for="sprite_variants">Variants:</label>
+				<label :for="`${id}-variants`">Variants:</label>
 				<Listbox
+					:id="`${id}-variants`"
 					v-model="selectedVariant"
 					:options="variantsWithIdx"
 					optionValue="idx"
@@ -57,9 +62,12 @@ function addVariants(newVariants: string[]) {
 					"
 					listStyle="max-height:256px"
 				/>
-				<Button @click="quickAddOpen = true">Add variation</Button>
+				<Button :id="`${id}-add`" @click="quickAddOpen = true"
+					>Add variation</Button
+				>
 				<Button
 					:disabled="selectedVariant === -1"
+					:id="`${id}-remove`"
 					@click="
 						variants.splice(selectedVariant, 1);
 						selectedVariant = 0;
@@ -69,6 +77,7 @@ function addVariants(newVariants: string[]) {
 			</div>
 			<div class="grower">
 				<ImageCollection
+					:id="`${id}-image-collection`"
 					v-if="selectedVariant !== -1"
 					:imageCollection="variants[selectedVariant]"
 					:folder="folder"
@@ -76,7 +85,7 @@ function addVariants(newVariants: string[]) {
 			</div>
 		</div>
 		<file-select-dialog
-			v-if="quickAddOpen"
+			v-model:visible="quickAddOpen"
 			:folder="folder"
 			:filter="/\.png|jpe?g|webp$/i"
 			multiple
@@ -84,17 +93,11 @@ function addVariants(newVariants: string[]) {
 				addVariants($event);
 				quickAddOpen = false;
 			"
-			@close="quickAddOpen = false"
 		/>
 	</fieldset>
 </template>
 
 <style scoped>
-fast-select {
-	width: 256px;
-	display: block;
-}
-
 .grower {
 	flex-grow: 1;
 }

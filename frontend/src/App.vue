@@ -1,41 +1,41 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { watch } from "vue";
+import { RouterView, useRoute, useRouter } from "vue-router";
 import { TriggerCoreStateUpdate } from "../wailsjs/go/main/App";
-import EditPack from "./components/edit-pack.vue";
-import SelectDDDG from "./components/select-dddg.vue";
-import SelectPack from "./components/select-pack.vue";
-import StartUp from "./components/start-up.vue";
-import { coreState, type Stage } from "./core-state";
+import BreadcrumbsBar from "./components/breadcrumbs-bar.vue";
+import { go, useParams } from "./router";
+import { bindParams } from "./store/active-pack";
+import { dddgPath, initialized } from "./store/core-state";
 
-const stage = ref("startup" as Stage);
-
-watch(
-	() => coreState.value,
-	(newState) => {
-		if (!newState) return;
-		if (newState.mountedPackPath) {
-			stage.value = "pack";
-		} else if (newState.dddgPath) {
-			stage.value = "selectPack";
-		} else {
-			stage.value = "selectDDDG";
-		}
-	},
-	{ deep: true },
-);
-
+bindParams();
 TriggerCoreStateUpdate();
+
+const route = useRoute();
+const router = useRouter();
+
+window.params = useParams();
+
+router.isReady().then(() => {
+	watch(
+		() => [initialized.value, route.fullPath] as const,
+		([init, path]) => {
+			if (!init) return;
+			if (path !== "/") return;
+
+			if (!dddgPath) go("select-dddg");
+			go("select-pack");
+		},
+		{ immediate: true },
+	);
+});
 </script>
 
 <template>
 	<header>
-		<fast-breadcrumb id="breadcrumb" separator=">"></fast-breadcrumb>
+		<BreadcrumbsBar />
 	</header>
-	<StartUp v-if="stage === 'startup'" />
-	<SelectDDDG v-else-if="stage === 'selectDDDG'" />
-	<SelectPack v-else-if="stage === 'selectPack'" />
-	<EditPack v-else-if="stage === 'pack'" />
-	<div id="modalSlot"></div>
+	<template v-if="!initialized">Starting up...</template>
+	<router-view v-else></router-view>
 </template>
 
 <style>
@@ -44,7 +44,6 @@ TriggerCoreStateUpdate();
 	width: 100%;
 	display: flex;
 	flex-direction: column;
-	padding: 8px;
 }
 
 header {

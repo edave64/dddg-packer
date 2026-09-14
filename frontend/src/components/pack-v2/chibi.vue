@@ -120,13 +120,12 @@ function loadImage(url: string): Promise<HTMLImageElement> {
 	</p>
 
 	<FileSelectDialog
-		v-if="selectorOpen"
+		v-model:visible="selectorOpen"
 		:folder="folder"
 		:filter="/\.png|jpe?g|webp$/i"
 		@selected="
 			generateChibi($event[0]);
 			selectorOpen = false;
 		"
-		@close="selectorOpen = false"
 	/>
 </template>

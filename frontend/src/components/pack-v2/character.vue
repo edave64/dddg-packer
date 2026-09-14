@@ -1,250 +1,131 @@
 <script setup lang="ts">
-import { seekFreeIds } from "@/array-tools";
-import type {
-	JSONCharacter,
-	JSONHeadCollection,
-	JSONStyleGroup,
-} from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
+import { aryRemove } from "@/array-tools";
+import Code from "@/components/shared/code.vue";
+import IdLabelPair from "@/components/shared/id-label-pair.vue";
+import ImageInput from "@/components/shared/image-input.vue";
+import { joinNormalize } from "@/path-tools";
+import { goUp, setTemporaryAlias } from "@/router";
+import { isV2, useActivePack, useCharacter } from "@/store/active-pack";
+import { useNormalizedDependecyTree } from "@/store/dependencies";
 import { Confirm } from "@wails/go/main/App";
-import Button from "primevue/button";
-import { computed, ref, type PropType } from "vue";
-import { joinNormalize } from "../../path-tools";
-import Code from "../shared/code.vue";
-import IdLabelPair from "../shared/id-label-pair.vue";
-import Chibi from "./chibi.vue";
-import HeadGroup from "./head-group.vue";
-import StyleGroup from "./style-group.vue";
+import { BrowserOpenURL } from "@wails/runtime/runtime";
+import { Button } from "primevue";
+import { computed } from "vue";
 
-const props = defineProps({
-	char: {
-		required: true,
-		type: Object as PropType<JSONCharacter>,
-	},
-	folder: {
-		type: String,
-		required: true,
-	},
-});
-
-const emit = defineEmits<{
-	leave: [];
-	delete: [];
-	updateCharName: [{ oldName: string; newName: string }];
-}>();
+const char = useCharacter();
+const pack = useActivePack();
 
 const f = computed(() => {
-	return joinNormalize(props.folder, props.char.folder);
+	const charV = char.value;
+	const packV = pack.value;
+	if (!charV || !packV) return "";
+
+	return joinNormalize(packV.packId!, "", charV.folder);
 });
 
-const state = ref(null as State);
+function resolve(path: string | undefined): string {
+	if (!path) return "";
+	const packV = pack.value;
+	if (!packV) return "";
 
-function updateHeadkey(oldKey: string, newKey: string) {
-	if (state.value?.t !== "head-group") return;
-	if (state.value.parent[newKey]) return;
-	if (!props.char.heads) return;
-	props.char.heads[newKey] = state.value.obj;
-	state.value.key = newKey;
-
-	if (props.char.styleGroups) {
-		for (const sg of props.char.styleGroups) {
-			for (const s of sg.styles) {
-				for (const p of s.poses) {
-					if (p.compatibleHeads) {
-						const idx = p.compatibleHeads.indexOf(oldKey);
-						p.compatibleHeads[idx] = newKey;
-					}
-				}
-			}
-		}
-	}
-
-	delete state.value.parent[oldKey];
+	return joinNormalize(packV.packId!, f.value, path);
 }
 
-async function deleteThis() {
-	if (
-		await Confirm(
-			"Do you really want to delete this character? This cannot be undone.",
-			"Deleting character",
-		)
-	) {
-		emit("delete");
-	}
-}
+const normalizedDependecyTree = useNormalizedDependecyTree();
 
-function createHeadGroup() {
-	const id = seekFreeIds("head_group", Object.keys(props.char.heads ?? {}));
-	if (!props.char.heads) {
-		props.char.heads = {};
-	}
-	const obj: JSONHeadCollection = {
-		variants: [],
-	};
-	props.char.heads[id] = obj;
-	state.value = {
-		t: "head-group",
-		obj,
-		key: id,
-		parent: props.char.heads,
-	};
-}
+const isExtension = computed(() => {
+	return char.value?.id.includes(":");
+});
 
-function createStyleGroup() {
-	const id = seekFreeIds(
-		"style_group",
-		props.char.styleGroups?.map((x) => x.id) ?? [],
+const label = computed(() => {
+	return (
+		char.value?.label ??
+		normalizedDependecyTree.value.characters.find(
+			(x) => x.id === char.value?.id,
+		)?.label
 	);
-	if (!props.char.styleGroups) {
-		props.char.styleGroups = [];
+});
+
+async function deleteCharacter() {
+	const packV = pack.value;
+	const charV = char.value;
+	if (!packV || !isV2(packV) || !packV.characters || !charV) return;
+	if (
+		!(await Confirm(
+			`Are you sure you want to delete the character${isExtension.value ? " extension" : ""} ${label.value ?? charV.id}?`,
+			"Delete character",
+		))
+	) {
+		return;
 	}
-	const obj: JSONStyleGroup = {
-		id,
-		styles: [
-			{
-				poses: [],
-			},
-		],
-	};
-	props.char.styleGroups.push(obj);
-	state.value = {
-		t: "style-group",
-		obj,
-	};
+	goUp();
+	aryRemove(packV.characters, charV);
 }
 
-type State =
-	| null
-	| {
-			t: "head-group";
-			obj: JSONHeadCollection | string[][];
-			key: string;
-			parent: Exclude<JSONCharacter["heads"], undefined>;
-	  }
-	| {
-			t: "style-group";
-			obj: JSONStyleGroup;
-	  };
-
-function deleteObj() {
-	const s = state.value;
-	if (s === null) return;
-	state.value = null;
-	switch (s.t) {
-		case "head-group":
-			if (!props.char.heads) break;
-			delete props.char.heads[s.key];
-			if (Object.keys(props.char.heads).length === 0) {
-				delete props.char.heads;
-			}
-			break;
-		case "style-group": {
-			if (!props.char.styleGroups) break;
-			const idx = props.char.styleGroups.findIndex((x) => x.id === s.obj.id);
-			props.char.styleGroups?.splice(idx, 1);
-			if (props.char.styleGroups.length === 0) {
-				delete props.char.styleGroups;
-			}
-			break;
-		}
-	}
-}
-
-const label = computed({
-	get() {
-		return props.char.label ? props.char.label : props.char.id;
+const id = computed({
+	get: () => char.value?.id ?? "",
+	set: (value) => {
+		const charV = char.value;
+		const packV = pack.value;
+		if (!charV || !packV) return;
+		setTemporaryAlias("charId", charV.id, value);
+		charV.id = value;
 	},
-	set(value: string) {
-		const old = props.char.label ?? "";
-		props.char.label = value;
-		emit("updateCharName", { oldName: old, newName: value });
-	},
+});
+
+const labelWithFallback = computed(() => {
+	return (
+		char.value?.label ??
+		normalizedDependecyTree.value.characters.find(
+			(x) => x.id === char.value?.id,
+		)?.label
+	);
 });
 </script>
 <template>
-	<teleport to="#breadcrumb">
-		<fast-breadcrumb-item :href="state ? '#' : ''" @click="state = null">{{
-			char.id
-		}}</fast-breadcrumb-item>
-	</teleport>
-	<template v-if="state === null">
-		<teleport to="#tree">
-			<fast-tree-item @click="$emit('leave')">Back to pack</fast-tree-item>
+	<template v-if="char">
+		<h2 v-if="!isExtension">Character {{ char.label || char.id }}</h2>
+		<h2 v-else>Character extension for {{ labelWithFallback || char.id }}</h2>
 
-			<fast-tree-item
-				v-if="!char.heads || Object.keys(char.heads).length === 0"
-				@click="createHeadGroup"
+		<p v-if="id === 'dddg.buildin.base.natsuki:ddlc.natsuki'">
+			NOTICE: DDLC sprites for Natsuki must be manually adjusted to match
+			changes to the sprites made in DDDG. Otherwise, there may be gaps or
+			overlaps in the sprites.
+			<a
+				href="https://github.com/edave64/dddg-packer/wiki/Natsuki:-Difference-between-DDDG-sprites-and-DDLC-sprites"
+				target="_blank"
+				@click.prevent="BrowserOpenURL($event.target!.href)"
+				>Learn more</a
 			>
-				Add head group
-			</fast-tree-item>
-			<fast-tree-item
-				v-if="char.heads && Object.keys(char.heads).length > 0"
-				expanded
-			>
-				Heads
-				<fast-tree-item
-					v-for="(v, k) of char.heads"
-					expanded
-					:key="'head:' + k"
-					@click="
-						state = {
-							t: 'head-group',
-							obj: v,
-							key: k as string,
-							parent: char.heads,
-						}
-					"
-				>
-					{{ k }}
-				</fast-tree-item>
-				<fast-tree-item @click="createHeadGroup">
-					Add head group
-				</fast-tree-item>
-			</fast-tree-item>
-			<fast-tree-item
-				v-if="!char.styleGroups || char.styleGroups.length === 0"
-				@click="createStyleGroup"
-			>
-				Add style group
-			</fast-tree-item>
-			<fast-tree-item
-				v-if="char.styleGroups && char.styleGroups.length > 0"
-				expanded
-			>
-				Style groups
-				<fast-tree-item
-					v-for="sg of char.styleGroups"
-					:key="'sg:' + sg.id"
-					expanded
-					@click="state = { t: 'style-group', obj: sg }"
-				>
-					{{ sg.id }}
-				</fast-tree-item>
-				<fast-tree-item @click="createStyleGroup">
-					Add style group
-				</fast-tree-item>
-			</fast-tree-item>
-		</teleport>
-		<h2>Character</h2>
-		<IdLabelPair v-model:id="char.id" v-model:label="char.label" />
-		<Chibi v-model="char.chibi" :folder="folder" />
-		<Button @click="deleteThis">Delete character</Button>
+		</p>
+
+		<IdLabelPair
+			html-id="char"
+			v-model:id="id"
+			v-model:label="char.label"
+			delayed
+			v-if="!isExtension"
+		/>
+		<IdLabelPair
+			html-id="char-id"
+			:id="char.id"
+			:label="labelWithFallback"
+			delayed
+			disabled
+			v-else
+		/>
+		<p v-if="!isExtension">
+			<ImageInput id="char-chibi" label="Chibi" v-model="char.chibi" />
+			<br />
+			<img :src="resolve(char.chibi)" style="max-height: 50vh" />
+		</p>
+		<p>
+			<Button
+				id="char-delete"
+				:label="'Delete character' + (isExtension ? ' extension' : '')"
+				@click="deleteCharacter()"
+			/>
+		</p>
 		<Code :obj="char" />
 	</template>
-	<HeadGroup
-		:head-group="state.obj"
-		:folder="folder"
-		:id="state.key"
-		@leave="state = null"
-		@update-key="updateHeadkey(state.key, $event)"
-		@delete="deleteObj"
-		v-else-if="state && state.t === 'head-group'"
-	/>
-	<StyleGroup
-		:style-group="state.obj"
-		:folder="folder"
-		:head-groups="char.heads ?? {}"
-		@leave="state = null"
-		@delete="deleteObj"
-		v-else-if="state && state.t === 'style-group'"
-	/>
 </template>

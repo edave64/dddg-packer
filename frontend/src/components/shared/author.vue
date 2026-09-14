@@ -29,15 +29,10 @@ function setProperty<K extends keyof IAuthor>(key: K, value: string) {
 }
 </script>
 <template>
-	<teleport to="#tree">
-		<fast-tree-item @click="$emit('leave')">Back to character</fast-tree-item>
-	</teleport>
-	<teleport to="#breadcrumb">
-		<fast-breadcrumb-item>Author '{{ id }}'</fast-breadcrumb-item>
-	</teleport>
 	<h2>Author</h2>
 	<p>
 		<PInput
+			id="author-name"
 			label="Name"
 			:modelValue="id"
 			@update:modelValue="$emit('updateKey', $event)"
@@ -45,6 +40,7 @@ function setProperty<K extends keyof IAuthor>(key: K, value: string) {
 	</p>
 	<p>
 		<PInput
+			id="author-reddit"
 			type="foreignid"
 			label="Reddit"
 			:modelValue="props.authors[id].reddit"
@@ -53,6 +49,7 @@ function setProperty<K extends keyof IAuthor>(key: K, value: string) {
 	</p>
 	<p>
 		<PInput
+			id="author-twitter"
 			type="foreignid"
 			label="Twitter"
 			:modelValue="props.authors[id].twitter"
@@ -61,6 +58,7 @@ function setProperty<K extends keyof IAuthor>(key: K, value: string) {
 	</p>
 	<p>
 		<PInput
+			id="author-pixiv"
 			type="foreignid"
 			label="Pixiv"
 			:modelValue="props.authors[id].pixiv"
@@ -69,6 +67,7 @@ function setProperty<K extends keyof IAuthor>(key: K, value: string) {
 	</p>
 	<p>
 		<PInput
+			id="author-deviantart"
 			type="foreignid"
 			label="Deviantart"
 			:modelValue="props.authors[id].deviantart"
@@ -77,6 +76,7 @@ function setProperty<K extends keyof IAuthor>(key: K, value: string) {
 	</p>
 	<p>
 		<PInput
+			id="author-discord"
 			type="foreignid"
 			label="Discord"
 			:modelValue="props.authors[id].discord"
@@ -85,6 +85,7 @@ function setProperty<K extends keyof IAuthor>(key: K, value: string) {
 	</p>
 	<p>
 		<PInput
+			id="author-website"
 			type="foreignid"
 			label="Website"
 			:modelValue="props.authors[id].website"

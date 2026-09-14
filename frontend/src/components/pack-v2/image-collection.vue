@@ -1,11 +1,16 @@
 <script setup lang="ts">
+import ImageInput from "@/components/shared/image-input.vue";
+import { joinNormalize } from "@/path-tools";
+import { usePackId } from "@/store/active-pack";
 import Button from "primevue/button";
 import Listbox from "primevue/listbox";
 import { computed, ref, watch, type CSSProperties, type PropType } from "vue";
-import { joinNormalize } from "../../path-tools";
-import ImageInput from "../shared/image-input.vue";
 
 const props = defineProps({
+	id: {
+		type: String,
+		required: true,
+	},
 	imageCollection: {
 		type: Array as PropType<string[] | undefined>,
 	},
@@ -34,16 +39,22 @@ watch(
 	{ immediate: true },
 );
 
+const packId = usePackId();
+
 const previewStyle = computed((): CSSProperties => {
 	let background = "";
 	if (!props.imageCollection) return {};
 
+	const base = joinNormalize(packId.value ?? "", "./");
+	const f = joinNormalize(packId.value ?? "", base, props.folder);
 	for (const ic of props.imageCollection) {
 		if (background) {
 			background += ", ";
 		}
 
-		background += `no-repeat url(${joinNormalize(props.folder, ic)}) center / contain`;
+		background += `no-repeat url(${encodeURI(
+			`${joinNormalize(packId.value ?? "", f, ic)}?cache=${packId.value}`,
+		)}) center / contain`;
 	}
 
 	return {
@@ -55,8 +66,9 @@ const previewStyle = computed((): CSSProperties => {
 <template>
 	<div class="img_splitter" v-if="imageCollection">
 		<div>
-			<label from="sprite_images">{{ title }}:</label>
+			<label :for="`${id}-listbox`">{{ title }}:</label>
 			<Listbox
+				:id="`${id}-listbox`"
 				v-model="selectedImage"
 				:options="imageWithIdx"
 				optionValue="idx"
@@ -64,6 +76,7 @@ const previewStyle = computed((): CSSProperties => {
 				listStyle="max-height:256px"
 			/>
 			<Button
+				:id="`${id}-add`"
 				@click="
 					imageCollection.push('');
 					selectedImage = imageCollection.length - 1;
@@ -72,12 +85,14 @@ const previewStyle = computed((): CSSProperties => {
 				Add image
 			</Button>
 			<Button
+				:id="`${id}-remove`"
 				:disabled="imageCollection.length < 2"
 				@click="imageCollection.splice(selectedImage, 1)"
 			>
 				Remove image</Button
 			><br />
 			<image-input
+				:id="`${id}-image-path`"
 				label="Image path"
 				:disabled="selectedImage === -1"
 				v-model="imageCollection[selectedImage]"
@@ -88,11 +103,6 @@ const previewStyle = computed((): CSSProperties => {
 </template>
 
 <style scoped>
-fast-select {
-	width: 256px;
-	display: block;
-}
-
 .img_splitter {
 	display: flex;
 }

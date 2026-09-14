@@ -4,7 +4,7 @@ export function renameKey<T extends {}>(
 	newKey: keyof T,
 ): T | null {
 	// Property already exists! Skip
-	if (Object.prototype.hasOwnProperty.call(obj, newKey)) return null;
+	if (Object.hasOwn(obj, newKey)) return null;
 
 	// This odd way of manipulating the key is done to preserve the key order. Otherwise, object in
 	// the UI that iterate over object keys might jump around strangely

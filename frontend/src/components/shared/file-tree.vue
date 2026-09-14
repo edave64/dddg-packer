@@ -24,7 +24,7 @@ const nodes = computed((): TreeNode[] => {
 		: [];
 	const filter = props.filter;
 	if (children && filter) {
-		children = children.filter((x) => x.name.match(filter));
+		children = children.filter((x) => x.isDir || x.name.match(filter));
 	}
 	return children.map((x) => toTreeNode(x));
 });
@@ -34,12 +34,12 @@ function toTreeNode(node: IFileInfo, folder = "."): TreeNode {
 	let children = node.isDir ? node.children ?? [] : undefined;
 	const filter = props.filter;
 	if (children && filter) {
-		children = children.filter((x) => x.name.match(filter));
+		children = children.filter((x) => x.isDir || x.name.match(filter));
 	}
 	return {
 		label: node.name,
 		key: path,
-		children,
+		children: children?.map((x) => toTreeNode(x, path)),
 		expanded: true,
 		selectable: !node.isDir,
 	};
@@ -77,9 +77,5 @@ const emit = defineEmits<{
 <style>
 .fast-field {
 	width: calc(100% - 8px);
-}
-
-fast-dialog {
-	z-index: 10000;
 }
 </style>

@@ -1,22 +1,15 @@
 {
 	"extends": "@vue/tsconfig/tsconfig.dom.json",
 	"compilerOptions": {
-		"lib": [
-			"ESNext",
-			"DOM"
-		],
+		"lib": ["ESNext", "DOM"],
 		"importHelpers": true,
 		"allowSyntheticDefaultImports": true,
 		"sourceMap": true,
 		"baseUrl": ".",
 		"alwaysStrict": true,
 		"paths": {
-			"@/*": [
-				"src/*"
-			],
-			"@wails/*": [
-				"wailsjs/*"
-			]
+			"@/*": ["src/*"],
+			"@wails/*": ["wailsjs/*"]
 		}
 	},
 	"include": [
@@ -27,7 +20,5 @@
 		"tests/**/*.ts",
 		"tests/**/*.tsx"
 	],
-	"exclude": [
-		"node_modules"
-	]
+	"exclude": ["node_modules"]
 }

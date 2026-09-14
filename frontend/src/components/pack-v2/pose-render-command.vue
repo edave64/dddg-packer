@@ -1,13 +1,17 @@
 <script setup lang="ts">
+import Combo from "@/components/shared/combo.vue";
+import { deletableField } from "@/components/shared/deletable-field";
+import NumberInput from "@/components/shared/number-input.vue";
+import { poseFolder } from "@/store/folders";
 import type { JSONPoseCommand } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
 import Button from "primevue/button";
 import { computed, type PropType } from "vue";
-import { joinNormalize } from "../../path-tools";
-import Combo from "../shared/combo.vue";
-import { deletableField } from "../shared/deletable-field";
-import NumberInput from "../shared/number-input.vue";
 
 const props = defineProps({
+	idx: {
+		type: Number,
+		required: true,
+	},
 	command: {
 		required: true,
 		type: Object as PropType<JSONPoseCommand>,
@@ -28,12 +32,7 @@ const emit = defineEmits<{
 	delete: [];
 }>();
 
-const f = computed(() => {
-	return joinNormalize(
-		props.folder,
-		props.command.type === "image" ? props.command.folder : undefined,
-	);
-});
+const f = poseFolder;
 
 const offsetX = computed({
 	get(): number {
@@ -133,6 +132,7 @@ const compositeOptions = [
 	<tr>
 		<td>
 			<Combo
+				:id="`render-command-${idx}-type`"
 				style="min-width: 180px"
 				v-model="command.type"
 				:data="[
@@ -146,6 +146,7 @@ const compositeOptions = [
 			<td></td>
 			<td>
 				<Combo
+					:id="`render-command-${idx}-part`"
 					style="min-width: 130px; width: 130px"
 					v-model="command.part"
 					:data="
@@ -162,23 +163,26 @@ const compositeOptions = [
 			<td></td>
 		</template>
 		<template v-else-if="command.type === 'image'">
-			<td><input /></td>
-			<td><input /></td>
+			<td><input :id="`render-command-${idx}-x`" /></td>
+			<td><input :id="`render-command-${idx}-y`" /></td>
 		</template>
 		<td>
 			<NumberInput
+				:id="`render-command-${idx}-x`"
 				style="width: 70px; display: inline-block"
 				v-model="offsetX"
 			/>
 		</td>
 		<td>
 			<NumberInput
+				:id="`render-command-${idx}-y`"
 				style="width: 70px; display: inline-block"
 				v-model="offsetY"
 			/>
 		</td>
 		<td>
 			<Combo
+				:id="`render-command-${idx}-composite`"
 				style="min-width: 150px"
 				v-model="composite"
 				:data="compositeOptions"
@@ -186,9 +190,15 @@ const compositeOptions = [
 		</td>
 
 		<td>
-			<Button @click="$emit('delete')">Delete</Button>
-			<Button @click="$emit('moveUp')">Up</Button>
-			<Button @click="$emit('moveDown')">Down</Button>
+			<Button :id="`render-command-${idx}-delete`" @click="$emit('delete')"
+				>Delete</Button
+			>
+			<Button :id="`render-command-${idx}-move-up`" @click="$emit('moveUp')"
+				>Up</Button
+			>
+			<Button :id="`render-command-${idx}-move-down`" @click="$emit('moveDown')"
+				>Down</Button
+			>
 		</td>
 	</tr>
 </template>
