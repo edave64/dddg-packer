@@ -49,7 +49,7 @@ const author = computed(() => {
 <template>
 	<h2>Author</h2>
 	<p>
-		<PInput id="author-name" label="Name" :modelValue="id" />
+		<PInput id="author-name" label="Name" v-model="id" />
 	</p>
 	<p>
 		<PInput
