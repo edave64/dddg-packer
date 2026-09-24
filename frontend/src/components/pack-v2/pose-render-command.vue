@@ -1,15 +1,20 @@
 <script setup lang="ts">
-import Combo from "@/components/shared/combo.vue";
+import ComboBox from "@/components/shared/combo-box.vue";
 import { deletableField } from "@/components/shared/deletable-field";
 import NumberInput from "@/components/shared/number-input.vue";
 import { poseFolder } from "@/store/folders";
 import type { JSONPoseCommand } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
+import { ButtonGroup } from "primevue";
 import Button from "primevue/button";
 import { computed, type PropType } from "vue";
 
 const props = defineProps({
 	idx: {
 		type: Number,
+		required: true,
+	},
+	isLast: {
+		type: Boolean,
 		required: true,
 	},
 	command: {
@@ -131,7 +136,7 @@ const compositeOptions = [
 <template>
 	<tr>
 		<td>
-			<Combo
+			<ComboBox
 				:id="`render-command-${idx}-type`"
 				style="min-width: 180px"
 				v-model="command.type"
@@ -145,7 +150,7 @@ const compositeOptions = [
 		<template v-if="command.type === 'pose-part'">
 			<td></td>
 			<td>
-				<Combo
+				<ComboBox
 					:id="`render-command-${idx}-part`"
 					style="min-width: 130px; width: 130px"
 					v-model="command.part"
@@ -181,7 +186,7 @@ const compositeOptions = [
 			/>
 		</td>
 		<td>
-			<Combo
+			<ComboBox
 				:id="`render-command-${idx}-composite`"
 				style="min-width: 150px"
 				v-model="composite"
@@ -190,15 +195,23 @@ const compositeOptions = [
 		</td>
 
 		<td>
-			<Button :id="`render-command-${idx}-delete`" @click="$emit('delete')"
-				>Delete</Button
-			>
-			<Button :id="`render-command-${idx}-move-up`" @click="$emit('moveUp')"
-				>Up</Button
-			>
-			<Button :id="`render-command-${idx}-move-down`" @click="$emit('moveDown')"
-				>Down</Button
-			>
+			<ButtonGroup>
+				<Button :id="`render-command-${idx}-delete`" @click="$emit('delete')"
+					>Delete</Button
+				>
+				<Button
+					:id="`render-command-${idx}-move-up`"
+					:disabled="idx === 0"
+					@click="$emit('moveUp')"
+					>Up</Button
+				>
+				<Button
+					:id="`render-command-${idx}-move-down`"
+					:disabled="isLast"
+					@click="$emit('moveDown')"
+					>Down</Button
+				>
+			</ButtonGroup>
 		</td>
 	</tr>
 </template>

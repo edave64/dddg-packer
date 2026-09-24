@@ -252,6 +252,7 @@ const id = computed({
 						<PoseRenderCommand
 							v-for="(command, rcI) in pose.renderCommands"
 							:key="'rc-' + rcI"
+							:is-last="rcI === pose.renderCommands.length - 1"
 							:idx="rcI"
 							:folder="f"
 							:command="command"
