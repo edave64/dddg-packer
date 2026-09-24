@@ -74,7 +74,6 @@ async function createPack() {
 	};
 
 	if (artist.value) {
-		repo.pack.authors.push(...artist.value);
 		pack.authors = [...artist.value];
 		const allAuthors = Repo.allAuthors.value;
 		for (const a of artist.value) {

@@ -5,7 +5,7 @@ import { GetPacks } from "../../wailsjs/go/main/App";
 import { dddgPath } from "../store/core-state";
 const packs = ref(null as null | string[]);
 
-watch(() => dddgPath, updatePacks, { immediate: true });
+watch(() => dddgPath.value, updatePacks, { immediate: true });
 async function updatePacks() {
 	try {
 		const newPacks = await GetPacks();
