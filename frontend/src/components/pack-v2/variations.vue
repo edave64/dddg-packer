@@ -58,7 +58,8 @@ function addVariants(newVariants: string[]) {
 					:options="variantsWithIdx"
 					optionValue="idx"
 					:optionLabel="
-						(x) => (x.variant.length === 1 ? x.variant[0] : x.variant)
+						(x) =>
+							x.variant.length === 1 ? x.variant[0] : x.variant
 					"
 					listStyle="max-height:256px"
 				/>

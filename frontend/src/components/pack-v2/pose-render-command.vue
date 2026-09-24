@@ -196,7 +196,9 @@ const compositeOptions = [
 
 		<td>
 			<ButtonGroup>
-				<Button :id="`render-command-${idx}-delete`" @click="$emit('delete')"
+				<Button
+					:id="`render-command-${idx}-delete`"
+					@click="$emit('delete')"
 					>Delete</Button
 				>
 				<Button

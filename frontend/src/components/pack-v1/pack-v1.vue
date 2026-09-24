@@ -69,10 +69,12 @@ function addDependency() {}
 	<template v-if="pack && repo">
 		<h2>Pack</h2>
 		<p v-if="hasImplicitDependencies">
-			WARNING: This pack is an old style character extension. These are not yet
-			supported by this tool. Saving this pack might break it.
+			WARNING: This pack is an old style character extension. These are
+			not yet supported by this tool. Saving this pack might break it.
 		</p>
-		<Button @click="OpenFolder(packId ?? '')">Open folder in explorer</Button>
+		<Button @click="OpenFolder(packId ?? '')"
+			>Open folder in explorer</Button
+		>
 		<PInput id="pack-id" label="ID" v-model="repo.pack.id" />
 		<PInput id="pack-name" label="Name" v-model="repo.pack.name" />
 		<PInput id="pack-source" label="Source" v-model="repo.pack.source" />

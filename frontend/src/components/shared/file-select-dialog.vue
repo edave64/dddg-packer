@@ -63,7 +63,14 @@ const fullUrl = computed(() => {
 				height: 100%;
 			"
 		>
-			<div style="display: flex; overflow: hidden; width: 100%; height: 100%">
+			<div
+				style="
+					display: flex;
+					overflow: hidden;
+					width: 100%;
+					height: 100%;
+				"
+			>
 				<FileTree
 					:folderStructure="folderStructure!"
 					style="
@@ -78,7 +85,10 @@ const fullUrl = computed(() => {
 					@selected="selected = $event"
 				/>
 				<div>
-					<img :src="fullUrl" style="max-width: 100%; max-height: 50vh" />
+					<img
+						:src="fullUrl"
+						style="max-width: 100%; max-height: 50vh"
+					/>
 				</div>
 			</div>
 			<Button

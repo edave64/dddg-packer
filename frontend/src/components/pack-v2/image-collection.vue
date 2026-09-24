@@ -72,7 +72,9 @@ const previewStyle = computed((): CSSProperties => {
 				v-model="selectedImage"
 				:options="imageWithIdx"
 				optionValue="idx"
-				:optionLabel="(x) => (x.image.length === 1 ? x.image[0] : x.image)"
+				:optionLabel="
+					(x) => (x.image.length === 1 ? x.image[0] : x.image)
+				"
 				listStyle="max-height:256px"
 			/>
 			<Button

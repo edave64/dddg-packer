@@ -36,7 +36,8 @@ const items = computed(() => {
 				leaf: true,
 				selectable: true,
 				label: `Back to ${getLabelOf(item)}`,
-				command: () => router.push({ name: item.name, params: route.params }),
+				command: () =>
+					router.push({ name: item.name, params: route.params }),
 			});
 			break;
 		}

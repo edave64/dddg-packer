@@ -1,3 +1,1 @@
-<template
-	>No DDDG path set</template
->
+<template>No DDDG path set</template>

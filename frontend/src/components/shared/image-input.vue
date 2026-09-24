@@ -51,7 +51,10 @@ const dlgOpen = ref(false);
 			:disabled="disabled"
 			variant="filled"
 		/>
-		<Button :id="`${id}-button`" :disabled="disabled" @click="dlgOpen = true"
+		<Button
+			:id="`${id}-button`"
+			:disabled="disabled"
+			@click="dlgOpen = true"
 			>...</Button
 		>
 	</div>

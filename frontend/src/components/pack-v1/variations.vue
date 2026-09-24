@@ -45,7 +45,10 @@ const variantsWithIdx = computed(() =>
 					:options="variantsWithIdx"
 					optionValue="idx"
 					:optionLabel="
-						(x) => (typeof x.variant === 'string' ? x.variant : x.variant.img)
+						(x) =>
+							typeof x.variant === 'string'
+								? x.variant
+								: x.variant.img
 					"
 					listStyle="max-height:256px"
 				/>

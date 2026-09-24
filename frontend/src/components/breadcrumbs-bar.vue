@@ -17,11 +17,17 @@ const items = computed(() => {
 			const isLast = i === matched.length - 1;
 			if (!x.name) {
 				const indexChild = x.children?.find((y) => y.path === "");
-				if (indexChild?.name && matched[i + 1]?.name !== indexChild.name) {
+				if (
+					indexChild?.name &&
+					matched[i + 1]?.name !== indexChild.name
+				) {
 					const command = isLast
 						? undefined
 						: () =>
-								router.push({ name: indexChild.name, params: route.params });
+								router.push({
+									name: indexChild.name,
+									params: route.params,
+								});
 					return {
 						label: getLabelOf(indexChild),
 						command,

@@ -65,7 +65,8 @@ const id = computed({
 
 		char.heads[value] = char.heads[old];
 		setTemporaryAlias("headGroupId", old, value);
-		let poses: Array<{ compatibleHeads?: string[] }> | undefined = undefined;
+		let poses: Array<{ compatibleHeads?: string[] }> | undefined =
+			undefined;
 		// Propagate changed head name to head lists of poses
 		if (charV1) {
 			poses = charV1.poses;

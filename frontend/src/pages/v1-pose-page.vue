@@ -96,7 +96,11 @@ async function deleteThis() {
 		/>
 		<details v-if="headGroups.length > 0">
 			<summary>Head groups</summary>
-			<Listbox multiple v-model="selectedHeadGroups" :options="headGroups" />
+			<Listbox
+				multiple
+				v-model="selectedHeadGroups"
+				:options="headGroups"
+			/>
 		</details>
 		<template v-if="'left' in pose">
 			<Variations
@@ -126,7 +130,9 @@ async function deleteThis() {
 			:folder="f"
 			v-model="pose.static"
 		/>
-		<template v-if="!('left' in pose || 'variant' in pose || 'static' in pose)">
+		<template
+			v-if="!('left' in pose || 'variant' in pose || 'static' in pose)"
+		>
 			<Button
 				@click="
 					(pose as any).left = [];
@@ -139,7 +145,9 @@ async function deleteThis() {
 				>Initialize as variants</Button
 			>
 			<br />
-			<Button @click="(pose as any).static = ''">Initialize as static</Button>
+			<Button @click="(pose as any).static = ''"
+				>Initialize as static</Button
+			>
 			<br />
 		</template>
 		<Button @click="deleteThis">Delete Pose</Button>

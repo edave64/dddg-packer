@@ -257,7 +257,9 @@ const id = computed({
 							:folder="f"
 							:command="command"
 							:pose-positions="
-								pose.positions ? Object.keys(pose.positions) : []
+								pose.positions
+									? Object.keys(pose.positions)
+									: []
 							"
 							@move-up="moveRcUp(rcI)"
 							@move-down="moveRcDown(rcI)"
@@ -265,7 +267,10 @@ const id = computed({
 						/>
 					</tbody>
 				</table>
-				<Button @click="pose.renderCommands.push({ type: 'image', images: [] })"
+				<Button
+					@click="
+						pose.renderCommands.push({ type: 'image', images: [] })
+					"
 					>Add render command</Button
 				>
 				<Button

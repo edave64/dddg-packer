@@ -85,7 +85,9 @@ const labelWithFallback = computed(() => {
 <template>
 	<template v-if="char">
 		<h2 v-if="!isExtension">Character {{ char.label || char.id }}</h2>
-		<h2 v-else>Character extension for {{ labelWithFallback || char.id }}</h2>
+		<h2 v-else>
+			Character extension for {{ labelWithFallback || char.id }}
+		</h2>
 
 		<p v-if="id === 'dddg.buildin.base.natsuki:ddlc.natsuki'">
 			NOTICE: DDLC sprites for Natsuki must be manually adjusted to match

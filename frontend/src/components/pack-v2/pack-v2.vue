@@ -81,9 +81,18 @@ const dependencies = computed({
 				>Open folder in explorer</Button
 			>
 		</div>
-		<PInput id="pack-id" label="ID" disabled :modelValue="activeRepo.pack.id" />
+		<PInput
+			id="pack-id"
+			label="ID"
+			disabled
+			:modelValue="activeRepo.pack.id"
+		/>
 		<PInput id="pack-name" label="Name" v-model="activeRepo.pack.name" />
-		<PInput id="pack-source" label="Source" v-model="activeRepo.pack.source" />
+		<PInput
+			id="pack-source"
+			label="Source"
+			v-model="activeRepo.pack.source"
+		/>
 		<PInput
 			id="pack-description"
 			label="Description"
