@@ -18,14 +18,15 @@ const id = computed({
 	set(val: string) {
 		const charV = useCharacterV1().value;
 		const styleV = useStyleV1().value;
+		const oldStyleName = styleV?.name ?? "";
 		if (!charV || !styleV) return;
 
-		setTemporaryAlias("styleId", styleV.name, val);
+		setTemporaryAlias("styleId", oldStyleName, val);
 		styleV.name = val;
 
 		if (charV.poses) {
 			for (const pose of charV.poses) {
-				if (pose.style === styleV.name) {
+				if (pose.style === oldStyleName) {
 					pose.style = val;
 				}
 			}
