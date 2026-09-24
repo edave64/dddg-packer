@@ -120,7 +120,6 @@ const id = computed({
 				:modelValue="id"
 				:disabled="isExtension"
 				delayed
-				@update:modelValue="$emit('updateKey', $event)"
 			/>
 		</p>
 		<VariationsV1

@@ -49,12 +49,7 @@ const author = computed(() => {
 <template>
 	<h2>Author</h2>
 	<p>
-		<PInput
-			id="author-name"
-			label="Name"
-			:modelValue="id"
-			@update:modelValue="$emit('updateKey', $event)"
-		/>
+		<PInput id="author-name" label="Name" :modelValue="id" />
 	</p>
 	<p>
 		<PInput

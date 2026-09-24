@@ -22,7 +22,10 @@ router.isReady().then(() => {
 			if (!init) return;
 			if (path !== "/") return;
 
-			if (!dddgPath.value) go("select-dddg");
+			if (!dddgPath.value) {
+				go("select-dddg");
+				return;
+			}
 			go("select-pack");
 		},
 		{ immediate: true },

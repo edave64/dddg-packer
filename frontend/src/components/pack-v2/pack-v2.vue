@@ -1,16 +1,10 @@
 <script setup lang="ts">
-import { seekFreeIds } from "@/array-tools";
 import Dependencies from "@/components/pack-v2/dependencies.vue";
 import ImageCollection from "@/components/pack-v2/image-collection.vue";
 import Code from "@/components/shared/code.vue";
 import PInput from "@/components/shared/p-input.vue";
 import { useActivePack, useActiveRepo } from "@/store/active-pack";
-import { useNormalizedDependecyTree } from "@/store/dependencies";
-import type {
-	JSONBackground,
-	JSONSprite,
-	JSONContentPack as V2Json,
-} from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
+import type { JSONContentPack as V2Json } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
 import { OpenFolder } from "@wails/go/main/App";
 import Button from "primevue/button";
 import { computed, watch, type ComputedRef } from "vue";
@@ -18,7 +12,6 @@ import { computed, watch, type ComputedRef } from "vue";
 // Parent should ensure that we are in a v2 pack
 const activePack = useActivePack() as ComputedRef<V2Json | undefined>;
 const activeRepo = useActiveRepo();
-const normalizedDependecyTree = useNormalizedDependecyTree();
 
 // Backfill dependencies for packs created outside of the packer
 watch(activePack, (pack) => {
@@ -66,49 +59,6 @@ watch(activePack, (pack) => {
 
 	pack.dependencies = Array.from(deps) as [];
 });
-
-function createBackground() {
-	const pack = activePack.value;
-	if (!pack) return;
-	const id = seekFreeIds(
-		"background",
-		pack.backgrounds?.map((x) => x.id),
-	);
-	if (!pack.backgrounds) {
-		pack.backgrounds = [];
-	}
-	const obj: JSONBackground = {
-		id,
-		variants: [],
-		label: "New Background",
-	};
-	pack.backgrounds.push(obj);
-}
-
-function createAuthor() {
-	const repo = activeRepo.value;
-	if (!repo) return;
-	const id = seekFreeIds("author", Object.keys(repo.authors));
-	repo.authors[id] = {};
-}
-
-function createSprite() {
-	const pack = activePack.value;
-	if (!pack) return;
-	const id = seekFreeIds(
-		"sprite",
-		pack.sprites?.map((x) => x.id),
-	);
-	if (!pack.sprites) {
-		pack.sprites = [];
-	}
-	const obj: JSONSprite = {
-		id,
-		variants: [],
-		label: "New Sprite",
-	};
-	pack.sprites.push(obj);
-}
 
 const dependencies = computed({
 	get() {
