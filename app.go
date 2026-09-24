@@ -210,6 +210,7 @@ func (a *App) GetRepoJson() (*MultiRepoJson, error) {
 	var ret MultiRepoJson
 
 	ret.Packs = make([]Pack, 0)
+	ret.Authors = make(map[string]Author)
 
 	for _, file := range entries {
 		if !file.IsDir() {
@@ -236,6 +237,9 @@ func (a *App) GetRepoJson() (*MultiRepoJson, error) {
 			continue
 		}
 		ret.Packs = append(ret.Packs, pack.Pack)
+		for name, author := range pack.Authors {
+			ret.Authors[name] = author
+		}
 	}
 
 	return &ret, nil
