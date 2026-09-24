@@ -530,21 +530,131 @@ export const router = createRouter({
 								},
 								{
 									path: "style/:styleId",
+									name: "v1-style",
+									component: () => import("@/pages/v1-style-page.vue"),
 									meta: {
 										version: 1,
+										header: "Styles",
+										add: "Add style",
+										children: (addChild: (id: string) => void): MenuItem[] => {
+											const charId = useParams().value.charId as
+												| string
+												| undefined;
+											const pack = useActivePack().value;
+											if (!pack || charId == null) return [];
+											const ret: MenuItem[] = [];
+											if (isV2(pack)) return ret;
+											for (const style of pack.styles ?? []) {
+												ret.push({
+													label: style.label,
+													command: () => {
+														go("v1-style", {
+															packId: pack.packId!,
+															charId,
+															styleId: style.name,
+														});
+													},
+												});
+											}
+
+											return ret;
+										},
+										doAddChild: (id?: string) => {
+											const char = useCharacter().value;
+											const charV1 = useCharacterV1().value;
+											const pack = useActivePack().value;
+											if (!pack) return;
+											if (!char && !charV1) return;
+											id ??= seekFreeIds(
+												"head",
+												Object.keys((char || charV1)!.heads ?? {}),
+											);
+											if (char) {
+												if (!char.heads) {
+													char.heads = {};
+												}
+												char.heads[id] = { variants: [] };
+											} else if (charV1) {
+												if (!charV1.heads) {
+													charV1.heads = {};
+												}
+												charV1.heads[id] = { all: [] };
+											}
+											go("heads", {
+												packId: pack.packId!,
+												charId: id,
+												headGroupId: id,
+											});
+										},
+										canAddChild: () => {
+											const packV = useActivePack().value;
+											return packV && !isV2(packV);
+										},
 									},
-									children: [
-										{
-											path: "",
-											name: "v1-style",
-											component: () => import("@/pages/v1-style-page.vue"),
+								},
+								{
+									path: "poses/:poseId",
+									name: "v1-pose",
+									component: () => import("@/pages/v1-pose-page.vue"),
+									meta: {
+										version: 1,
+										header: "Poses",
+										add: "Add pose",
+										children: (addChild: (id: string) => void): MenuItem[] => {
+											const charId = useParams().value.charId as
+												| string
+												| undefined;
+											const pack = useActivePack().value;
+											if (!pack || charId == null) return [];
+											const ret: MenuItem[] = [];
+											if (isV2(pack)) return ret;
+											for (const pose of pack.poses ?? []) {
+												ret.push({
+													label: pose.name,
+													command: () => {
+														go("v1-pose", {
+															packId: pack.packId!,
+															charId,
+															poseId: pose.name,
+														});
+													},
+												});
+											}
+
+											return ret;
 										},
-										{
-											path: "pose",
-											name: "v1-style-pose",
-											component: () => import("@/pages/v1-pose-page.vue"),
+										doAddChild: (id?: string) => {
+											const char = useCharacter().value;
+											const charV1 = useCharacterV1().value;
+											const pack = useActivePack().value;
+											if (!pack) return;
+											if (!char && !charV1) return;
+											id ??= seekFreeIds(
+												"head",
+												Object.keys((char || charV1)!.heads ?? {}),
+											);
+											if (char) {
+												if (!char.heads) {
+													char.heads = {};
+												}
+												char.heads[id] = { variants: [] };
+											} else if (charV1) {
+												if (!charV1.heads) {
+													charV1.heads = {};
+												}
+												charV1.heads[id] = { all: [] };
+											}
+											go("heads", {
+												packId: pack.packId!,
+												charId: id,
+												headGroupId: id,
+											});
 										},
-									],
+										canAddChild: () => {
+											const packV = useActivePack().value;
+											return packV && !isV2(packV);
+										},
+									},
 								},
 							],
 						},
@@ -740,7 +850,6 @@ interface Paths {
 	"v1-pose": {
 		packId: string;
 		charId: string;
-		styleId: string;
 		poseId: string;
 	};
 	heads: { packId: string; charId: string; headGroupId: string };

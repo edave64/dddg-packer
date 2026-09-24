@@ -39,7 +39,6 @@ const root = new URL(`/packs/${packId.value}/`, location.origin);
 		await fetch(new URL(`${props.folder}*.json`, root))
 	).json();
 	folderStructure.value = tree;
-	console.log(tree);
 })();
 
 const fullUrl = computed(() => {
