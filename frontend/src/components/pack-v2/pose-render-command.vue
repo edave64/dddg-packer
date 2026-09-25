@@ -132,6 +132,23 @@ const compositeOptions = [
 		value: x,
 	})),
 ];
+
+const images = computed({
+	get(): string {
+		if (props.command.type === "image" && props.command.images)
+			return JSON.stringify(props.command.images);
+		return "";
+	},
+	set(val: string) {
+		if (props.command.type !== "image") return;
+		try {
+			const parsed = JSON.parse(val);
+			props.command.images = parsed;
+		} catch {
+			props.command.images = [val];
+		}
+	},
+});
 </script>
 <template>
 	<tr>
@@ -168,8 +185,15 @@ const compositeOptions = [
 			<td></td>
 		</template>
 		<template v-else-if="command.type === 'image'">
-			<td><input :id="`render-command-${idx}-x`" /></td>
-			<td><input :id="`render-command-${idx}-y`" /></td>
+			<td>
+				<input
+					:id="`render-command-${idx}-folder`"
+					v-model="command.folder"
+				/>
+			</td>
+			<td>
+				<input :id="`render-command-${idx}-image`" v-model="images" />
+			</td>
 		</template>
 		<td>
 			<NumberInput
