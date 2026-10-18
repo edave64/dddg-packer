@@ -11,7 +11,7 @@ export const Repo = {
 			description: "Monika",
 			authors: [],
 			characters: ["Monika"],
-			characterIds: ['ddlc.buildin.base.monika:ddlc.monika'],
+			characterIds: ['dddg.buildin.base.monika:ddlc.monika'],
 			preview: [],
 			source: "",
 			dddg2Path:
