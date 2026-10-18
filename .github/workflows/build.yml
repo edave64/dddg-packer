@@ -10,14 +10,21 @@ permissions:
 jobs:
   build:
     strategy:
+      fail-fast: false
       matrix:
         include:
           - os: macos-latest
             build_args: '-platform "darwin/universal"'
+            artifact_name: build-macos
           - os: ubuntu-latest
-            build_args: '-tags webkit2_41 -platform "linux/amd64,linux/arm64,linux/arm"'
+            build_args: '-tags webkit2_41 -platform "linux/amd64"'
+            artifact_name: build-linux-amd64
+          - os: ubuntu-26.04-arm
+            build_args: '-tags webkit2_41 -platform "linux/arm64"'
+            artifact_name: build-linux-arm64
           - os: windows-latest
             build_args: '-platform "windows/amd64,windows/arm64,windows/386"'
+            artifact_name: build-windows
 
     runs-on: ${{ matrix.os }}
 
@@ -58,6 +65,6 @@ jobs:
       - name: Upload build artifacts
         uses: actions/upload-artifact@v7
         with:
-          name: build-${{ matrix.os }}
+          name: ${{ matrix.artifact_name }}
           path: build/bin/**
           if-no-files-found: error
