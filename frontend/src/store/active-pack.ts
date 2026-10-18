@@ -329,6 +329,7 @@ export async function save() {
 	if (!repoV) return;
 
 	if (hasPackChanges.value || hasRepoChanges.value) {
+		// Pack changes can cause repo changes, e.g. the `characters` and `characterIds` fields
 		await saveRepo(repoV);
 	}
 	if (hasPackChanges.value) {
