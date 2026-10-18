@@ -2,6 +2,7 @@
 import ComboBox from "@/components/shared/combo-box.vue";
 import { deletableField } from "@/components/shared/deletable-field";
 import NumberInput from "@/components/shared/number-input.vue";
+import PInput from "@/components/shared/p-input.vue";
 import { poseFolder } from "@/store/folders";
 import type { JSONPoseCommand } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/jsonFormat";
 import { ButtonGroup } from "primevue";
@@ -186,13 +187,22 @@ const images = computed({
 		</template>
 		<template v-else-if="command.type === 'image'">
 			<td>
-				<input
+				<p-input
 					:id="`render-command-${idx}-folder`"
+					label=""
 					v-model="command.folder"
 				/>
 			</td>
 			<td>
-				<input :id="`render-command-${idx}-image`" v-model="images" />
+				<!-- Since the setter enforces this to be a valid JSON string array, we delay thee
+				     update. Otherwise any non-valid in-between state would get wrapped as a string
+				-->
+				<p-input
+					:id="`render-command-${idx}-image`"
+					label=""
+					v-model="images"
+					delayed
+				/>
 			</td>
 		</template>
 		<td>
