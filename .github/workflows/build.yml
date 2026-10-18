@@ -5,6 +5,7 @@ on:
 
 permissions:
   contents: read
+  packages: read
 
 jobs:
   build:
@@ -39,6 +40,8 @@ jobs:
         uses: actions/setup-node@v7
         with:
           node-version: 24
+          registry-url: https://npm.pkg.github.com
+          scope: "@edave64"
 
       - name: Install Wails CLI
         shell: bash
@@ -49,6 +52,8 @@ jobs:
       - name: Build Wails app
         shell: bash
         run: wails build ${{ matrix.build_args }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v7
