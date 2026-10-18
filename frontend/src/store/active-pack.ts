@@ -20,6 +20,7 @@ import { computed, ref, watch, type ComputedRef, type Ref } from "vue";
 import { saveFile } from "./core-state";
 import { useNormalizedDependecyTree } from "./dependencies";
 import type { HeadDummy } from "./head-dummy";
+import { expandOrTranslateId } from "@edave64/doki-doki-dialog-generator-pack-format/dist/v2/convertV1";
 
 const p: Ref<null | ComputedRef<Record<string, string>>> = ref(null);
 const params = computed(() => p.value?.value ?? ({} as Record<string, string>));
@@ -355,6 +356,7 @@ export async function saveRepo(repoV: ISupportedRepo) {
 
 	// Character names
 	repoV.pack.characters = packV ? getPackCharacters(packV) : [];
+	repoV.pack.characterIds = packV ? getPackCharacterIds(packV) : [];
 
 	await saveFile("repo.json", JSON.stringify(repoV, undefined, "\t"));
 	repoChanges.value = false;
@@ -368,6 +370,10 @@ export async function savePack(repoV: ISupportedRepo) {
 	packChanges.value = false;
 }
 
+/**
+ * Computes the values for `pack.characters`. This is regenerated every time the pack, to prevent
+ * having to maintain the value and potentially getting out of sync.
+ */
 function getPackCharacters(pack: V1Json<HeadDummy> | V2Fixed): string[] {
 	if (isV2(pack)) {
 		const dependencies = useNormalizedDependecyTree().value;
@@ -401,6 +407,24 @@ function getPackCharacters(pack: V1Json<HeadDummy> | V2Fixed): string[] {
 
 		const labelPart = pack.id.split(".").at(-1)!;
 		return [labelPart[0].toUpperCase() + labelPart.slice(1)];
+	}
+}
+
+/**
+ * Computes the values for `pack.characterIds`. This is regenerated every time the pack, to prevent
+ * having to maintain the value and potentially getting out of sync.
+ */
+function getPackCharacterIds(pack: V1Json<HeadDummy> | V2Fixed): string[] {
+	if (isV2(pack)) {
+		return pack.characters?.map((char) => char.id.includes(":") ? char.id : `${pack.packId}:${char.id}`) ?? [];
+	} else {
+		return [
+			expandOrTranslateId("character", pack.id, {
+				characterId: pack.id,
+				packId: pack.packId!,
+				paths: {},
+			}),
+		];
 	}
 }
 

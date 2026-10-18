@@ -24,6 +24,7 @@ export interface IPack {
 	dddg2Path?: string;
 	preview: string[];
 	characters: string[];
+	characterIds: string[];
 	authors: string[];
 	kind: (
 		| "Characters"

@@ -11,6 +11,7 @@ export const Repo = {
 			description: "Monika",
 			authors: [],
 			characters: ["Monika"],
+			characterIds: ['ddlc.buildin.base.monika:ddlc.monika'],
 			preview: [],
 			source: "",
 			dddg2Path:
@@ -23,6 +24,7 @@ export const Repo = {
 			description: "Sayori",
 			authors: [],
 			characters: ["Sayori"],
+			characterIds: ['dddg.buildin.sayori:ddlc.sayori'],
 			preview: [],
 			source: "",
 			dddg2Path:
@@ -35,6 +37,7 @@ export const Repo = {
 			description: "Natsuki",
 			authors: [],
 			characters: ["Natsuki"],
+			characterIds: ['dddg.buildin.base.natsuki:ddlc.natsuki'],
 			preview: [],
 			source: "",
 			dddg2Path:
@@ -47,6 +50,7 @@ export const Repo = {
 			description: "Yuri",
 			authors: [],
 			characters: ["Yuri"],
+			characterIds: ['dddg.buildin.yuri:ddlc.yuri'],
 			preview: [],
 			source: "",
 			dddg2Path:
@@ -59,6 +63,7 @@ export const Repo = {
 			description: "MC",
 			authors: [],
 			characters: ["MC"],
+			characterIds: ['dddg.buildin.mc:ddlc.fan.mc2'],
 			preview: [],
 			source: "",
 			dddg2Path:
@@ -71,6 +76,7 @@ export const Repo = {
 			description: "MC",
 			authors: [],
 			characters: ["MC"],
+			characterIds: ['dddg.buildin.concept_mc:ddlc.fan.concept_mc'],
 			preview: [],
 			source: "",
 			dddg2Path:
@@ -83,6 +89,7 @@ export const Repo = {
 			description: "MC",
 			authors: [],
 			characters: ["MC"],
+			characterIds: ['dddg.buildin.mc_chad:ddlc.fan.mc_chad'],
 			preview: [],
 			source: "",
 			dddg2Path:
@@ -95,6 +102,7 @@ export const Repo = {
 			description: "FeMC",
 			authors: [],
 			characters: ["FeMC"],
+			characterIds: ['dddg.buildin.femc:ddlc.fan.femc'],
 			preview: [],
 			source: "",
 			dddg2Path:
@@ -107,6 +115,7 @@ export const Repo = {
 			description: "FeMC",
 			authors: [],
 			characters: ["FeMC"],
+			characterIds: ['dddg.buildin.concept_femc:ddlc.fan.concept_femc'],
 			preview: [],
 			source: "",
 			dddg2Path:
@@ -119,6 +128,7 @@ export const Repo = {
 			description: "Amy",
 			authors: [],
 			characters: ["Amy"],
+			characterIds: ['dddg.buildin.amy2:ddlc.fan.amy2'],
 			preview: [],
 			source: "",
 			dddg2Path:
